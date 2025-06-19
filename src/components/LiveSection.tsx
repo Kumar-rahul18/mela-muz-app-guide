@@ -1,31 +1,33 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const LiveSection = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const items = [
     {
       icon: '🎭',
-      label: 'Virtual Pooja',
+      label: t('live.virtual_pooja'),
       path: '/virtual-pooja'
     },
     {
       icon: '📹',
-      label: 'Live Darshan',
+      label: t('live.live_darshan'),
       path: '/live-darshan'
     },
     {
       icon: '👥',
-      label: 'Crowd Status',
+      label: t('live.crowd_status'),
       path: '/crowd-status'
     }
   ];
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">Live Aarti & Crowd Status</h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('home.live_aarti')}</h2>
       <div className="grid grid-cols-3 gap-4">
         {items.map((item, index) => (
           <div 
