@@ -65,7 +65,16 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      setCrowdStatuses(data || []);
+      // Type cast the data to match our interface
+      const typedData: CrowdStatus[] = (data || []).map(item => ({
+        id: item.id,
+        location: item.location,
+        status: item.status as 'low' | 'medium' | 'high',
+        status_color: item.status_color as 'green' | 'yellow' | 'red',
+        description: item.description || ''
+      }));
+
+      setCrowdStatuses(typedData);
     } catch (error) {
       console.error('Error fetching crowd statuses:', error);
     }

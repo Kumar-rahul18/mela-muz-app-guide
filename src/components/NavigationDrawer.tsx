@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Home, Gallery, Calendar, Users, Shield, Camera, MapPin } from 'lucide-react';
+import { Home, Images, Calendar, Users, Shield, Camera, MapPin } from 'lucide-react';
 
 interface NavigationDrawerProps {
   isOpen: boolean;
@@ -17,7 +17,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose }) 
 
   const navigationItems = [
     { icon: Home, label: t('nav.home'), path: '/' },
-    { icon: Gallery, label: t('nav.gallery'), path: '/gallery' },
+    { icon: Images, label: t('nav.gallery'), path: '/gallery' },
     { icon: Calendar, label: t('nav.events'), path: '/events' },
     { icon: Users, label: t('nav.crowd_status'), path: '/crowd-status' },
     { icon: Camera, label: t('nav.photo_contest'), path: '/photo-contest' },

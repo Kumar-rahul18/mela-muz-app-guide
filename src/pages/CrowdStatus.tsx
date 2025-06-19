@@ -33,7 +33,16 @@ const CrowdStatus = () => {
         return;
       }
 
-      setLocations(data || []);
+      // Type cast the data to match our interface
+      const typedData: CrowdLocation[] = (data || []).map(item => ({
+        id: item.id,
+        location: item.location,
+        status: item.status as 'low' | 'medium' | 'high',
+        status_color: item.status_color as 'green' | 'yellow' | 'red',
+        description: item.description || ''
+      }));
+
+      setLocations(typedData);
     } catch (error) {
       console.error('Error fetching crowd status:', error);
     }
