@@ -12,7 +12,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const translations = {
   en: {
     // Header
-    'app.title': 'Shravani Mela Muz 24',
+    'app.title': 'Sharavani Mela MMC 25',
     
     // Navigation
     'nav.home': 'Home',
@@ -22,6 +22,7 @@ const translations = {
     'nav.admin': 'Admin Access',
     'nav.photo_contest': 'Photo Contest',
     'nav.facilities': 'Facilities',
+    'nav.change_language': 'Change Language',
     
     // Home sections
     'home.photo_contest': 'PHOTO CONTEST',
@@ -31,7 +32,7 @@ const translations = {
     'home.daily_winner': 'Daily Winner',
     'home.participate': 'Participate',
     'home.live_aarti': 'Live Aarti & Crowd Status',
-    'home.events': 'Shravani Mela Events',
+    'home.events': 'Sharavani Mela Events',
     'home.facilities': 'Facilities & Contacts',
     
     // Live section
@@ -82,7 +83,7 @@ const translations = {
   },
   hi: {
     // Header
-    'app.title': 'श्रावणी मेला मुज़ 24',
+    'app.title': 'शारावणी मेला एमएमसी 25',
     
     // Navigation
     'nav.home': 'होम',
@@ -92,6 +93,7 @@ const translations = {
     'nav.admin': 'प्रशासक पहुंच',
     'nav.photo_contest': 'फोटो प्रतियोगिता',
     'nav.facilities': 'सुविधाएं',
+    'nav.change_language': 'भाषा बदलें',
     
     // Home sections
     'home.photo_contest': 'फोटो प्रतियोगिता',
@@ -101,7 +103,7 @@ const translations = {
     'home.daily_winner': 'दैनिक विजेता',
     'home.participate': 'भाग लें',
     'home.live_aarti': 'लाइव आरती और भीड़ स्थिति',
-    'home.events': 'श्रावणी मेला कार्यक्रम',
+    'home.events': 'शारावणी मेला कार्यक्रम',
     'home.facilities': 'सुविधाएं और संपर्क',
     
     // Live section

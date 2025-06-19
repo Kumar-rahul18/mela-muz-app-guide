@@ -3,17 +3,17 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { supabase } from '@/integrations/supabase/client';
+import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-const AdminLogin: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+const AdminLogin = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
+  const [email, setEmail] = useState('mmcmuzaffarpur.ulb@gmail.com');
+  const [password, setPassword] = useState('Mmc#@1234');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,11 +26,7 @@ const AdminLogin: React.FC = () => {
       });
 
       if (error) {
-        toast({
-          title: "Login Error",
-          description: error.message,
-          variant: "destructive"
-        });
+        toast.error('Login failed: ' + error.message);
         return;
       }
 
@@ -43,75 +39,80 @@ const AdminLogin: React.FC = () => {
         .single();
 
       if (adminError || !adminData) {
-        toast({
-          title: "Access Denied",
-          description: "You don't have admin privileges",
-          variant: "destructive"
-        });
+        toast.error('Access denied. Admin privileges required.');
         await supabase.auth.signOut();
         return;
       }
 
-      toast({
-        title: "Login Successful",
-        description: "Welcome to admin dashboard"
-      });
-
+      toast.success('Login successful!');
       navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
-      toast({
-        title: "Error",
-        description: "An unexpected error occurred",
-        variant: "destructive"
-      });
+      toast.error('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-center app-gradient text-white p-4 rounded-lg">
-            {t('admin.login')}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="app-gradient text-white px-4 py-3 shadow-lg">
+        <div className="flex items-center space-x-3">
+          <button 
+            onClick={() => navigate('/')} 
+            className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+          >
+            ← 
+          </button>
+          <h1 className="text-lg font-semibold">{t('admin.login')}</h1>
+        </div>
+      </div>
+
+      <div className="px-4 py-8">
+        <div className="max-w-md mx-auto bg-white rounded-2xl p-6 shadow-lg">
+          <div className="text-center mb-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">🔐</span>
+            </div>
+            <h2 className="text-xl font-bold text-gray-800">{t('admin.login')}</h2>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-2">
-                {t('admin.email')}
-              </label>
+              <Label htmlFor="email">{t('admin.email')}</Label>
               <Input
+                id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                className="mt-1"
               />
             </div>
+
             <div>
-              <label className="block text-sm font-medium mb-2">
-                {t('admin.password')}
-              </label>
+              <Label htmlFor="password">{t('admin.password')}</Label>
               <Input
+                id="password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                className="mt-1"
               />
             </div>
-            <Button
-              type="submit"
-              className="w-full"
+
+            <Button 
+              type="submit" 
+              className="w-full bg-red-600 hover:bg-red-700"
               disabled={isLoading}
             >
               {isLoading ? 'Signing in...' : t('admin.signin')}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 };

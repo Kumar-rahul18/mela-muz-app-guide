@@ -70,7 +70,10 @@ const CrowdStatus = () => {
       {/* Header */}
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
         <div className="flex items-center space-x-3">
-          <button onClick={() => navigate('/')} className="text-white">
+          <button 
+            onClick={() => navigate('/')} 
+            className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+          >
             ← 
           </button>
           <h1 className="text-lg font-semibold">{t('nav.crowd_status')}</h1>

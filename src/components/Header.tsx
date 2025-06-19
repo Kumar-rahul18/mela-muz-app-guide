@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import { Menu } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import NavigationDrawer from './NavigationDrawer';
+import LanguageSelector from './LanguageSelector';
 
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
   const { t } = useLanguage();
 
   return (
@@ -31,7 +33,13 @@ const Header = () => {
       
       <NavigationDrawer 
         isOpen={isDrawerOpen} 
-        onClose={() => setIsDrawerOpen(false)} 
+        onClose={() => setIsDrawerOpen(false)}
+        onLanguageChange={() => setIsLanguageSelectorOpen(true)}
+      />
+      
+      <LanguageSelector 
+        isOpen={isLanguageSelectorOpen} 
+        onClose={() => setIsLanguageSelectorOpen(false)} 
       />
     </>
   );

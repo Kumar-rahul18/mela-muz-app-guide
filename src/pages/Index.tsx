@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import FacilityIcon from '../components/FacilityIcon';
@@ -11,15 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 const Index = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-
-  useEffect(() => {
-    // Show language selector on first visit
-    const hasSelectedLanguage = localStorage.getItem('app-language');
-    if (!hasSelectedLanguage) {
-      setShowLanguageSelector(true);
-    }
-  }, []);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(true);
 
   const facilities = [
     { icon: '🗺️', label: t('facility.route'), type: 'route' },
@@ -51,7 +43,7 @@ const Index = () => {
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
             <div className="relative z-10">
-              <h1 className="text-2xl font-bold mb-2">SHRAVANI MELA</h1>
+              <h1 className="text-2xl font-bold mb-2">SHARAVANI MELA</h1>
               <div className="flex items-center space-x-2 mb-2">
                 <span className="text-lg">📷</span>
                 <span className="text-lg font-semibold">{t('home.photo_contest')}</span>
