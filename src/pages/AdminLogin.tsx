@@ -11,8 +11,8 @@ import { toast } from 'sonner';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [email, setEmail] = useState('mmcmuzaffarpur.ulb@gmail.com');
-  const [password, setPassword] = useState('Mmc#@1234');
+  const [email, setEmail] = useState('harsh171517@gmail.com');
+  const [password, setPassword] = useState('MMC@1234');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
