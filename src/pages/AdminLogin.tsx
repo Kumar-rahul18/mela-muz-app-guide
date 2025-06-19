@@ -12,7 +12,7 @@ const AdminLogin = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [email, setEmail] = useState('harsh171517@gmail.com');
-  const [password, setPassword] = useState('MMC@1234');
+  const [password, setPassword] = useState('Xy91%7as');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
