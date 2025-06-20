@@ -42,12 +42,12 @@ const Index = () => {
         </div>
 
         {/* Photo Contest Section */}
-        <div className="mb-6 animate-fade-out">
+        <div className="mb-6 animate-fade-in">
           <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-xl p-6 border-2 border-orange-200 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-16 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-2xl">📸</span>
+                <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-xl">📸</span>
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-orange-800 mb-1">{t('Photo contest')}</h2>
@@ -57,7 +57,7 @@ const Index = () => {
               </div>
               <button 
                 onClick={() => navigate('/photo-contest')}
-                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-90"
+                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 {t('Participate')}
               </button>
