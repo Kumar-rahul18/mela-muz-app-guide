@@ -20,12 +20,12 @@ const FacilityIcon: React.FC<FacilityIconProps> = ({ icon, label, type }) => {
       onClick={handleClick}
       className="flex flex-col items-center space-y-2 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
     >
-      <div className="card-gradient w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg">
+      <div className="bg-gradient-to-br from-orange-400 to-pink-500 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg hover:shadow-xl transition-shadow border-2 border-orange-200">
         <div className="text-white text-2xl">
           {icon}
         </div>
       </div>
-      <span className="text-xs text-gray-600 text-center font-medium leading-tight">
+      <span className="text-xs text-orange-800 text-center font-medium leading-tight">
         {label}
       </span>
     </div>

@@ -10,8 +10,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 const Index = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
-  const [showLanguageSelector, setShowLanguageSelector] = useState(true);
+  const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
 
   const facilities = [
     { icon: '🗺️', label: t('facility.route'), type: 'route' },
@@ -33,48 +32,32 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
       <Header />
       
       <div className="px-4 pb-6">
-        {/* Photo Contest Banner */}
+        {/* Main Sliding Pictures Section */}
         <div className="mt-4 mb-6 animate-slide-up">
-          <div className="app-gradient rounded-2xl p-6 text-white relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
-            <div className="relative z-10">
-              <h1 className="text-2xl font-bold mb-2">SHARAVANI MELA</h1>
-              <div className="flex items-center space-x-2 mb-2">
-                <span className="text-lg">📷</span>
-                <span className="text-lg font-semibold">{t('home.photo_contest')}</span>
-              </div>
-              <div className="bg-white text-purple-600 px-3 py-1 rounded-full text-sm font-medium inline-block">
-                {t('home.pic_of_day')}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Image Slider replacing Pic of the Day Section */}
-        <div className="mb-6 animate-fade-in">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('home.pic_of_day')}</h2>
           <ImageSlider />
         </div>
 
-        {/* Pic of the Day Section - now smaller */}
+        {/* Photo Contest Section */}
         <div className="mb-6 animate-fade-in">
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <div className="text-center">
-              <div className="w-16 h-16 mx-auto mb-3 bg-gray-100 rounded-2xl flex items-center justify-center">
-                <span className="text-xl">📸</span>
+          <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-2xl p-6 border-2 border-orange-200 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                  <span className="text-2xl">📸</span>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-orange-800 mb-1">{t('home.photo_contest')}</h2>
+                  <p className="text-orange-600 text-sm">{t('home.submit_entry')}</p>
+                  <p className="text-orange-500 text-xs">{t('home.daily_winner')}</p>
+                </div>
               </div>
-              <div className="text-gray-500 text-sm mb-1">{t('home.free_entry')}</div>
-              <div className="font-semibold text-gray-800 mb-2">{t('home.photo_contest')}</div>
-              <div className="text-xs text-gray-500 mb-3">{t('home.submit_entry')}</div>
-              <div className="text-xs text-gray-500 mb-4">{t('home.daily_winner')}</div>
               <button 
                 onClick={() => navigate('/photo-contest')}
-                className="bg-pink-500 text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-pink-600 transition-colors"
+                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 {t('home.participate')}
               </button>
@@ -91,16 +74,24 @@ const Index = () => {
         <div className="mb-6 animate-fade-in">
           <div 
             onClick={() => navigate('/events')}
-            className="flex items-center justify-between bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer hover:shadow-md transition-shadow"
+            className="flex items-center justify-between bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-4 shadow-lg border-2 border-purple-200 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105"
           >
-            <h2 className="text-lg font-semibold text-gray-800">{t('home.events')}</h2>
-            <span className="text-gray-400">➤</span>
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                <span className="text-xl">🎭</span>
+              </div>
+              <h2 className="text-lg font-semibold text-purple-800">{t('home.events')}</h2>
+            </div>
+            <span className="text-purple-600 text-2xl">➤</span>
           </div>
         </div>
 
         {/* Facilities Section */}
         <div className="animate-fade-in">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('home.facilities')}</h2>
+          <h2 className="text-lg font-semibold text-orange-800 mb-4 flex items-center">
+            <span className="text-2xl mr-2">🏛️</span>
+            {t('home.facilities')}
+          </h2>
           <div className="grid grid-cols-4 gap-4">
             {facilities.map((facility, index) => (
               <FacilityIcon
