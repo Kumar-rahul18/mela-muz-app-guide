@@ -51,8 +51,8 @@ const Index = () => {
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-orange-800 mb-1">{t('Photo contest')}</h2>
-                  <p className="text-orange-600 text-sm">{t('Submit entry')}</p>
-                  <p className="text-orange-500 text-xs">{t('Daily Winner')}</p>
+                  <p className="text-orange-600 text-sm">{t('Submit your entry')}</p>
+                 
                 </div>
               </div>
               <button 
