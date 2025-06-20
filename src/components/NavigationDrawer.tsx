@@ -35,19 +35,11 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
       setIsLoggedIn(true);
 
-      // Check if user is admin (specific email check)
+      // Check if user is admin (specific email check only)
       if (user.email === 'harsh171517@gmail.com') {
         setIsAdmin(true);
       } else {
-        // Also check database for admin status
-        const { data: adminData, error } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('user_id', user.id)
-          .eq('is_active', true)
-          .single();
-
-        setIsAdmin(!error && !!adminData);
+        setIsAdmin(false);
       }
     } catch (error) {
       console.error('Error checking auth status:', error);

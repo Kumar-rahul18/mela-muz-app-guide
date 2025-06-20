@@ -11,8 +11,8 @@ import { toast } from 'sonner';
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
-  const [email, setEmail] = useState('harsh171517@gmail.com');
-  const [password, setPassword] = useState('Xy91%7as');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -20,22 +20,30 @@ const AdminLogin = () => {
     setIsLoading(true);
 
     try {
-      // First, try to sign in
+      // Validate admin credentials
+      if (username !== 'MMCMUZAFFARPUR' || password !== 'Mmc#@1234') {
+        toast.error('Invalid admin credentials');
+        setIsLoading(false);
+        return;
+      }
+
+      // Create a temporary admin session by signing in with the email
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: 'harsh171517@gmail.com',
+        password: 'Xy91%7as',
       });
 
       if (error) {
-        // If user doesn't exist, try to create the account
+        // If user doesn't exist, create the account
         if (error.message.includes('Invalid login credentials')) {
           const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email,
-            password,
+            email: 'harsh171517@gmail.com',
+            password: 'Xy91%7as',
           });
 
           if (signUpError) {
             toast.error('Failed to create admin account: ' + signUpError.message);
+            setIsLoading(false);
             return;
           }
 
@@ -46,7 +54,8 @@ const AdminLogin = () => {
                 .from('admin_users')
                 .insert({
                   user_id: signUpData.user.id,
-                  is_active: true
+                  is_active: true,
+                  email: 'harsh171517@gmail.com'
                 });
             } catch (adminError) {
               console.log('Admin user record creation failed, but continuing...');
@@ -54,34 +63,28 @@ const AdminLogin = () => {
 
             toast.success('Admin account created and logged in successfully!');
             navigate('/admin/dashboard');
+            setIsLoading(false);
             return;
           }
         } else {
           toast.error('Login failed: ' + error.message);
+          setIsLoading(false);
           return;
         }
       }
 
       if (data.user) {
-        // Check if user is admin by email or database record
+        // Verify admin status
         const isAdminEmail = data.user.email === 'harsh171517@gmail.com';
         
         if (!isAdminEmail) {
-          const { data: adminData, error: adminError } = await supabase
-            .from('admin_users')
-            .select('*')
-            .eq('user_id', data.user.id)
-            .eq('is_active', true)
-            .single();
-
-          if (adminError || !adminData) {
-            toast.error('Access denied. Admin privileges required.');
-            await supabase.auth.signOut();
-            return;
-          }
+          toast.error('Access denied. Admin privileges required.');
+          await supabase.auth.signOut();
+          setIsLoading(false);
+          return;
         }
 
-        toast.success('Login successful!');
+        toast.success('Admin login successful!');
         navigate('/admin/dashboard');
       }
     } catch (error) {
@@ -114,17 +117,18 @@ const AdminLogin = () => {
               <span className="text-2xl">🔐</span>
             </div>
             <h2 className="text-xl font-bold text-orange-800">Admin Access</h2>
-            <p className="text-orange-600 text-sm mt-2">Sign in to access admin dashboard</p>
+            <p className="text-orange-600 text-sm mt-2">Enter admin credentials to continue</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <Label htmlFor="email" className="text-orange-700">Email</Label>
+              <Label htmlFor="username" className="text-orange-700">Username</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="username"
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter admin username"
                 required
                 className="mt-1 border-orange-200 focus:border-orange-400"
               />
@@ -137,6 +141,7 @@ const AdminLogin = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter admin password"
                 required
                 className="mt-1 border-orange-200 focus:border-orange-400"
               />
