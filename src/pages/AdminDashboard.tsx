@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -37,6 +36,7 @@ const AdminDashboard: React.FC = () => {
   const [imageTitle, setImageTitle] = useState('');
   const [imageDescription, setImageDescription] = useState('');
   const [displayOrder, setDisplayOrder] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const { t } = useLanguage();
 
@@ -47,23 +47,20 @@ const AdminDashboard: React.FC = () => {
   }, []);
 
   const checkAdminAccess = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) {
-      navigate('/admin');
-      return;
-    }
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user || user.email !== 'harsh171517@gmail.com') {
+        console.log('Access denied - not admin user');
+        navigate('/admin');
+        return;
+      }
 
-    const { data: adminData, error } = await supabase
-      .from('admin_users')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .single();
-
-    if (error || !adminData) {
+      console.log('Admin access granted');
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error checking admin access:', error);
       navigate('/admin');
-      return;
     }
   };
 
@@ -279,11 +276,19 @@ const AdminDashboard: React.FC = () => {
     navigate('/');
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="text-orange-800">Loading admin dashboard...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 p-4">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-orange-800">{t('admin.dashboard')}</h1>
+          <h1 className="text-3xl font-bold text-orange-800">{t('admin_dashboard')}</h1>
           <Button onClick={handleLogout} variant="outline" className="border-orange-300 text-orange-700 hover:bg-orange-50">
             Logout
           </Button>
@@ -293,12 +298,12 @@ const AdminDashboard: React.FC = () => {
           {/* Crowd Status Management */}
           <Card className="border-orange-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-orange-100 to-pink-100">
-              <CardTitle className="text-orange-800">{t('admin.crowd_management')}</CardTitle>
+              <CardTitle className="text-orange-800">{t('crowd_management')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-6">
               <div>
                 <label className="block text-sm font-medium mb-2 text-orange-700">
-                  {t('admin.location')}
+                  {t('location')}
                 </label>
                 <Input
                   value={selectedLocation}
@@ -309,16 +314,16 @@ const AdminDashboard: React.FC = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2 text-orange-700">
-                  {t('admin.status')}
+                  {t('status')}
                 </label>
                 <Select value={selectedStatus} onValueChange={(value: 'low' | 'medium' | 'high') => setSelectedStatus(value)}>
                   <SelectTrigger className="border-orange-200 focus:border-orange-400">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">{t('admin.low')}</SelectItem>
-                    <SelectItem value="medium">{t('admin.medium')}</SelectItem>
-                    <SelectItem value="high">{t('admin.high')}</SelectItem>
+                    <SelectItem value="low">{t('low')}</SelectItem>
+                    <SelectItem value="medium">{t('medium')}</SelectItem>
+                    <SelectItem value="high">{t('high')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -334,7 +339,7 @@ const AdminDashboard: React.FC = () => {
                 />
               </div>
               <Button onClick={updateCrowdStatus} className="w-full bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600">
-                {t('admin.update_status')}
+                {t('update_status')}
               </Button>
             </CardContent>
           </Card>
@@ -342,7 +347,7 @@ const AdminDashboard: React.FC = () => {
           {/* Gallery Management */}
           <Card className="border-orange-200 shadow-lg">
             <CardHeader className="bg-gradient-to-r from-purple-100 to-pink-100">
-              <CardTitle className="text-purple-800">{t('admin.gallery_management')}</CardTitle>
+              <CardTitle className="text-purple-800">{t('gallery_management')}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4 p-6">
               <div>
@@ -391,7 +396,7 @@ const AdminDashboard: React.FC = () => {
                 />
               </div>
               <Button onClick={addGalleryImage} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600">
-                {t('admin.add_image')}
+                {t('add_image')}
               </Button>
             </CardContent>
           </Card>

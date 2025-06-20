@@ -49,12 +49,12 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
   };
 
   const navigationItems = [
-    { icon: Home, label: t('nav.home'), path: '/' },
-    { icon: Images, label: t('nav.gallery'), path: '/gallery' },
-    { icon: Calendar, label: t('nav.events'), path: '/events' },
-    { icon: Users, label: t('nav.crowd_status'), path: '/crowd-status' },
-    { icon: Camera, label: t('nav.photo_contest'), path: '/photo-contest' },
-    { icon: MapPin, label: t('nav.facilities'), path: '/facility/route' },
+    { icon: Home, label: t('home'), path: '/' },
+    { icon: Images, label: t('gallery'), path: '/gallery' },
+    { icon: Calendar, label: t('events'), path: '/events' },
+    { icon: Users, label: t('crowd_status'), path: '/crowd-status' },
+    { icon: Camera, label: t('photo_contest'), path: '/photo-contest' },
+    { icon: MapPin, label: t('facilities'), path: '/facility/route' },
   ];
 
   const handleNavigation = (path: string) => {
@@ -89,7 +89,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
       <DrawerContent>
         <DrawerHeader>
           <DrawerTitle className="bg-gradient-to-r from-orange-600 via-red-500 to-pink-600 text-white p-4 rounded-lg">
-            {t('app.title')}
+            {t('app_title')}
           </DrawerTitle>
         </DrawerHeader>
         <div className="p-4 space-y-2">
@@ -123,7 +123,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
                 onClick={handleAdminDashboard}
               >
                 <Shield className="mr-3 h-5 w-5" />
-                {t('nav.admin')}
+                {t('admin')}
               </Button>
               <Button
                 variant="ghost"
@@ -143,7 +143,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
             onClick={handleLanguageChange}
           >
             <Languages className="mr-3 h-5 w-5" />
-            {t('nav.change_language')}
+            {t('change_language')}
           </Button>
         </div>
         <DrawerClose asChild>

@@ -30,7 +30,7 @@ const Header = () => {
                 <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z"/>
               </svg>
             </div>
-            <h1 className="text-lg font-semibold">{t('app.title')}</h1>
+            <h1 className="text-lg font-semibold">{t('app_title')}</h1>
           </div>
         </div>
       </header>
