@@ -59,7 +59,7 @@ const Index = () => {
                 onClick={() => navigate('/photo-contest')}
                 className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
               >
-                {t('home.participate')}
+                {t('Participate')}
               </button>
             </div>
           </div>
@@ -80,7 +80,7 @@ const Index = () => {
               <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
                 <span className="text-xl">🎭</span>
               </div>
-              <h2 className="text-lg font-semibold text-purple-800">{t('home.events')}</h2>
+              <h2 className="text-lg font-semibold text-purple-800">{t('Events')}</h2>
             </div>
             <span className="text-purple-600 text-2xl">➤</span>
           </div>
