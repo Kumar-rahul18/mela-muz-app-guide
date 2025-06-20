@@ -13,22 +13,22 @@ const Index = () => {
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
 
   const facilities = [
-    { icon: '🗺️', label: t('Route'), type: 'route' },
+    { icon: '🗺️', label: t('Mela route'), type: 'route' },
     { icon: '🖼️', label: t('Gallery'), type: 'gallery' },
     { icon: '📞', label: t('Contacts'), type: 'contacts' },
     { icon: '🚑', label: t('Ambulance'), type: 'ambulance' },
     { icon: '👮', label: t('Police'), type: 'police-station' },
     { icon: '🎧', label: t('Control room'), type: 'control-room' },
     { icon: '🚰', label: t('Drinking water'), type: 'drinking-water' },
-    { icon: '🚻', label: t('facility.toilet'), type: 'toilet' },
-    { icon: '🛁', label: t('facility.bathroom'), type: 'bathroom' },
-    { icon: '🛏️', label: t('facility.rest_room'), type: 'rest-room' },
-    { icon: '🏠', label: t('facility.dharamshala'), type: 'dharamshala' },
-    { icon: '🅿️', label: t('facility.parking'), type: 'parking' },
-    { icon: '🏥', label: t('facility.health_centre'), type: 'health-centre' },
-    { icon: '🏕️', label: t('facility.shivir'), type: 'shivir' },
-    { icon: '🏧', label: t('facility.atm'), type: 'atm' },
-    { icon: '🚒', label: t('facility.fire_brigade'), type: 'fire-brigade' }
+    { icon: '🚻', label: t('Toilet'), type: 'toilet' },
+    { icon: '🛁', label: t('Bathroom'), type: 'bathroom' },
+    { icon: '🛏️', label: t('Rest room'), type: 'rest-room' },
+    { icon: '🏠', label: t('Dharamshala'), type: 'dharamshala' },
+    { icon: '🅿️', label: t('Parking'), type: 'parking' },
+    { icon: '🏥', label: t('Health centre'), type: 'health-centre' },
+    { icon: '🏕️', label: t('Shivir'), type: 'shivir' },
+    { icon: '🏧', label: t('ATM'), type: 'atm' },
+    { icon: '🚒', label: t('Fire brigade'), type: 'fire-brigade' }
   ];
 
   return (
