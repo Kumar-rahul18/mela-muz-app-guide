@@ -13,8 +13,8 @@ const Index = () => {
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
 
   const facilities = [
-    { icon: '🗺️', label: t('facility.route'), type: 'route' },
-    { icon: '🖼️', label: t('facility.gallery'), type: 'gallery' },
+    { icon: '🗺️', label: t('Route'), type: 'route' },
+    { icon: '🖼️', label: t('Gallery'), type: 'gallery' },
     { icon: '📞', label: t('facility.contacts'), type: 'contacts' },
     { icon: '🚑', label: t('facility.ambulance'), type: 'ambulance' },
     { icon: '👮', label: t('facility.police'), type: 'police-station' },
