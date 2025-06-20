@@ -42,11 +42,11 @@ const Index = () => {
         </div>
 
         {/* Photo Contest Section */}
-        <div className="mb-6 animate-fade-in">
-          <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-2xl p-6 border-2 border-orange-200 shadow-lg">
+        <div className="mb-6 animate-fade-out">
+          <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-xl p-6 border-2 border-orange-200 shadow-lg">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
+                <div className="w-12 h-16 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
                   <span className="text-2xl">📸</span>
                 </div>
                 <div>
