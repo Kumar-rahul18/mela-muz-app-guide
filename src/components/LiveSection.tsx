@@ -10,24 +10,24 @@ const LiveSection = () => {
   const items = [
     {
       icon: '🎭',
-      label: t('live.virtual_pooja'),
+      label: t('virtual pooja'),
       path: '/virtual-pooja'
     },
     {
       icon: '📹',
-      label: t('live.live_darshan'),
+      label: t('live darshan'),
       path: '/live-darshan'
     },
     {
       icon: '👥',
-      label: t('live.crowd_status'),
+      label: t('crowd status'),
       path: '/crowd-status'
     }
   ];
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('home.live_aarti')}</h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('live aarti')}</h2>
       <div className="grid grid-cols-3 gap-4">
         {items.map((item, index) => (
           <div 
