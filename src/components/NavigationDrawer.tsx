@@ -86,7 +86,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent side ="right">
+      <DrawerContent side ="left">
         <DrawerHeader>
           <DrawerTitle className="bg-gradient-to-r from-orange-600 via-red-500 to-pink-600 text-white p-4 rounded-lg">
             {t('app_title')}
