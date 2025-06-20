@@ -30,13 +30,13 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
             onClick={() => handleLanguageSelect('en')}
             className="h-16 text-lg bg-blue-500 hover:bg-blue-600"
           >
-            🇺🇸 {t('lang.english')}
+            🇺🇸 {t('English')}
           </Button>
           <Button
             onClick={() => handleLanguageSelect('hi')}
             className="h-16 text-lg bg-orange-500 hover:bg-orange-600"
           >
-            🇮🇳 {t('lang.hindi')}
+            🇮🇳 {t('हिन्दी')}
           </Button>
         </div>
       </DialogContent>
