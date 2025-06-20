@@ -22,7 +22,7 @@ const LanguageSelector: React.FC<LanguageSelectorProps> = ({ isOpen, onClose }) 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center text-xl font-bold">
-            {t('lang.select')}
+            {t('Select language/भाषा चयन करें')}
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col space-y-4 p-6">
