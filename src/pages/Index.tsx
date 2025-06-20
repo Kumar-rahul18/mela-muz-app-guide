@@ -50,14 +50,14 @@ const Index = () => {
                   <span className="text-2xl">📸</span>
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-orange-800 mb-1">{t('home.photo_contest')}</h2>
-                  <p className="text-orange-600 text-sm">{t('home.submit_entry')}</p>
-                  <p className="text-orange-500 text-xs">{t('home.daily_winner')}</p>
+                  <h2 className="text-xl font-bold text-orange-800 mb-1">{t('Photo contest')}</h2>
+                  <p className="text-orange-600 text-sm">{t('Submit entry')}</p>
+                  <p className="text-orange-500 text-xs">{t('Daily Winner')}</p>
                 </div>
               </div>
               <button 
                 onClick={() => navigate('/photo-contest')}
-                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-90"
               >
                 {t('Participate')}
               </button>
