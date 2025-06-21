@@ -81,6 +81,42 @@ export type Database = {
         }
         Relationships: []
       }
+      contacts: {
+        Row: {
+          contact_type: string
+          created_at: string
+          designation: string | null
+          email: string | null
+          id: string
+          is_active: boolean
+          name: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          contact_type: string
+          created_at?: string
+          designation?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          contact_type?: string
+          created_at?: string
+          designation?: string | null
+          email?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       crowd_status: {
         Row: {
           created_at: string
@@ -111,6 +147,81 @@ export type Database = {
           status_color?: string
           updated_at?: string
           updated_by?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          date: string
+          description: string | null
+          event_type: string
+          id: string
+          is_active: boolean
+          location: string | null
+          time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          description?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean
+          location?: string | null
+          time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      facilities: {
+        Row: {
+          contact_number: string | null
+          created_at: string
+          facility_type: string
+          google_maps_link: string | null
+          id: string
+          is_active: boolean
+          location_name: string | null
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          contact_number?: string | null
+          created_at?: string
+          facility_type: string
+          google_maps_link?: string | null
+          id?: string
+          is_active?: boolean
+          location_name?: string | null
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          contact_number?: string | null
+          created_at?: string
+          facility_type?: string
+          google_maps_link?: string | null
+          id?: string
+          is_active?: boolean
+          location_name?: string | null
+          name?: string
+          updated_at?: string
         }
         Relationships: []
       }

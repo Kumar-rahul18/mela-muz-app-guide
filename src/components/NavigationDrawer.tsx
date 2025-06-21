@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@/components/ui/drawer';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Home, Images, Calendar, Users, Shield, Camera, MapPin, Languages, LogIn } from 'lucide-react';
+import { Home, Images, Calendar, Users, Shield, Camera, MapPin, Languages, LogIn, BookOpen } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 
 interface NavigationDrawerProps {
@@ -35,7 +35,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
       setIsLoggedIn(true);
 
-      // Check if user is admin (specific email check only)
       if (user.email === 'harsh171517@gmail.com') {
         setIsAdmin(true);
       } else {
@@ -50,7 +49,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
   const navigationItems = [
     { icon: Home, label: t('home'), path: '/' },
-    { icon: Images, label: t('gallery'), path: '/gallery' },
+    { icon: BookOpen, label: t('history'), path: '/history' },
     { icon: Calendar, label: t('events'), path: '/events' },
     { icon: Users, label: t('crowd_status'), path: '/crowd-status' },
     { icon: Camera, label: t('photo_contest'), path: '/photo-contest' },
@@ -86,13 +85,13 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
   return (
     <Drawer open={isOpen} onOpenChange={onClose}>
-      <DrawerContent side ="left">
+      <DrawerContent className="fixed inset-y-0 left-0 z-50 h-full w-80 transform transition-transform duration-300 ease-in-out bg-white shadow-xl">
         <DrawerHeader>
           <DrawerTitle className="bg-gradient-to-r from-orange-600 via-red-500 to-pink-600 text-white p-4 rounded-lg">
             {t('app_title')}
           </DrawerTitle>
         </DrawerHeader>
-        <div className="p-4 space-y-2">
+        <div className="p-4 space-y-2 flex-1 overflow-y-auto">
           {navigationItems.map((item, index) => (
             <Button
               key={index}
@@ -105,7 +104,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
             </Button>
           ))}
           
-          {/* Admin Section */}
           {!isLoggedIn ? (
             <Button
               variant="ghost"
@@ -136,7 +134,6 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
             </>
           ) : null}
           
-          {/* Language Change Button */}
           <Button
             variant="ghost"
             className="w-full justify-start text-left h-12 bg-blue-50 hover:bg-blue-100 text-blue-700"
@@ -146,11 +143,13 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
             {t('change_language')}
           </Button>
         </div>
-        <DrawerClose asChild>
-          <Button variant="outline" className="m-4">
-            Close
-          </Button>
-        </DrawerClose>
+        <div className="p-4">
+          <DrawerClose asChild>
+            <Button variant="outline" className="w-full">
+              Close
+            </Button>
+          </DrawerClose>
+        </div>
       </DrawerContent>
     </Drawer>
   );

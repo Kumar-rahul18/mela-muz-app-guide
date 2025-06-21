@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,6 +13,8 @@ import Events from "./pages/Events";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import History from "./pages/History";
+import FacilityRoute from "./pages/FacilityRoute";
 
 const queryClient = new QueryClient();
 
@@ -30,7 +31,8 @@ const App = () => (
             <Route path="/live-darshan" element={<LiveDarshan />} />
             <Route path="/crowd-status" element={<CrowdStatus />} />
             <Route path="/events" element={<Events />} />
-            <Route path="/facility/:type" element={<FacilityDetail />} />
+            <Route path="/history" element={<History />} />
+            <Route path="/facility/:type" element={<FacilityRoute />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="*" element={<NotFound />} />

@@ -1,114 +1,209 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Header from '@/components/Header';
+import LiveSection from '@/components/LiveSection';
+import WeatherWidget from '@/components/WeatherWidget';
+import LanguageSelector from '@/components/LanguageSelector';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/Header';
-import FacilityIcon from '../components/FacilityIcon';
-import LiveSection from '../components/LiveSection';
-import ImageSlider from '../components/ImageSlider';
-import LanguageSelector from '../components/LanguageSelector';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const navigate = useNavigate();
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
+  const [contestPhotos, setContestPhotos] = useState<any[]>([]);
 
-  const facilities = [
-    { icon: '🗺️', label: t('Mela route'), type: 'route' },
-    { icon: '🖼️', label: t('Gallery'), type: 'gallery' },
-    { icon: '📞', label: t('Contacts'), type: 'contacts' },
-    { icon: '🚑', label: t('Ambulance'), type: 'ambulance' },
-    { icon: '👮', label: t('Police'), type: 'police-station' },
-    { icon: '🎧', label: t('Control room'), type: 'control-room' },
-    { icon: '🚰', label: t('Drinking water'), type: 'drinking-water' },
-    { icon: '🚻', label: t('Toilet'), type: 'toilet' },
-    { icon: '🛁', label: t('Bathroom'), type: 'bathroom' },
-    { icon: '🛏️', label: t('Rest room'), type: 'rest-room' },
-    { icon: '🏠', label: t('Dharamshala'), type: 'dharamshala' },
-    { icon: '🅿️', label: t('Parking'), type: 'parking' },
-    { icon: '🏥', label: t('Health centre'), type: 'health-centre' },
-    { icon: '🏕️', label: t('Shivir'), type: 'shivir' },
-    { icon: '🏧', label: t('ATM'), type: 'atm' },
-    { icon: '🚒', label: t('Fire brigade'), type: 'fire-brigade' }
+  useEffect(() => {
+    fetchContestPhotos();
+  }, []);
+
+  const fetchContestPhotos = async () => {
+    // This would fetch photos from contest submissions
+    // For now, using placeholder data
+    setContestPhotos([
+      {
+        id: 1,
+        image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        title: "Morning Prayer",
+        description: "Beautiful morning aarti ceremony"
+      },
+      {
+        id: 2,
+        image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        title: "Temple View",
+        description: "Magnificent temple architecture"
+      }
+    ]);
+  };
+
+  const facilityItems = [
+    {
+      icon: '🚰',
+      label: t('drinking_water'),
+      path: '/facility/drinking-water'
+    },
+    {
+      icon: '🚻',
+      label: t('toilet'),
+      path: '/facility/toilet'
+    },
+    {
+      icon: '🛁',
+      label: t('bathroom'), 
+      path: '/facility/bathroom'
+    },
+    {
+      icon: '🛏️',
+      label: t('rest_room'),
+      path: '/facility/rest-room'
+    },
+    {
+      icon: '🏛️',
+      label: t('dharamshala'),
+      path: '/facility/dharamshala'
+    },
+    {
+      icon: '🏕️',
+      label: t('shivir'),
+      path: '/facility/shivir'
+    },
+    {
+      icon: '🏥',
+      label: t('health_centre'),
+      path: '/facility/health-centre'
+    },
+    {
+      icon: '🅿️',
+      label: t('parking'),
+      path: '/facility/parking'
+    }
+  ];
+
+  const quickAccessItems = [
+    {
+      icon: '🚨',
+      label: t('ambulance'),
+      action: () => window.open('tel:108', '_self')
+    },
+    {
+      icon: '🌤️',
+      label: t('weather'),
+      component: <WeatherWidget />
+    },
+    {
+      icon: '📞',
+      label: t('control_room'),
+      action: () => window.open('tel:102', '_self')
+    },
+    {
+      icon: '🛠️',
+      label: t('help_desk'),
+      action: () => window.open('tel:1800-123-4567', '_self')
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
-      <div className="px-4 pb-6">
-        {/* Main Sliding Pictures Section */}
-        <div className="mt-4 mb-6 animate-slide-up">
-          <ImageSlider />
-        </div>
-
-        {/* Photo Contest Section */}
-        <div className="mb-6 animate-fade-in">
-          <div className="bg-gradient-to-r from-orange-100 to-pink-100 rounded-xl p-6 border-2 border-orange-200 shadow-lg">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-orange-400 to-pink-400 rounded-full flex items-center justify-center shadow-lg">
-                  <span className="text-xl">📸</span>
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-orange-800 mb-1">{t('Photo contest')}</h2>
-                  <p className="text-orange-600 text-sm">{t('Submit your entry')}</p>
-                 
-                </div>
-              </div>
-              <button 
-                onClick={() => navigate('/photo-contest')}
-                className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
-              >
-                {t('Participate')}
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Live Section */}
-        <div className="mb-6">
-          <LiveSection />
-        </div>
-
-        {/* Events Section */}
-        <div className="mb-6 animate-fade-in">
-          <div 
-            onClick={() => navigate('/events')}
-            className="flex items-center justify-between bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-4 shadow-lg border-2 border-purple-200 cursor-pointer hover:shadow-xl transition-all duration-300 hover:scale-105"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                <span className="text-xl">🎭</span>
-              </div>
-              <h2 className="text-lg font-semibold text-purple-800">{t('Events')}</h2>
-            </div>
-            <span className="text-purple-600 text-2xl">➤</span>
-          </div>
-        </div>
-
-        {/* Facilities Section */}
-        <div className="animate-fade-in">
-          <h2 className="text-lg font-semibold text-orange-800 mb-4 flex items-center">
-            <span className="text-2xl mr-2">🏛️</span>
-            {t('home.facilities')}
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {facilities.map((facility, index) => (
-              <FacilityIcon
-                key={index}
-                icon={facility.icon}
-                label={facility.label}
-                type={facility.type}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
-
       <LanguageSelector 
         isOpen={showLanguageSelector} 
         onClose={() => setShowLanguageSelector(false)} 
       />
+      
+      <div className="px-4 py-6 space-y-6">
+        {/* Photo Contest Banner */}
+        <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <span className="text-2xl">📸</span>
+                <h2 className="text-lg font-bold">{t('photo_contest')}</h2>
+              </div>
+              <p className="text-sm text-white/90 mb-3">{t('submit_entry')}</p>
+              <button 
+                onClick={() => navigate('/photo-contest')}
+                className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors"
+              >
+                {t('participate')}
+              </button>
+            </div>
+            <div className="text-6xl opacity-20">🏆</div>
+          </div>
+        </div>
+
+        {/* Photo Gallery from Contest */}
+        <div className="animate-fade-in">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('pic_of_day')}</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {contestPhotos.slice(0, 2).map((photo) => (
+              <div key={photo.id} className="relative rounded-2xl overflow-hidden shadow-sm">
+                <img 
+                  src={photo.image_url} 
+                  alt={photo.title}
+                  className="w-full h-32 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                <div className="absolute bottom-2 left-2 right-2">
+                  <p className="text-white text-xs font-medium">{photo.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Live Section */}
+        <LiveSection />
+
+        {/* Facilities */}
+        <div className="animate-fade-in">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('facilities')}</h2>
+          <div className="grid grid-cols-4 gap-3">
+            {facilityItems.map((item, index) => (
+              <div 
+                key={index}
+                onClick={() => navigate(item.path)}
+                className="flex flex-col items-center space-y-2 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                <div className="card-gradient w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">
+                  <span className="text-xl">{item.icon}</span>
+                </div>
+                <span className="text-xs text-gray-600 text-center font-medium leading-tight">
+                  {item.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Access */}
+        <div className="animate-fade-in">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('contacts')}</h2>
+          <div className="grid grid-cols-2 gap-3">
+            {quickAccessItems.map((item, index) => (
+              <div 
+                key={index}
+                onClick={item.action}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
+              >
+                {item.component ? (
+                  item.component
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                      <span className="text-lg">{item.icon}</span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-800 text-sm">{item.label}</p>
+                      <p className="text-xs text-gray-500">{t('tap_to_call')}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
