@@ -14,7 +14,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations = {
   en: {
-    'app_title': 'Sharavani Mela MMC 25',
+    'app_title': 'Shravani Mela MMC 25',
     'photo_contest': 'Photo Contest',
     'pic_of_day': 'Picture of the Day',
     'free_entry': 'Free Entry',
