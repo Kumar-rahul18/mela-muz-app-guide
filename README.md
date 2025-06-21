@@ -13,4 +13,5 @@ CURRENT ISSUES AND UPDATES REQUIRED:
 10. Adding historic detail about the Shravani mela in the navigation bar.(Baba garib Nath dham and importance of Shravani Mela)
 11. Virtual Puja integration
 12. Splash screen addition in the app
+13. # Add sign in with email facilities for participating in best photo contest
     
