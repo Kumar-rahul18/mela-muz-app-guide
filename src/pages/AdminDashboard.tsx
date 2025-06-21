@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -196,67 +195,119 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const updateCrowdStatus = async () => {
-    if (!selectedLocation || !selectedStatus) {
+  const addFacility = async () => {
+    if (!facilityType || !facilityName) {
       toast({
         title: "Error",
-        description: "Please select location and status",
+        description: "Please fill required fields",
         variant: "destructive"
       });
       return;
     }
 
     try {
-      const statusColor = selectedStatus === 'low' ? 'green' : 
-                         selectedStatus === 'medium' ? 'yellow' : 'red';
+      console.log('Attempting to add facility:', {
+        facility_type: facilityType,
+        name: facilityName,
+        contact_number: facilityContact || null,
+        location_name: facilityLocationName || null,
+        google_maps_link: facilityMapsLink || null
+      });
 
-      const existingStatus = crowdStatuses.find(cs => cs.location === selectedLocation);
-      
-      if (existingStatus) {
-        const { error } = await supabase
-          .from('crowd_status')
-          .update({
-            status: selectedStatus,
-            status_color: statusColor,
-            description: crowdDescription,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', existingStatus.id);
+      const { data, error } = await supabase
+        .from('facilities')
+        .insert([{
+          facility_type: facilityType,
+          name: facilityName,
+          contact_number: facilityContact || null,
+          location_name: facilityLocationName || null,
+          google_maps_link: facilityMapsLink || null,
+          is_active: true
+        }])
+        .select();
 
-        if (error) {
-          console.error('Error updating crowd status:', error);
-          throw error;
-        }
-      } else {
-        const { error } = await supabase
-          .from('crowd_status')
-          .insert([{
-            location: selectedLocation,
-            status: selectedStatus,
-            status_color: statusColor,
-            description: crowdDescription
-          }]);
-
-        if (error) {
-          console.error('Error inserting crowd status:', error);
-          throw error;
-        }
+      if (error) {
+        console.error('Supabase error adding facility:', error);
+        throw error;
       }
+
+      console.log('Facility added successfully:', data);
 
       toast({
         title: "Success",
-        description: "Crowd status updated successfully"
+        description: "Facility added successfully"
       });
 
-      await fetchCrowdStatuses();
-      setSelectedLocation('');
-      setSelectedStatus('low');
-      setCrowdDescription('');
+      setFacilityType('');
+      setFacilityName('');
+      setFacilityContact('');
+      setFacilityLocationName('');
+      setFacilityMapsLink('');
+      await fetchFacilities();
     } catch (error) {
-      console.error('Error updating crowd status:', error);
+      console.error('Error adding facility:', error);
       toast({
         title: "Error",
-        description: "Failed to update crowd status",
+        description: `Failed to add facility: ${error.message}`,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const addContact = async () => {
+    if (!contactType || !contactName || !contactPhone) {
+      toast({
+        title: "Error",
+        description: "Please fill required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      console.log('Attempting to add contact:', {
+        contact_type: contactType,
+        name: contactName,
+        phone: contactPhone,
+        email: contactEmail || null,
+        designation: contactDesignation || null
+      });
+
+      const { data, error } = await supabase
+        .from('contacts')
+        .insert([{
+          contact_type: contactType,
+          name: contactName,
+          phone: contactPhone,
+          email: contactEmail || null,
+          designation: contactDesignation || null,
+          is_active: true
+        }])
+        .select();
+
+      if (error) {
+        console.error('Supabase error adding contact:', error);
+        throw error;
+      }
+
+      console.log('Contact added successfully:', data);
+
+      toast({
+        title: "Success",
+        description: "Contact added successfully"
+      });
+
+      setContactType('');
+      setContactName('');
+      setContactPhone('');
+      setContactEmail('');
+      setContactDesignation('');
+      await fetchContacts();
+    } catch (error) {
+      console.error('Error adding contact:', error);
+      toast({
+        title: "Error",
+        description: `Failed to add contact: ${error.message}`,
         variant: "destructive"
       });
     }
@@ -273,21 +324,34 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      const { error } = await supabase
+      console.log('Attempting to add event:', {
+        title: eventTitle,
+        description: eventDescription || null,
+        date: eventDate,
+        time: eventTime,
+        event_type: eventType,
+        location: eventLocation || null
+      });
+
+      const { data, error } = await supabase
         .from('events')
         .insert([{
           title: eventTitle,
-          description: eventDescription,
+          description: eventDescription || null,
           date: eventDate,
           time: eventTime,
           event_type: eventType,
-          location: eventLocation
-        }]);
+          location: eventLocation || null,
+          is_active: true
+        }])
+        .select();
 
       if (error) {
-        console.error('Error adding event:', error);
+        console.error('Supabase error adding event:', error);
         throw error;
       }
+
+      console.log('Event added successfully:', data);
 
       toast({
         title: "Success",
@@ -305,101 +369,86 @@ const AdminDashboard: React.FC = () => {
       console.error('Error adding event:', error);
       toast({
         title: "Error",
-        description: "Failed to add event",
+        description: `Failed to add event: ${error.message}`,
         variant: "destructive"
       });
     }
   };
 
-  const addFacility = async () => {
-    if (!facilityType || !facilityName) {
+  const updateCrowdStatus = async () => {
+    if (!selectedLocation || !selectedStatus) {
       toast({
         title: "Error",
-        description: "Please fill required fields",
+        description: "Please select location and status",
         variant: "destructive"
       });
       return;
     }
 
     try {
-      const { error } = await supabase
-        .from('facilities')
-        .insert([{
-          facility_type: facilityType,
-          name: facilityName,
-          contact_number: facilityContact,
-          location_name: facilityLocationName,
-          google_maps_link: facilityMapsLink
-        }]);
+      const statusColor = selectedStatus === 'low' ? 'green' : 
+                         selectedStatus === 'medium' ? 'yellow' : 'red';
 
-      if (error) {
-        console.error('Error adding facility:', error);
-        throw error;
+      console.log('Attempting to update crowd status:', {
+        location: selectedLocation,
+        status: selectedStatus,
+        status_color: statusColor,
+        description: crowdDescription || null
+      });
+
+      const existingStatus = crowdStatuses.find(cs => cs.location === selectedLocation);
+      
+      if (existingStatus) {
+        const { data, error } = await supabase
+          .from('crowd_status')
+          .update({
+            status: selectedStatus,
+            status_color: statusColor,
+            description: crowdDescription || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', existingStatus.id)
+          .select();
+
+        if (error) {
+          console.error('Supabase error updating crowd status:', error);
+          throw error;
+        }
+
+        console.log('Crowd status updated successfully:', data);
+      } else {
+        const { data, error } = await supabase
+          .from('crowd_status')
+          .insert([{
+            location: selectedLocation,
+            status: selectedStatus,
+            status_color: statusColor,
+            description: crowdDescription || null
+          }])
+          .select();
+
+        if (error) {
+          console.error('Supabase error inserting crowd status:', error);
+          throw error;
+        }
+
+        console.log('Crowd status inserted successfully:', data);
       }
 
       toast({
         title: "Success",
-        description: "Facility added successfully"
+        description: "Crowd status updated successfully"
       });
 
-      setFacilityType('');
-      setFacilityName('');
-      setFacilityContact('');
-      setFacilityLocationName('');
-      setFacilityMapsLink('');
-      await fetchFacilities();
+      await fetchCrowdStatuses();
+      setSelectedLocation('');
+      setSelectedStatus('low');
+      setCrowdDescription('');
     } catch (error) {
-      console.error('Error adding facility:', error);
+      console.error('Error updating crowd status:', error);
       toast({
         title: "Error",
-        description: "Failed to add facility",
-        variant: "destructive"
-      });
-    }
-  };
-
-  const addContact = async () => {
-    if (!contactType || !contactName || !contactPhone) {
-      toast({
-        title: "Error",
-        description: "Please fill required fields",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('contacts')
-        .insert([{
-          contact_type: contactType,
-          name: contactName,
-          phone: contactPhone,
-          email: contactEmail,
-          designation: contactDesignation
-        }]);
-
-      if (error) {
-        console.error('Error adding contact:', error);
-        throw error;
-      }
-
-      toast({
-        title: "Success",
-        description: "Contact added successfully"
-      });
-
-      setContactType('');
-      setContactName('');
-      setContactPhone('');
-      setContactEmail('');
-      setContactDesignation('');
-      await fetchContacts();
-    } catch (error) {
-      console.error('Error adding contact:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add contact",
+        description: `Failed to update crowd status: ${error.message}`,
         variant: "destructive"
       });
     }
