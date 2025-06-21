@@ -38,6 +38,26 @@ const Index = () => {
 
   const facilityItems = [
     {
+      icon: '🗺️',
+      label: t('mela_route'),
+      path: '/facility/mela-route'
+    },
+    {
+      icon: '📞',
+      label: t('centralised_contact'),
+      path: '/facility/centralised-contact'
+    },
+    {
+      icon: '🖼️',
+      label: t('gallery'),
+      path: '/facility/gallery'
+    },
+    {
+      icon: '🏧',
+      label: t('atm'),
+      path: '/facility/atm'
+    },
+    {
       icon: '🚰',
       label: t('drinking_water'),
       path: '/facility/drinking-water'

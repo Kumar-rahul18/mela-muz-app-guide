@@ -223,18 +223,24 @@ const AdminDashboard: React.FC = () => {
           })
           .eq('id', existingStatus.id);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error updating crowd status:', error);
+          throw error;
+        }
       } else {
         const { error } = await supabase
           .from('crowd_status')
-          .insert({
+          .insert([{
             location: selectedLocation,
             status: selectedStatus,
             status_color: statusColor,
             description: crowdDescription
-          });
+          }]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error inserting crowd status:', error);
+          throw error;
+        }
       }
 
       toast({
@@ -242,7 +248,7 @@ const AdminDashboard: React.FC = () => {
         description: "Crowd status updated successfully"
       });
 
-      fetchCrowdStatuses();
+      await fetchCrowdStatuses();
       setSelectedLocation('');
       setSelectedStatus('low');
       setCrowdDescription('');
@@ -269,16 +275,19 @@ const AdminDashboard: React.FC = () => {
     try {
       const { error } = await supabase
         .from('events')
-        .insert({
+        .insert([{
           title: eventTitle,
           description: eventDescription,
           date: eventDate,
           time: eventTime,
           event_type: eventType,
           location: eventLocation
-        });
+        }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding event:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -291,7 +300,7 @@ const AdminDashboard: React.FC = () => {
       setEventTime('');
       setEventType('general');
       setEventLocation('');
-      fetchEvents();
+      await fetchEvents();
     } catch (error) {
       console.error('Error adding event:', error);
       toast({
@@ -315,15 +324,18 @@ const AdminDashboard: React.FC = () => {
     try {
       const { error } = await supabase
         .from('facilities')
-        .insert({
+        .insert([{
           facility_type: facilityType,
           name: facilityName,
           contact_number: facilityContact,
           location_name: facilityLocationName,
           google_maps_link: facilityMapsLink
-        });
+        }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding facility:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -335,7 +347,7 @@ const AdminDashboard: React.FC = () => {
       setFacilityContact('');
       setFacilityLocationName('');
       setFacilityMapsLink('');
-      fetchFacilities();
+      await fetchFacilities();
     } catch (error) {
       console.error('Error adding facility:', error);
       toast({
@@ -359,15 +371,18 @@ const AdminDashboard: React.FC = () => {
     try {
       const { error } = await supabase
         .from('contacts')
-        .insert({
+        .insert([{
           contact_type: contactType,
           name: contactName,
           phone: contactPhone,
           email: contactEmail,
           designation: contactDesignation
-        });
+        }]);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error adding contact:', error);
+        throw error;
+      }
 
       toast({
         title: "Success",
@@ -379,7 +394,7 @@ const AdminDashboard: React.FC = () => {
       setContactPhone('');
       setContactEmail('');
       setContactDesignation('');
-      fetchContacts();
+      await fetchContacts();
     } catch (error) {
       console.error('Error adding contact:', error);
       toast({

@@ -15,38 +15,62 @@ interface Facility {
   is_active: boolean;
 }
 
+interface Contact {
+  id: string;
+  contact_type: string;
+  name: string;
+  phone: string;
+  email: string;
+  designation: string;
+  is_active: boolean;
+}
+
 const FacilityRoute = () => {
   const navigate = useNavigate();
   const { type } = useParams();
   const { t } = useLanguage();
   const [facilities, setFacilities] = useState<Facility[]>([]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchFacilities();
+    fetchData();
   }, [type]);
 
-  const fetchFacilities = async () => {
+  const fetchData = async () => {
     try {
-      let query = supabase
-        .from('facilities')
-        .select('*')
-        .eq('is_active', true);
+      if (type === 'centralised-contact') {
+        // Fetch contacts for centralised contact
+        const { data, error } = await supabase
+          .from('contacts')
+          .select('*')
+          .eq('is_active', true)
+          .order('contact_type');
 
-      if (type && type !== 'route') {
-        query = query.eq('facility_type', type);
+        if (error) {
+          console.error('Error fetching contacts:', error);
+          return;
+        }
+
+        setContacts(data || []);
+      } else if (type && type !== 'route' && type !== 'gallery' && type !== 'mela-route' && type !== 'atm') {
+        // Fetch facilities for specific types
+        const { data, error } = await supabase
+          .from('facilities')
+          .select('*')
+          .eq('facility_type', type)
+          .eq('is_active', true)
+          .order('name');
+
+        if (error) {
+          console.error('Error fetching facilities:', error);
+          return;
+        }
+
+        setFacilities(data || []);
       }
-
-      const { data, error } = await query.order('name');
-
-      if (error) {
-        console.error('Error fetching facilities:', error);
-        return;
-      }
-
-      setFacilities(data || []);
     } catch (error) {
-      console.error('Error fetching facilities:', error);
+      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
@@ -61,7 +85,11 @@ const FacilityRoute = () => {
       'dharamshala': '🏛️',
       'shivir': '🏕️',
       'health-centre': '🏥',
-      'parking': '🅿️'
+      'parking': '🅿️',
+      'centralised-contact': '📞',
+      'mela-route': '🗺️',
+      'gallery': '🖼️',
+      'atm': '🏧'
     };
     return icons[facilityType] || '🏢';
   };
@@ -75,7 +103,11 @@ const FacilityRoute = () => {
       'dharamshala': t('dharamshala'),
       'shivir': t('shivir'),
       'health-centre': t('health_centre'),
-      'parking': t('parking')
+      'parking': t('parking'),
+      'centralised-contact': t('centralised_contact'),
+      'mela-route': t('mela_route'),
+      'gallery': t('gallery'),
+      'atm': t('atm')
     };
     return names[facilityType] || facilityType;
   };
@@ -86,10 +118,54 @@ const FacilityRoute = () => {
     }
   };
 
+  const handleCall = (phoneNumber: string) => {
+    window.open(`tel:${phoneNumber}`, '_self');
+  };
+
+  const renderSpecialPages = () => {
+    if (type === 'mela-route') {
+      return (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+            <span className="text-2xl">🗺️</span>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">{t('mela_route')}</h3>
+          <p className="text-gray-600">Coming soon - Interactive mela route map</p>
+        </div>
+      );
+    }
+
+    if (type === 'gallery') {
+      return (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+            <span className="text-2xl">🖼️</span>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">{t('gallery')}</h3>
+          <p className="text-gray-600">Photo gallery from contest submissions</p>
+        </div>
+      );
+    }
+
+    if (type === 'atm') {
+      return (
+        <div className="text-center py-12">
+          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+            <span className="text-2xl">🏧</span>
+          </div>
+          <h3 className="text-lg font-semibold mb-2">{t('atm')}</h3>
+          <p className="text-gray-600">ATM locations will be available soon</p>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-gray-600">Loading facilities...</div>
+        <div className="text-gray-600">Loading...</div>
       </div>
     );
   }
@@ -105,16 +181,53 @@ const FacilityRoute = () => {
             ← 
           </button>
           <h1 className="text-lg font-semibold">
-            {type && type !== 'route' ? getFacilityName(type) : t('facilities')}
+            {type ? getFacilityName(type) : t('facilities')}
           </h1>
         </div>
       </div>
 
       <div className="px-4 py-6">
-        {facilities.length === 0 ? (
+        {type === 'centralised-contact' ? (
+          contacts.length === 0 ? (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                <span className="text-2xl">📞</span>
+              </div>
+              <p className="text-gray-600">No contacts available</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {contacts.map((contact) => (
+                <div key={contact.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl">📞</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-800 mb-1">{contact.name}</h3>
+                      <p className="text-sm text-gray-600 mb-1">{contact.designation}</p>
+                      <p className="text-sm text-gray-500 mb-1">{contact.contact_type}</p>
+                      {contact.email && (
+                        <p className="text-sm text-blue-600 mb-3">✉️ {contact.email}</p>
+                      )}
+                      <Button
+                        onClick={() => handleCall(contact.phone)}
+                        className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full"
+                      >
+                        📞 Call {contact.phone}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )
+        ) : type === 'mela-route' || type === 'gallery' || type === 'atm' ? (
+          renderSpecialPages()
+        ) : facilities.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🏢</span>
+              <span className="text-2xl">{getFacilityIcon(type || '')}</span>
             </div>
             <p className="text-gray-600">No facilities available</p>
           </div>

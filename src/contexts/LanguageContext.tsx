@@ -52,7 +52,11 @@ const translations = {
     'virtual_pooja': 'Virtual Pooja',
     'live_aarti': 'Live Aarti',
     'navigate': 'Navigate',
-    'language': 'en'
+    'language': 'en',
+    mela_route: 'Mela Route',
+    centralised_contact: 'Centralised Contact',
+    gallery: 'Gallery',
+    atm: 'ATM'
   },
   hi: {
     'app_title': 'शारवणी मेला MMC 25',
@@ -93,7 +97,11 @@ const translations = {
     'virtual_pooja': 'वर्चुअल पूजा',
     'live_aarti': 'लाइव आरती',
     'navigate': 'दिशा-निर्देश',
-    'language': 'hi'
+    'language': 'hi',
+    mela_route: 'मेला मार्ग',
+    centralised_contact: 'केंद्रीकृत संपर्क',
+    gallery: 'गैलरी',
+    atm: 'एटीएम'
   }
 };
 
