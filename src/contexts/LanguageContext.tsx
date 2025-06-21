@@ -57,7 +57,7 @@ const translations = {
     'centralised_contact': 'Centralised Contact'
   },
   hi: {
-    'app_title': 'शारवणी मेला MMC 25',
+    'app_title': 'श्रावणी मेला MMC 25',
     'photo_contest': 'फोटो प्रतियोगिता',
     'pic_of_day': 'आज की तस्वीर',
     'free_entry': 'निःशुल्क प्रवेश',
