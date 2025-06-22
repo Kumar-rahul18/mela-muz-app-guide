@@ -253,8 +253,8 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
               className="w-10 h-10 rounded-full border border-white shadow-sm"
             />
             <div>
-              <h1 className="text-lg font-bold leading-tight">Shravani Mela</h1>
-              <p className="text-sm font-semibold leading-tight">by mmc</p>
+              <h1 className="text-lg font-bold leading-tight">Shravani Mela App</h1>
+              <p className="text-sm font-semibold leading-tight">by MMC</p>
             </div>
           </div>
         </DrawerHeader>
