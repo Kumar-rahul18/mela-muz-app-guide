@@ -35,7 +35,15 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
 
       setIsLoggedIn(true);
 
-      if (user.email === 'harsh171517@gmail.com') {
+      // Check if user is admin using admin_users table
+      const { data: adminUser } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (adminUser) {
         setIsAdmin(true);
       } else {
         setIsAdmin(false);

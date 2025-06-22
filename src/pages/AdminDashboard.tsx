@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -83,22 +84,44 @@ const AdminDashboard: React.FC = () => {
   const [contactDesignation, setContactDesignation] = useState('');
   
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const { t } = useLanguage();
 
   useEffect(() => {
     checkAdminAccess();
-    fetchAllData();
   }, []);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchAllData();
+    }
+  }, [isAdmin]);
 
   const checkAdminAccess = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       
-      if (!user || user.email !== 'harsh171517@gmail.com') {
+      if (!user) {
         navigate('/admin');
         return;
       }
+
+      // Check if user is admin in admin_users table
+      const { data: adminUser, error } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (error || !adminUser) {
+        console.error('Not an admin user:', error);
+        navigate('/admin');
+        return;
+      }
+
+      setIsAdmin(true);
       setIsLoading(false);
     } catch (error) {
       console.error('Error checking admin access:', error);
@@ -206,15 +229,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      console.log('Attempting to add facility:', {
-        facility_type: facilityType,
-        name: facilityName,
-        contact_number: facilityContact || null,
-        location_name: facilityLocationName || null,
-        google_maps_link: facilityMapsLink || null
-      });
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('facilities')
         .insert([{
           facility_type: facilityType,
@@ -223,32 +238,36 @@ const AdminDashboard: React.FC = () => {
           location_name: facilityLocationName || null,
           google_maps_link: facilityMapsLink || null,
           is_active: true
-        }])
-        .select();
+        }]);
 
       if (error) {
-        console.error('Supabase error adding facility:', error);
-        throw error;
+        console.error('Error adding facility:', error);
+        toast({
+          title: "Error",
+          description: `Failed to add facility: ${error.message}`,
+          variant: "destructive"
+        });
+        return;
       }
-
-      console.log('Facility added successfully:', data);
 
       toast({
         title: "Success",
         description: "Facility added successfully"
       });
 
+      // Clear form
       setFacilityType('');
       setFacilityName('');
       setFacilityContact('');
       setFacilityLocationName('');
       setFacilityMapsLink('');
+      
       await fetchFacilities();
     } catch (error) {
       console.error('Error adding facility:', error);
       toast({
         title: "Error",
-        description: `Failed to add facility: ${error.message}`,
+        description: "Failed to add facility",
         variant: "destructive"
       });
     }
@@ -265,15 +284,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      console.log('Attempting to add contact:', {
-        contact_type: contactType,
-        name: contactName,
-        phone: contactPhone,
-        email: contactEmail || null,
-        designation: contactDesignation || null
-      });
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('contacts')
         .insert([{
           contact_type: contactType,
@@ -282,32 +293,36 @@ const AdminDashboard: React.FC = () => {
           email: contactEmail || null,
           designation: contactDesignation || null,
           is_active: true
-        }])
-        .select();
+        }]);
 
       if (error) {
-        console.error('Supabase error adding contact:', error);
-        throw error;
+        console.error('Error adding contact:', error);
+        toast({
+          title: "Error",
+          description: `Failed to add contact: ${error.message}`,
+          variant: "destructive"
+        });
+        return;
       }
-
-      console.log('Contact added successfully:', data);
 
       toast({
         title: "Success",
         description: "Contact added successfully"
       });
 
+      // Clear form
       setContactType('');
       setContactName('');
       setContactPhone('');
       setContactEmail('');
       setContactDesignation('');
+      
       await fetchContacts();
     } catch (error) {
       console.error('Error adding contact:', error);
       toast({
         title: "Error",
-        description: `Failed to add contact: ${error.message}`,
+        description: "Failed to add contact",
         variant: "destructive"
       });
     }
@@ -324,16 +339,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      console.log('Attempting to add event:', {
-        title: eventTitle,
-        description: eventDescription || null,
-        date: eventDate,
-        time: eventTime,
-        event_type: eventType,
-        location: eventLocation || null
-      });
-
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('events')
         .insert([{
           title: eventTitle,
@@ -343,33 +349,37 @@ const AdminDashboard: React.FC = () => {
           event_type: eventType,
           location: eventLocation || null,
           is_active: true
-        }])
-        .select();
+        }]);
 
       if (error) {
-        console.error('Supabase error adding event:', error);
-        throw error;
+        console.error('Error adding event:', error);
+        toast({
+          title: "Error",
+          description: `Failed to add event: ${error.message}`,
+          variant: "destructive"
+        });
+        return;
       }
-
-      console.log('Event added successfully:', data);
 
       toast({
         title: "Success",
         description: "Event added successfully"
       });
 
+      // Clear form
       setEventTitle('');
       setEventDescription('');
       setEventDate('');
       setEventTime('');
       setEventType('general');
       setEventLocation('');
+      
       await fetchEvents();
     } catch (error) {
       console.error('Error adding event:', error);
       toast({
         title: "Error",
-        description: `Failed to add event: ${error.message}`,
+        description: "Failed to add event",
         variant: "destructive"
       });
     }
@@ -389,17 +399,10 @@ const AdminDashboard: React.FC = () => {
       const statusColor = selectedStatus === 'low' ? 'green' : 
                          selectedStatus === 'medium' ? 'yellow' : 'red';
 
-      console.log('Attempting to update crowd status:', {
-        location: selectedLocation,
-        status: selectedStatus,
-        status_color: statusColor,
-        description: crowdDescription || null
-      });
-
       const existingStatus = crowdStatuses.find(cs => cs.location === selectedLocation);
       
       if (existingStatus) {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('crowd_status')
           .update({
             status: selectedStatus,
@@ -407,32 +410,36 @@ const AdminDashboard: React.FC = () => {
             description: crowdDescription || null,
             updated_at: new Date().toISOString()
           })
-          .eq('id', existingStatus.id)
-          .select();
+          .eq('id', existingStatus.id);
 
         if (error) {
-          console.error('Supabase error updating crowd status:', error);
-          throw error;
+          console.error('Error updating crowd status:', error);
+          toast({
+            title: "Error",
+            description: `Failed to update crowd status: ${error.message}`,
+            variant: "destructive"
+          });
+          return;
         }
-
-        console.log('Crowd status updated successfully:', data);
       } else {
-        const { data, error } = await supabase
+        const { error } = await supabase
           .from('crowd_status')
           .insert([{
             location: selectedLocation,
             status: selectedStatus,
             status_color: statusColor,
             description: crowdDescription || null
-          }])
-          .select();
+          }]);
 
         if (error) {
-          console.error('Supabase error inserting crowd status:', error);
-          throw error;
+          console.error('Error inserting crowd status:', error);
+          toast({
+            title: "Error",
+            description: `Failed to update crowd status: ${error.message}`,
+            variant: "destructive"
+          });
+          return;
         }
-
-        console.log('Crowd status inserted successfully:', data);
       }
 
       toast({
@@ -440,15 +447,17 @@ const AdminDashboard: React.FC = () => {
         description: "Crowd status updated successfully"
       });
 
-      await fetchCrowdStatuses();
+      // Clear form
       setSelectedLocation('');
       setSelectedStatus('low');
       setCrowdDescription('');
+      
+      await fetchCrowdStatuses();
     } catch (error) {
       console.error('Error updating crowd status:', error);
       toast({
         title: "Error",
-        description: `Failed to update crowd status: ${error.message}`,
+        description: "Failed to update crowd status",
         variant: "destructive"
       });
     }
@@ -461,14 +470,22 @@ const AdminDashboard: React.FC = () => {
         .update({ is_active: !currentStatus })
         .eq('id', eventId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error updating event status:', error);
+        toast({
+          title: "Error",
+          description: "Failed to update event status",
+          variant: "destructive"
+        });
+        return;
+      }
 
       toast({
         title: "Success",
         description: "Event status updated"
       });
 
-      fetchEvents();
+      await fetchEvents();
     } catch (error) {
       console.error('Error updating event status:', error);
     }
@@ -481,14 +498,22 @@ const AdminDashboard: React.FC = () => {
         .delete()
         .eq('id', facilityId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error deleting facility:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete facility",
+          variant: "destructive"
+        });
+        return;
+      }
 
       toast({
         title: "Success",
         description: "Facility deleted successfully"
       });
 
-      fetchFacilities();
+      await fetchFacilities();
     } catch (error) {
       console.error('Error deleting facility:', error);
     }
@@ -503,6 +528,14 @@ const AdminDashboard: React.FC = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
         <div className="text-orange-800">Loading admin dashboard...</div>
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-pink-50 to-purple-50 flex items-center justify-center">
+        <div className="text-red-800">Access denied. You are not authorized to view this page.</div>
       </div>
     );
   }
