@@ -108,19 +108,23 @@ const LiveSection = () => {
 
   return (
     <div className="animate-fade-in">
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('live_aarti')}</h2>
+      <h2 className="text-base sm:text-lg font-semibold text-gray-800 mb-4">
+        {t('live_aarti')}
+      </h2>
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 justify-center text-center">
+      <div className="grid grid-cols-4 gap-3 sm:gap-6 justify-center text-center">
         {items.map((item, index) => (
           <div
             key={index}
             onClick={() => handleItemClick(item)}
-            className="flex flex-col items-center space-y-2 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
+            className="flex flex-col items-center space-y-1 sm:space-y-2 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            <div className="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shadow-md">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-xl sm:text-2xl shadow-md">
               <span>{item.icon}</span>
             </div>
-            <span className="text-sm text-gray-800 font-medium">{item.label}</span>
+            <span className="text-[10px] sm:text-sm text-gray-800 font-medium leading-tight">
+              {item.label}
+            </span>
           </div>
         ))}
       </div>
