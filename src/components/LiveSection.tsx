@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const LiveSection = () => {
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const { t } = useLanguage();
 
   const items = [
