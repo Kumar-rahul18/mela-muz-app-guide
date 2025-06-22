@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -219,7 +220,6 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
-      // Use the service role to bypass RLS for admin operations
       const { error } = await supabase
         .from('facilities')
         .insert([{
