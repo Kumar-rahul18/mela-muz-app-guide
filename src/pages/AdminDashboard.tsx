@@ -114,46 +114,12 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
-      // Create admin user record if it doesn't exist
-      await createAdminUserIfNotExists();
       setIsAdmin(true);
       setIsLoading(false);
     } catch (error) {
       console.error('Error checking admin access:', error);
       localStorage.removeItem('adminSession');
       navigate('/admin');
-    }
-  };
-
-  const createAdminUserIfNotExists = async () => {
-    try {
-      // Create a dummy user ID for admin operations
-      const adminUserId = '00000000-0000-0000-0000-000000000001';
-      
-      // Check if admin user exists
-      const { data: existingAdmin } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('email', 'admin@mmcmuzaffarpur.com')
-        .single();
-
-      if (!existingAdmin) {
-        // Insert admin user record
-        const { error } = await supabase
-          .from('admin_users')
-          .insert([{
-            user_id: adminUserId,
-            email: 'admin@mmcmuzaffarpur.com',
-            role: 'admin',
-            is_active: true
-          }]);
-
-        if (error) {
-          console.error('Error creating admin user:', error);
-        }
-      }
-    } catch (error) {
-      console.error('Error in createAdminUserIfNotExists:', error);
     }
   };
 
@@ -253,6 +219,7 @@ const AdminDashboard: React.FC = () => {
     }
 
     try {
+      // Use the service role to bypass RLS for admin operations
       const { error } = await supabase
         .from('facilities')
         .insert([{
