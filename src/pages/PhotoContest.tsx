@@ -59,7 +59,7 @@ const PhotoContest = () => {
               <span className="text-2xl text-white">📸</span>
             </div>
             <h2 className="text-xl font-bold text-gray-800 mb-2">Submit Your Entry</h2>
-            <p className="text-gray-600 text-sm">Share your best Shravani Mela moments</p>
+            <p className="text-gray-600 text-sm">Share your best Shravani Mela moments and win cash prizes</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -84,14 +84,14 @@ const PhotoContest = () => {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="Enter your phone number"
+                placeholder="Enter your phone number(you will be contacted if you won)"
                 className="w-full"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Photo Description
+                Photo Description(Tell us about the vibe and ambience)
               </label>
               <Textarea
                 value={formData.description}
