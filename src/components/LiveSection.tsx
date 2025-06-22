@@ -71,14 +71,6 @@ const LiveSection = () => {
   const navigate = useNavigate();
   const { t } = useLanguage();
 
-  const handleItemClick = (item: any) => {
-    if (item.action) {
-      item.action();
-    } else if (item.path) {
-      navigate(item.path);
-    }
-  };
-
   const items = [
     {
       icon: '🎭',
@@ -95,49 +87,45 @@ const LiveSection = () => {
       label: t('crowd_status'),
       path: '/crowd-status',
     },
+    {
+      icon: '🎵',
+      label: t('shiv_bhajan'),
+      action: () =>
+        window.open(
+          'https://youtube.com/playlist?list=PLSVDTyd9LvbUv_42Wk7Xa4HX5urNMW7H7',
+          '_blank'
+        ),
+    },
   ];
+
+  const handleItemClick = (item: any) => {
+    if (item.action) {
+      item.action();
+    } else if (item.path) {
+      navigate(item.path);
+    }
+  };
 
   return (
     <div className="animate-fade-in">
       <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('live_aarti')}</h2>
 
-      {/* Grid layout for all 4 in one row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 justify-center text-center">
         {items.map((item, index) => (
           <div
             key={index}
             onClick={() => handleItemClick(item)}
-            className="flex flex-col items-center space-y-2 p-3 bg-white rounded-2xl shadow-sm border border-gray-100 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
+            className="flex flex-col items-center space-y-2 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
           >
-            <div className="card-gradient w-12 h-12 rounded-xl flex items-center justify-center shadow-md">
-              <span className="text-xl">{item.icon}</span>
+            <div className="w-16 h-16 rounded-2xl bg-orange-500 flex items-center justify-center text-2xl shadow-md">
+              <span>{item.icon}</span>
             </div>
-            <span className="text-xs text-gray-700 font-medium text-center leading-tight">
-              {item.label}
-            </span>
+            <span className="text-sm text-gray-800 font-medium">{item.label}</span>
           </div>
         ))}
-
-        {/* Shiv Bhajan as inline card with embedded player */}
-        <div className="flex flex-col items-center space-y-2 p-3 bg-white rounded-2xl shadow-sm border border-gray-100 col-span-2 sm:col-span-1">
-          <div className="w-full aspect-video rounded-lg overflow-hidden shadow-md">
-            <iframe
-              className="w-full h-full"
-              src="https://www.youtube.com/embed/videoseries?list=PLSVDTyd9LvbUv_42Wk7Xa4HX5urNMW7H7"
-              title="Shiv Bhajan Playlist"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            ></iframe>
-          </div>
-          <span className="text-xs text-gray-700 font-medium text-center leading-tight">
-            {t('shiv_bhajan')}
-          </span>
-        </div>
       </div>
     </div>
   );
 };
 
 export default LiveSection;
-
