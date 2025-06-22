@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface CrowdStatus {
@@ -97,7 +97,7 @@ const AdminDashboard: React.FC = () => {
     }
   }, [isAdmin]);
 
-  const checkAdminAccess = () => {
+  const checkAdminAccess = async () => {
     try {
       const adminSession = localStorage.getItem('adminSession');
       
@@ -114,12 +114,46 @@ const AdminDashboard: React.FC = () => {
         return;
       }
 
+      // Create admin user record if it doesn't exist
+      await createAdminUserIfNotExists();
       setIsAdmin(true);
       setIsLoading(false);
     } catch (error) {
       console.error('Error checking admin access:', error);
       localStorage.removeItem('adminSession');
       navigate('/admin');
+    }
+  };
+
+  const createAdminUserIfNotExists = async () => {
+    try {
+      // Create a dummy user ID for admin operations
+      const adminUserId = '00000000-0000-0000-0000-000000000001';
+      
+      // Check if admin user exists
+      const { data: existingAdmin } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('email', 'admin@mmcmuzaffarpur.com')
+        .single();
+
+      if (!existingAdmin) {
+        // Insert admin user record
+        const { error } = await supabase
+          .from('admin_users')
+          .insert([{
+            user_id: adminUserId,
+            email: 'admin@mmcmuzaffarpur.com',
+            role: 'admin',
+            is_active: true
+          }]);
+
+        if (error) {
+          console.error('Error creating admin user:', error);
+        }
+      }
+    } catch (error) {
+      console.error('Error in createAdminUserIfNotExists:', error);
     }
   };
 
@@ -214,11 +248,7 @@ const AdminDashboard: React.FC = () => {
 
   const addFacility = async () => {
     if (!facilityType || !facilityName) {
-      toast({
-        title: "Error",
-        description: "Please fill required fields",
-        variant: "destructive"
-      });
+      toast.error('Please fill required fields');
       return;
     }
 
@@ -236,44 +266,26 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error adding facility:', error);
-        toast({
-          title: "Error",
-          description: `Failed to add facility: ${error.message}`,
-          variant: "destructive"
-        });
+        toast.error(`Failed to add facility: ${error.message}`);
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Facility added successfully"
-      });
-
-      // Clear form
+      toast.success('Facility added successfully');
       setFacilityType('');
       setFacilityName('');
       setFacilityContact('');
       setFacilityLocationName('');
       setFacilityMapsLink('');
-      
       await fetchFacilities();
     } catch (error) {
       console.error('Error adding facility:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add facility",
-        variant: "destructive"
-      });
+      toast.error('Failed to add facility');
     }
   };
 
   const addContact = async () => {
     if (!contactType || !contactName || !contactPhone) {
-      toast({
-        title: "Error",
-        description: "Please fill required fields",
-        variant: "destructive"
-      });
+      toast.error('Please fill required fields');
       return;
     }
 
@@ -291,44 +303,26 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error adding contact:', error);
-        toast({
-          title: "Error",
-          description: `Failed to add contact: ${error.message}`,
-          variant: "destructive"
-        });
+        toast.error(`Failed to add contact: ${error.message}`);
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Contact added successfully"
-      });
-
-      // Clear form
+      toast.success('Contact added successfully');
       setContactType('');
       setContactName('');
       setContactPhone('');
       setContactEmail('');
       setContactDesignation('');
-      
       await fetchContacts();
     } catch (error) {
       console.error('Error adding contact:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add contact",
-        variant: "destructive"
-      });
+      toast.error('Failed to add contact');
     }
   };
 
   const addEvent = async () => {
     if (!eventTitle || !eventDate || !eventTime) {
-      toast({
-        title: "Error",
-        description: "Please fill required fields",
-        variant: "destructive"
-      });
+      toast.error('Please fill required fields');
       return;
     }
 
@@ -347,45 +341,27 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error adding event:', error);
-        toast({
-          title: "Error",
-          description: `Failed to add event: ${error.message}`,
-          variant: "destructive"
-        });
+        toast.error(`Failed to add event: ${error.message}`);
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Event added successfully"
-      });
-
-      // Clear form
+      toast.success('Event added successfully');
       setEventTitle('');
       setEventDescription('');
       setEventDate('');
       setEventTime('');
       setEventType('general');
       setEventLocation('');
-      
       await fetchEvents();
     } catch (error) {
       console.error('Error adding event:', error);
-      toast({
-        title: "Error",
-        description: "Failed to add event",
-        variant: "destructive"
-      });
+      toast.error('Failed to add event');
     }
   };
 
   const updateCrowdStatus = async () => {
     if (!selectedLocation || !selectedStatus) {
-      toast({
-        title: "Error",
-        description: "Please select location and status",
-        variant: "destructive"
-      });
+      toast.error('Please select location and status');
       return;
     }
 
@@ -408,11 +384,7 @@ const AdminDashboard: React.FC = () => {
 
         if (error) {
           console.error('Error updating crowd status:', error);
-          toast({
-            title: "Error",
-            description: `Failed to update crowd status: ${error.message}`,
-            variant: "destructive"
-          });
+          toast.error(`Failed to update crowd status: ${error.message}`);
           return;
         }
       } else {
@@ -427,33 +399,19 @@ const AdminDashboard: React.FC = () => {
 
         if (error) {
           console.error('Error inserting crowd status:', error);
-          toast({
-            title: "Error",
-            description: `Failed to update crowd status: ${error.message}`,
-            variant: "destructive"
-          });
+          toast.error(`Failed to update crowd status: ${error.message}`);
           return;
         }
       }
 
-      toast({
-        title: "Success",
-        description: "Crowd status updated successfully"
-      });
-
-      // Clear form
+      toast.success('Crowd status updated successfully');
       setSelectedLocation('');
       setSelectedStatus('low');
       setCrowdDescription('');
-      
       await fetchCrowdStatuses();
     } catch (error) {
       console.error('Error updating crowd status:', error);
-      toast({
-        title: "Error",
-        description: "Failed to update crowd status",
-        variant: "destructive"
-      });
+      toast.error('Failed to update crowd status');
     }
   };
 
@@ -466,19 +424,11 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error updating event status:', error);
-        toast({
-          title: "Error",
-          description: "Failed to update event status",
-          variant: "destructive"
-        });
+        toast.error('Failed to update event status');
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Event status updated"
-      });
-
+      toast.success('Event status updated');
       await fetchEvents();
     } catch (error) {
       console.error('Error updating event status:', error);
@@ -494,22 +444,54 @@ const AdminDashboard: React.FC = () => {
 
       if (error) {
         console.error('Error deleting facility:', error);
-        toast({
-          title: "Error",
-          description: "Failed to delete facility",
-          variant: "destructive"
-        });
+        toast.error('Failed to delete facility');
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Facility deleted successfully"
-      });
-
+      toast.success('Facility deleted successfully');
       await fetchFacilities();
     } catch (error) {
       console.error('Error deleting facility:', error);
+    }
+  };
+
+  const deleteEvent = async (eventId: string) => {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .delete()
+        .eq('id', eventId);
+
+      if (error) {
+        console.error('Error deleting event:', error);
+        toast.error('Failed to delete event');
+        return;
+      }
+
+      toast.success('Event deleted successfully');
+      await fetchEvents();
+    } catch (error) {
+      console.error('Error deleting event:', error);
+    }
+  };
+
+  const deleteContact = async (contactId: string) => {
+    try {
+      const { error } = await supabase
+        .from('contacts')
+        .delete()
+        .eq('id', contactId);
+
+      if (error) {
+        console.error('Error deleting contact:', error);
+        toast.error('Failed to delete contact');
+        return;
+      }
+
+      toast.success('Contact deleted successfully');
+      await fetchContacts();
+    } catch (error) {
+      console.error('Error deleting contact:', error);
     }
   };
 
@@ -712,13 +694,22 @@ const AdminDashboard: React.FC = () => {
                             {event.date} at {event.time} | {event.location}
                           </p>
                         </div>
-                        <Button
-                          size="sm"
-                          variant={event.is_active ? "default" : "outline"}
-                          onClick={() => toggleEventStatus(event.id, event.is_active)}
-                        >
-                          {event.is_active ? 'Active' : 'Inactive'}
-                        </Button>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant={event.is_active ? "default" : "outline"}
+                            onClick={() => toggleEventStatus(event.id, event.is_active)}
+                          >
+                            {event.is_active ? 'Active' : 'Inactive'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => deleteEvent(event.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   ))}
@@ -882,11 +873,20 @@ const AdminDashboard: React.FC = () => {
                 <div className="space-y-3">
                   {contacts.map((contact) => (
                     <div key={contact.id} className="border border-green-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-pink-50">
-                      <div>
-                        <h3 className="font-semibold text-green-800">{contact.name}</h3>
-                        <p className="text-sm text-green-600">{contact.designation}</p>
-                        <p className="text-xs text-green-500">{contact.contact_type} | {contact.phone}</p>
-                        {contact.email && <p className="text-xs text-green-500">{contact.email}</p>}
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-semibold text-green-800">{contact.name}</h3>
+                          <p className="text-sm text-green-600">{contact.designation}</p>
+                          <p className="text-xs text-green-500">{contact.contact_type} | {contact.phone}</p>
+                          {contact.email && <p className="text-xs text-green-500">{contact.email}</p>}
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => deleteContact(contact.id)}
+                        >
+                          Delete
+                        </Button>
                       </div>
                     </div>
                   ))}
