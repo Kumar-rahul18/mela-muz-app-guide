@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const AdminLogin = () => {
@@ -27,66 +26,15 @@ const AdminLogin = () => {
         return;
       }
 
-      // Create a temporary admin session by signing in with the email
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: 'harsh171517@gmail.com',
-        password: 'Xy91%7as',
-      });
+      // Set admin session in localStorage
+      localStorage.setItem('adminSession', JSON.stringify({
+        username: 'MMCMUZAFFARPUR',
+        isAdmin: true,
+        loginTime: new Date().toISOString()
+      }));
 
-      if (error) {
-        // If user doesn't exist, create the account
-        if (error.message.includes('Invalid login credentials')) {
-          const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-            email: 'harsh171517@gmail.com',
-            password: 'Xy91%7as',
-          });
-
-          if (signUpError) {
-            toast.error('Failed to create admin account: ' + signUpError.message);
-            setIsLoading(false);
-            return;
-          }
-
-          if (signUpData.user) {
-            // Try to add admin user record
-            try {
-              await supabase
-                .from('admin_users')
-                .insert({
-                  user_id: signUpData.user.id,
-                  is_active: true,
-                  email: 'harsh171517@gmail.com'
-                });
-            } catch (adminError) {
-              console.log('Admin user record creation failed, but continuing...');
-            }
-
-            toast.success('Admin account created and logged in successfully!');
-            navigate('/admin/dashboard');
-            setIsLoading(false);
-            return;
-          }
-        } else {
-          toast.error('Login failed: ' + error.message);
-          setIsLoading(false);
-          return;
-        }
-      }
-
-      if (data.user) {
-        // Verify admin status
-        const isAdminEmail = data.user.email === 'harsh171517@gmail.com';
-        
-        if (!isAdminEmail) {
-          toast.error('Access denied. Admin privileges required.');
-          await supabase.auth.signOut();
-          setIsLoading(false);
-          return;
-        }
-
-        toast.success('Admin login successful!');
-        navigate('/admin/dashboard');
-      }
+      toast.success('Admin login successful!');
+      navigate('/admin/dashboard');
     } catch (error) {
       console.error('Login error:', error);
       toast.error('An unexpected error occurred');

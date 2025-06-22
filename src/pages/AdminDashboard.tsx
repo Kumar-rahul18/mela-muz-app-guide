@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -98,25 +97,19 @@ const AdminDashboard: React.FC = () => {
     }
   }, [isAdmin]);
 
-  const checkAdminAccess = async () => {
+  const checkAdminAccess = () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const adminSession = localStorage.getItem('adminSession');
       
-      if (!user) {
+      if (!adminSession) {
         navigate('/admin');
         return;
       }
 
-      // Check if user is admin in admin_users table
-      const { data: adminUser, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (error || !adminUser) {
-        console.error('Not an admin user:', error);
+      const sessionData = JSON.parse(adminSession);
+      
+      if (sessionData.username !== 'MMCMUZAFFARPUR' || !sessionData.isAdmin) {
+        localStorage.removeItem('adminSession');
         navigate('/admin');
         return;
       }
@@ -125,6 +118,7 @@ const AdminDashboard: React.FC = () => {
       setIsLoading(false);
     } catch (error) {
       console.error('Error checking admin access:', error);
+      localStorage.removeItem('adminSession');
       navigate('/admin');
     }
   };
@@ -519,8 +513,8 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
+  const handleLogout = () => {
+    localStorage.removeItem('adminSession');
     navigate('/');
   };
 

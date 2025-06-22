@@ -5,7 +5,6 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerClose } from '@
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Home, Images, Calendar, Users, Shield, Camera, MapPin, Languages, LogIn, BookOpen } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
 
 interface NavigationDrawerProps {
   isOpen: boolean;
@@ -17,40 +16,23 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    checkAuthStatus();
+    checkAdminStatus();
   }, []);
 
-  const checkAuthStatus = async () => {
+  const checkAdminStatus = () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const adminSession = localStorage.getItem('adminSession');
       
-      if (!user) {
-        setIsLoggedIn(false);
-        setIsAdmin(false);
-        return;
-      }
-
-      setIsLoggedIn(true);
-
-      // Check if user is admin using admin_users table
-      const { data: adminUser } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (adminUser) {
-        setIsAdmin(true);
+      if (adminSession) {
+        const sessionData = JSON.parse(adminSession);
+        setIsAdmin(sessionData.username === 'MMCMUZAFFARPUR' && sessionData.isAdmin);
       } else {
         setIsAdmin(false);
       }
     } catch (error) {
-      console.error('Error checking auth status:', error);
-      setIsLoggedIn(false);
+      console.error('Error checking admin status:', error);
       setIsAdmin(false);
     }
   };
@@ -84,9 +66,8 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
     onClose();
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
+  const handleLogout = () => {
+    localStorage.removeItem('adminSession');
     setIsAdmin(false);
     onClose();
   };
@@ -112,7 +93,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
             </Button>
           ))}
           
-          {!isLoggedIn ? (
+          {!isAdmin ? (
             <Button
               variant="ghost"
               className="w-full justify-start text-left h-12 bg-red-50 hover:bg-red-100 text-red-700"
@@ -121,7 +102,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
               <LogIn className="mr-3 h-5 w-5" />
               Admin Login
             </Button>
-          ) : isAdmin ? (
+          ) : (
             <>
               <Button
                 variant="ghost"
@@ -140,7 +121,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({ isOpen, onClose, on
                 Logout
               </Button>
             </>
-          ) : null}
+          )}
           
           <Button
             variant="ghost"
