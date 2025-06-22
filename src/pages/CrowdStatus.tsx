@@ -80,24 +80,7 @@ const CrowdStatus = () => {
         </div>
       </div>
 
-{/*       <div className="px-4 py-6">
-        {/* Overall Status */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="text-center">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Current Crowd Level</h2>
-            <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-              <span className="text-3xl">{overallStatus.emoji}</span>
-            </div>
-            <p className={`text-2xl font-bold mb-2 ${
-              overallStatus.color === 'red' ? 'text-red-600' :
-              overallStatus.color === 'yellow' ? 'text-yellow-600' :
-              'text-green-600'
-            }`}>
-              {overallStatus.level}
-            </p>
-            <p className="text-gray-600 text-sm">Last updated: 2 minutes ago</p>
-          </div>
-        </div> */}
+    
 
         {/* Legend */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
