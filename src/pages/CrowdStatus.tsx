@@ -76,11 +76,11 @@ const CrowdStatus = () => {
           >
             ← 
           </button>
-          <h1 className="text-lg font-semibold">{t('nav.crowd_status')}</h1>
+          <h1 className="text-lg font-semibold">{t('Crowd status')}</h1>
         </div>
       </div>
 
-      <div className="px-4 py-6">
+{/*       <div className="px-4 py-6">
         {/* Overall Status */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
           <div className="text-center">
@@ -97,7 +97,7 @@ const CrowdStatus = () => {
             </p>
             <p className="text-gray-600 text-sm">Last updated: 2 minutes ago</p>
           </div>
-        </div>
+        </div> */}
 
         {/* Legend */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
