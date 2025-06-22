@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const LiveSection = () => {
-  //const navigate = useNavigate();
+  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const items = [
@@ -26,7 +26,7 @@ const LiveSection = () => {
     {
       icon: '🎵',
       label: t('shiv_bhajan'),
-      action: () => window.open('https://www.youtube.com/results?search_query=shiv+bhajan', '_blank')
+      action: () => window.open('https://www.youtube.com/watch?v=XTp5jaRU3Ws', '_blank')
     }
   ];
 
