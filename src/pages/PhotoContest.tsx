@@ -84,14 +84,14 @@ const PhotoContest = () => {
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="Enter your phone number(you will be contacted if you won)"
+                placeholder="Enter your phone number"
                 className="w-full"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Photo Description(Tell us about the vibe and ambience)
+                Photo Description(Tell us about the ambience)
               </label>
               <Textarea
                 value={formData.description}
