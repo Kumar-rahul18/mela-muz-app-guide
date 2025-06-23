@@ -122,8 +122,8 @@ const ContactCategoryFilter: React.FC = () => {
                   contact.category === 'mmc_admin' ? 'bg-purple-100 text-purple-700' :
                   'bg-gray-100 text-gray-700'
                 }`}>
-                  {contact.category === 'district_admin' ? t('district_admin') :
-                   contact.category === 'mmc_admin' ? t('mmc_admin') : 'General'}
+                 // {contact.category === 'district_admin' ? t('district_admin') :
+                 //  contact.category === 'mmc_admin' ? t('mmc_admin') : 'General'}
                 </span>
               </CardTitle>
             </CardHeader>
