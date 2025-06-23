@@ -24,7 +24,7 @@ const ImageSlider: React.FC = () => {
     },
     {
       id: '2',
-      image_url: 'https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image_url: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/gallary-mages//Garibnath.jpg',
       title: 'Temple View',
       description: 'Magnificent temple architecture'
     },
