@@ -14,15 +14,50 @@ const ImageSlider: React.FC = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Placeholder images for picture of the day
+  const placeholderImages = [
+    {
+      id: '1',
+      image_url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Morning Prayer',
+      description: 'Beautiful morning aarti ceremony'
+    },
+    {
+      id: '2',
+      image_url: 'https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Temple View',
+      description: 'Magnificent temple architecture'
+    },
+    {
+      id: '3',
+      image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Evening Aarti',
+      description: 'Devotees participating in evening prayers'
+    },
+    {
+      id: '4',
+      image_url: 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Cultural Dance',
+      description: 'Traditional dance performance'
+    },
+    {
+      id: '5',
+      image_url: 'https://images.unsplash.com/photo-1566495757213-570fdc4b71b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      title: 'Festival Crowd',
+      description: 'Devotees gathering for the mela'
+    }
+  ];
+
   useEffect(() => {
     fetchImages();
   }, []);
 
   useEffect(() => {
-    if (images.length === 0) return;
+    const imagesToShow = images.length > 0 ? images : placeholderImages;
+    if (imagesToShow.length === 0) return;
 
     const interval = setInterval(() => {
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % imagesToShow.length);
     }, 2000); // 2 seconds interval
 
     return () => clearInterval(interval);
@@ -35,20 +70,24 @@ const ImageSlider: React.FC = () => {
         .select('*')
         .eq('is_active', true)
         .order('display_order')
-        .limit(5); // Only fetch 5 images
+        .limit(5);
 
       if (error) {
         console.error('Error fetching images:', error);
         return;
       }
 
-      setImages(data || []);
+      if (data && data.length > 0) {
+        setImages(data);
+      }
     } catch (error) {
       console.error('Error fetching images:', error);
     }
   };
 
-  if (images.length === 0) {
+  const imagesToShow = images.length > 0 ? images : placeholderImages;
+
+  if (imagesToShow.length === 0) {
     return (
       <div className="w-full h-56 bg-gradient-to-r from-orange-200 to-pink-200 rounded-2xl flex items-center justify-center border-4 border-orange-300 shadow-lg">
         <div className="text-center">
@@ -75,7 +114,7 @@ const ImageSlider: React.FC = () => {
 
       <Carousel className="w-full h-full">
         <CarouselContent>
-          {images.map((image, index) => (
+          {imagesToShow.map((image, index) => (
             <CarouselItem key={image.id} className={index === currentIndex ? 'block' : 'hidden'}>
               <div className="relative w-full h-56">
                 <img
@@ -99,7 +138,7 @@ const ImageSlider: React.FC = () => {
       
       {/* Dots indicator */}
       <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 flex space-x-2 z-20">
-        {images.map((_, index) => (
+        {imagesToShow.map((_, index) => (
           <button
             key={index}
             className={`w-3 h-3 rounded-full border-2 border-white ${

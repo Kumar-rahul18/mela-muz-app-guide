@@ -1,145 +1,136 @@
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-type Language = 'en' | 'hi';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
+  language: 'en' | 'hi';
+  setLanguage: (lang: 'en' | 'hi') => void;
   t: (key: string) => string;
   showLanguageSelector: boolean;
   setShowLanguageSelector: (show: boolean) => void;
 }
 
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
-
 const translations = {
   en: {
-    'app_title': 'Shravani Mela MMC 25',
-    'photo_contest': 'Photo Contest',
-    'pic_of_day': 'Picture of the Day',
-    'free_entry': 'Free Entry',
-    'submit_entry': 'Submit your best festival photos',
-    'daily_winner': 'Daily winner announcement',
-    'participate': 'Participate',
-    'events': 'Events',
+    // Main sections
     'facilities': 'Facilities',
-    'route': 'Route Map',
-    'gallery': 'Gallery',
-    'contacts': 'Contacts',
-    'ambulance': 'Ambulance',
+    'contacts': 'Emergency Contacts',
+    'live_aarti': 'Live Aarti & Events',
+    'photo_contest': 'Photo Contest',
+    'pic_of_day': 'Pic of the Day',
     'weather': 'Weather',
-    'control_room': 'Control Room',
-    'help_desk': 'Help Desk',
+    'crowd_status': 'Crowd Status',
+    
+    // Facilities
+    'mela_route': 'Mela Route',
+    'centralised_contact': 'Contact Center',
+    'gallery': 'Gallery',
+    'atm': 'ATM',
     'drinking_water': 'Drinking Water',
     'toilet': 'Toilet',
     'bathroom': 'Bathroom',
     'rest_room': 'Rest Room',
     'dharamshala': 'Dharamshala',
-    'parking': 'Parking',
-    'health_centre': 'Health Centre',
     'shivir': 'Shivir',
-    'atm': 'ATM',
-    'home': 'Home',
-    'history': 'History',
-    'crowd_status': 'Crowd Status',
-    'admin': 'Admin Panel',
-    'change_language': 'Change Language',
-    'select_language': 'Select Language',
-    'english': 'English',
-    'hindi': 'हिंदी',
+    'health_centre': 'Health Centre',
+    'parking': 'Parking',
+    
+    // Emergency contacts
+    'ambulance': 'Ambulance',
+    'control_room': 'Control Room',
+    'help_desk': 'Help Desk',
     'tap_to_call': 'Tap to call',
-    'live_darshan': 'Live Darshan',
-    'virtual_pooja': 'Virtual Pooja',
-    'live_aarti': 'Live Aarti',
-    'shiv_bhajan': 'Shiv Bhajan',
+    
+    // Actions
     'navigate': 'Navigate',
-    'language': 'en',
-    'mela_route': 'Mela Route',
-    'centralised_contact': 'Centralised Contact'
+    'participate': 'Participate Now',
+    'submit_entry': 'Submit your best shots',
+    
+    // Live Aarti
+    'live_darshan': 'Live Darshan',
+    'event_schedule': 'Event Schedule',
+    'crowd_status': 'Crowd Status',
+    'history': 'History',
+    
+    // Language selection
+    'Select language/भाषा चयन करें': 'Select Language',
+    'English': 'English',
+    'हिन्दी': 'हिन्दी',
+    
+    // Admin
+    'admin.low': 'Low',
+    'admin.medium': 'Medium',
+    'admin.high': 'High'
   },
   hi: {
-    'app_title': 'श्रावणी मेला MMC 25',
+    // Main sections
+    'facilities': 'सुविधाएं',
+    'contacts': 'आपातकालीन संपर्क',
+    'live_aarti': 'लाइव आरती और कार्यक्रम',
     'photo_contest': 'फोटो प्रतियोगिता',
     'pic_of_day': 'आज की तस्वीर',
-    'free_entry': 'निःशुल्क प्रवेश',
-    'submit_entry': 'अपनी बेहतरीन त्योहार तस्वीरें जमा करें',
-    'daily_winner': 'दैनिक विजेता की घोषणा',
-    'participate': 'भाग लें',
-    'events': 'कार्यक्रम',
-    'facilities': 'सुविधाएं',
-    'route': 'मार्ग मानचित्र',
-    'gallery': 'गैलरी',
-    'contacts': 'संपर्क',
-    'ambulance': 'एम्बुलेंस',
     'weather': 'मौसम',
-    'control_room': 'नियंत्रण कक्ष',
-    'help_desk': 'सहायता डेस्क',
-    'drinking_water': 'पेयजल',
+    'crowd_status': 'भीड़ की स्थिति',
+    
+    // Facilities
+    'mela_route': 'मेला मार्ग',
+    'centralised_contact': 'संपर्क केंद्र',
+    'gallery': 'गैलरी',
+    'atm': 'एटीएम',
+    'drinking_water': 'पीने का पानी',
     'toilet': 'शौचालय',
     'bathroom': 'स्नानघर',
     'rest_room': 'विश्राम कक्ष',
     'dharamshala': 'धर्मशाला',
-    'parking': 'पार्किंग',
-    'health_centre': 'स्वास्थ्य केंद्र',
     'shivir': 'शिविर',
-    'atm': 'एटीएम',
-    'home': 'मुख्य पृष्ठ',
-    'history': 'इतिहास',
-    'crowd_status': 'भीड़ की स्थिति',
-    'admin': 'प्रशासन पैनल',
-    'change_language': 'भाषा बदलें',
-    'select_language': 'भाषा चुनें',
-    'english': 'English',
-    'hindi': 'हिंदी',
+    'health_centre': 'स्वास्थ्य केंद्र',
+    'parking': 'पार्किंग',
+    
+    // Emergency contacts
+    'ambulance': 'एम्बुलेंस',
+    'control_room': 'नियंत्रण कक्ष',
+    'help_desk': 'सहायता डेस्क',
     'tap_to_call': 'कॉल करने के लिए टैप करें',
+    
+    // Actions
+    'navigate': 'नेविगेट करें',
+    'participate': 'अभी भाग लें',
+    'submit_entry': 'अपनी बेहतरीन तस्वीरें भेजें',
+    
+    // Live Aarti
     'live_darshan': 'लाइव दर्शन',
-    'virtual_pooja': 'वर्चुअल पूजा',
-    'live_aarti': 'लाइव आरती',
-    'shiv_bhajan': 'शिव भजन',
-    'navigate': 'दिशा-निर्देश',
-    'language': 'hi',
-    'mela_route': 'मेला मार्ग',
-    'centralised_contact': 'केंद्रीकृत संपर्क'
+    'event_schedule': 'कार्यक्रम सूची',
+    'crowd_status': 'भीड़ की स्थिति',
+    'history': 'इतिहास',
+    
+    // Language selection
+    'Select language/भाषा चयन करें': 'भाषा चुनें',
+    'English': 'अंग्रेजी',
+    'हिन्दी': 'हिन्दी',
+    
+    // Admin
+    'admin.low': 'कम',
+    'admin.medium': 'मध्यम',
+    'admin.high': 'अधिक'
   }
 };
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>('en');
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const LanguageProvider = ({ children }: { children: ReactNode }) => {
+  const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
-
-  useEffect(() => {
-    // Check if language has been selected before
-    const savedLanguage = localStorage.getItem('selectedLanguage');
-    const languageSelected = localStorage.getItem('languageSelected');
-    
-    if (savedLanguage && languageSelected === 'true') {
-      setLanguage(savedLanguage as Language);
-      setShowLanguageSelector(false);
-    } else {
-      // Show language selector on first visit or app reopening
-      setShowLanguageSelector(true);
-    }
-  }, []);
-
-  const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
-    localStorage.setItem('selectedLanguage', lang);
-    localStorage.setItem('languageSelected', 'true');
-    setShowLanguageSelector(false);
-  };
 
   const t = (key: string): string => {
     return translations[language][key as keyof typeof translations['en']] || key;
   };
 
   return (
-    <LanguageContext.Provider value={{ 
-      language, 
-      setLanguage: handleLanguageChange, 
-      t, 
-      showLanguageSelector, 
-      setShowLanguageSelector 
+    <LanguageContext.Provider value={{
+      language,
+      setLanguage,
+      t,
+      showLanguageSelector,
+      setShowLanguageSelector
     }}>
       {children}
     </LanguageContext.Provider>
