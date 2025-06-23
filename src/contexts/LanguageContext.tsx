@@ -11,6 +11,9 @@ interface LanguageContextType {
 
 const translations = {
   en: {
+    // App title
+    'app_title': 'Shravani Mela Guide',
+    
     // Main sections
     'facilities': 'Facilities',
     'contacts': 'Emergency Contacts',
@@ -46,9 +49,10 @@ const translations = {
     'submit_entry': 'Submit your best shots',
     
     // Live Aarti
+    'virtual_pooja': 'Virtual Pooja',
     'live_darshan': 'Live Darshan',
+    'shiv_bhajan': 'Shiv Bhajan',
     'event_schedule': 'Event Schedule',
-    'crowd_status': 'Crowd Status',
     'history': 'History',
     
     // Language selection
@@ -59,9 +63,23 @@ const translations = {
     // Admin
     'admin.low': 'Low',
     'admin.medium': 'Medium',
-    'admin.high': 'High'
+    'admin.high': 'High',
+    
+    // Weather
+    'temperature': 'Temperature',
+    'humidity': 'Humidity',
+    'wind_speed': 'Wind Speed',
+    'air_quality': 'Air Quality',
+    'good': 'Good',
+    'moderate': 'Moderate',
+    'poor': 'Poor',
+    'very_poor': 'Very Poor',
+    'severe': 'Severe'
   },
   hi: {
+    // App title
+    'app_title': 'श्रावणी मेला गाइड',
+    
     // Main sections
     'facilities': 'सुविधाएं',
     'contacts': 'आपातकालीन संपर्क',
@@ -97,9 +115,10 @@ const translations = {
     'submit_entry': 'अपनी बेहतरीन तस्वीरें भेजें',
     
     // Live Aarti
+    'virtual_pooja': 'वर्चुअल पूजा',
     'live_darshan': 'लाइव दर्शन',
+    'shiv_bhajan': 'शिव भजन',
     'event_schedule': 'कार्यक्रम सूची',
-    'crowd_status': 'भीड़ की स्थिति',
     'history': 'इतिहास',
     
     // Language selection
@@ -110,7 +129,18 @@ const translations = {
     // Admin
     'admin.low': 'कम',
     'admin.medium': 'मध्यम',
-    'admin.high': 'अधिक'
+    'admin.high': 'अधिक',
+    
+    // Weather
+    'temperature': 'तापमान',
+    'humidity': 'आर्द्रता',
+    'wind_speed': 'हवा की गति',
+    'air_quality': 'वायु गुणवत्ता',
+    'good': 'अच्छी',
+    'moderate': 'मध्यम',
+    'poor': 'खराब',
+    'very_poor': 'बहुत खराब',
+    'severe': 'गंभीर'
   }
 };
 
