@@ -15,6 +15,10 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import History from "./pages/History";
 import FacilityRoute from "./pages/FacilityRoute";
+import Gallery from './pages/Gallery'; // adjust the path as needed
+
+
+
 
 const queryClient = new QueryClient();
 
@@ -35,6 +39,7 @@ const App = () => (
             <Route path="/facility/:type" element={<FacilityRoute />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/gallery" element={<Gallery />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
