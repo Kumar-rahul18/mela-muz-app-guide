@@ -92,7 +92,7 @@ const LiveSection = () => {
       label: t('shiv_bhajan'),
       action: () =>
         window.open(
-          'https://youtube.com/playlist?list=PLSVDTyd9LvbUv_42Wk7Xa4HX5urNMW7H7',
+          'https://youtube.com/playlist?list=PLSVDTyd9LvbWVR9rgho_95yPI0HWutsh9&si=pWiZskCe8-7rUw-I',
           '_blank'
         ),
     },
