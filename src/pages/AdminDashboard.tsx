@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -47,6 +46,7 @@ interface Contact {
   phone: string;
   email: string;
   designation: string;
+  category: string;
   is_active: boolean;
 }
 
@@ -55,6 +55,8 @@ const AdminDashboard: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
+  const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
+  const [selectedContactCategory, setSelectedContactCategory] = useState<string>('all');
   
   // Form states for crowd status
   const [selectedLocation, setSelectedLocation] = useState('');
@@ -82,6 +84,7 @@ const AdminDashboard: React.FC = () => {
   const [contactPhone, setContactPhone] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [contactDesignation, setContactDesignation] = useState('');
+  const [contactCategory, setContactCategory] = useState('general');
   
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -97,6 +100,18 @@ const AdminDashboard: React.FC = () => {
       fetchAllData();
     }
   }, [isAdmin]);
+
+  useEffect(() => {
+    filterContacts();
+  }, [contacts, selectedContactCategory]);
+
+  const filterContacts = () => {
+    if (selectedContactCategory === 'all') {
+      setFilteredContacts(contacts);
+    } else {
+      setFilteredContacts(contacts.filter(contact => contact.category === selectedContactCategory));
+    }
+  };
 
   const checkAdminAccess = async () => {
     try {
@@ -265,6 +280,7 @@ const AdminDashboard: React.FC = () => {
           phone: contactPhone,
           email: contactEmail || null,
           designation: contactDesignation || null,
+          category: contactCategory,
           is_active: true
         }]);
 
@@ -280,6 +296,7 @@ const AdminDashboard: React.FC = () => {
       setContactPhone('');
       setContactEmail('');
       setContactDesignation('');
+      setContactCategory('general');
       await fetchContacts();
     } catch (error) {
       console.error('Error adding contact:', error);
@@ -817,14 +834,27 @@ const AdminDashboard: React.FC = () => {
                       placeholder="Enter email address"
                     />
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-2 text-green-700">Designation</label>
-                  <Input
-                    value={contactDesignation}
-                    onChange={(e) => setContactDesignation(e.target.value)}
-                    placeholder="Enter designation"
-                  />
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-green-700">Designation</label>
+                    <Input
+                      value={contactDesignation}
+                      onChange={(e) => setContactDesignation(e.target.value)}
+                      placeholder="Enter designation"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-green-700">Category *</label>
+                    <Select value={contactCategory} onValueChange={setContactCategory}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="general">General</SelectItem>
+                        <SelectItem value="district_admin">District Admin</SelectItem>
+                        <SelectItem value="mmc_admin">MMC Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 <Button onClick={addContact} className="w-full bg-gradient-to-r from-green-500 to-pink-500 hover:from-green-600 hover:to-pink-600">
                   Add Contact
@@ -834,11 +864,39 @@ const AdminDashboard: React.FC = () => {
 
             <Card className="border-green-200 shadow-lg">
               <CardHeader className="bg-gradient-to-r from-green-100 to-pink-100">
-                <CardTitle className="text-green-800">Current Contacts</CardTitle>
+                <CardTitle className="text-green-800 flex items-center justify-between">
+                  Current Contacts
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      variant={selectedContactCategory === 'all' ? "default" : "outline"}
+                      onClick={() => setSelectedContactCategory('all')}
+                      className="text-xs"
+                    >
+                      All
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={selectedContactCategory === 'district_admin' ? "default" : "outline"}
+                      onClick={() => setSelectedContactCategory('district_admin')}
+                      className="text-xs"
+                    >
+                      District Admin
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={selectedContactCategory === 'mmc_admin' ? "default" : "outline"}
+                      onClick={() => setSelectedContactCategory('mmc_admin')}
+                      className="text-xs"
+                    >
+                      MMC Admin
+                    </Button>
+                  </div>
+                </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="space-y-3">
-                  {contacts.map((contact) => (
+                  {filteredContacts.map((contact) => (
                     <div key={contact.id} className="border border-green-200 rounded-lg p-4 bg-gradient-to-r from-green-50 to-pink-50">
                       <div className="flex justify-between items-start">
                         <div>
@@ -846,6 +904,14 @@ const AdminDashboard: React.FC = () => {
                           <p className="text-sm text-green-600">{contact.designation}</p>
                           <p className="text-xs text-green-500">{contact.contact_type} | {contact.phone}</p>
                           {contact.email && <p className="text-xs text-green-500">{contact.email}</p>}
+                          <span className={`inline-block mt-1 text-xs px-2 py-1 rounded-full font-medium ${
+                            contact.category === 'district_admin' ? 'bg-blue-100 text-blue-700' :
+                            contact.category === 'mmc_admin' ? 'bg-purple-100 text-purple-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {contact.category === 'district_admin' ? 'District Admin' :
+                             contact.category === 'mmc_admin' ? 'MMC Admin' : 'General'}
+                          </span>
                         </div>
                         <Button
                           size="sm"

@@ -43,6 +43,11 @@ const translations = {
     'help_desk': 'Help Desk',
     'tap_to_call': 'Tap to call',
     
+    // Contact categories
+    'district_admin': 'District Admin',
+    'mmc_admin': 'MMC Admin',
+    'general_contacts': 'General Contacts',
+    
     // Actions
     'navigate': 'Navigate',
     'participate': 'Participate Now',
@@ -108,6 +113,11 @@ const translations = {
     'control_room': 'नियंत्रण कक्ष',
     'help_desk': 'सहायता डेस्क',
     'tap_to_call': 'कॉल करने के लिए टैप करें',
+    
+    // Contact categories
+    'district_admin': 'जिला प्रशासन',
+    'mmc_admin': 'एमएमसी प्रशासन',
+    'general_contacts': 'सामान्य संपर्क',
     
     // Actions
     'navigate': 'नेविगेट करें',

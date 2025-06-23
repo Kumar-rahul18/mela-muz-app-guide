@@ -83,6 +83,7 @@ export type Database = {
       }
       contacts: {
         Row: {
+          category: string | null
           contact_type: string
           created_at: string
           designation: string | null
@@ -94,6 +95,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          category?: string | null
           contact_type: string
           created_at?: string
           designation?: string | null
@@ -105,6 +107,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          category?: string | null
           contact_type?: string
           created_at?: string
           designation?: string | null
