@@ -38,7 +38,9 @@ const ContactCategoryFilter: React.FC = () => {
         .from('contacts')
         .select('*')
         .eq('is_active', true)
-        .order('contact_type');
+       // .order('contact_type');
+      .order('created_at', { ascending: true });
+
 
       if (error) {
         console.error('Error fetching contacts:', error);
