@@ -65,20 +65,51 @@ const ImageSlider: React.FC = () => {
 
   const fetchImages = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch from gallery_images table
+      const { data: galleryData, error: galleryError } = await supabase
         .from('gallery_images')
         .select('*')
         .eq('is_active', true)
         .order('display_order')
-        .limit(5);
+        .limit(3);
 
-      if (error) {
-        console.error('Error fetching images:', error);
+      // Fetch approved photo contest submissions
+      const { data: contestData, error: contestError } = await supabase
+        .from('photo_contest_submissions')
+        .select('*')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false })
+        .limit(2);
+
+      if (galleryError && contestError) {
+        console.error('Error fetching images:', galleryError, contestError);
         return;
       }
 
-      if (data && data.length > 0) {
-        setImages(data);
+      const combinedImages = [];
+
+      // Transform gallery images
+      if (galleryData && galleryData.length > 0) {
+        combinedImages.push(...galleryData.map(img => ({
+          id: img.id,
+          image_url: img.image_url,
+          title: img.title || 'Gallery Image',
+          description: img.description || ''
+        })));
+      }
+
+      // Transform contest submissions
+      if (contestData && contestData.length > 0) {
+        combinedImages.push(...contestData.map(submission => ({
+          id: submission.id,
+          image_url: submission.image_url,
+          title: `Photo by ${submission.name}`,
+          description: submission.description || 'Contest Submission'
+        })));
+      }
+
+      if (combinedImages.length > 0) {
+        setImages(combinedImages);
       }
     } catch (error) {
       console.error('Error fetching images:', error);

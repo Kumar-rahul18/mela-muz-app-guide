@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const PhotoContest = () => {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ const PhotoContest = () => {
     description: '',
     image: null as File | null
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -22,7 +24,7 @@ const PhotoContest = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone || !formData.image) {
       toast({
@@ -31,13 +33,60 @@ const PhotoContest = () => {
       });
       return;
     }
-    
-    toast({
-      title: "Photo submitted successfully!",
-      description: "Your entry has been received for the contest."
-    });
-    
-    setTimeout(() => navigate('/'), 2000);
+
+    setIsSubmitting(true);
+
+    try {
+      // Upload image to storage
+      const fileExt = formData.image.name.split('.').pop();
+      const fileName = `${Date.now()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('photo-contest')
+        .upload(filePath, formData.image);
+
+      if (uploadError) {
+        throw uploadError;
+      }
+
+      // Get public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('photo-contest')
+        .getPublicUrl(filePath);
+
+      // Save submission to database
+      const { error: dbError } = await supabase
+        .from('photo_contest_submissions')
+        .insert([
+          {
+            name: formData.name,
+            phone: formData.phone,
+            description: formData.description,
+            image_url: publicUrl
+          }
+        ]);
+
+      if (dbError) {
+        throw dbError;
+      }
+
+      toast({
+        title: "Photo submitted successfully!",
+        description: "Your entry has been received for the contest."
+      });
+      
+      setTimeout(() => navigate('/'), 2000);
+    } catch (error) {
+      console.error('Error submitting photo:', error);
+      toast({
+        title: "Submission failed",
+        description: "Please try again later.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -73,6 +122,7 @@ const PhotoContest = () => {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter your full name"
                 className="w-full"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -86,6 +136,7 @@ const PhotoContest = () => {
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 placeholder="Enter your phone number"
                 className="w-full"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -98,6 +149,7 @@ const PhotoContest = () => {
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 placeholder="Describe your photo (optional)"
                 className="w-full h-20"
+                disabled={isSubmitting}
               />
             </div>
 
@@ -112,6 +164,7 @@ const PhotoContest = () => {
                   onChange={handleImageChange}
                   className="hidden"
                   id="photo-upload"
+                  disabled={isSubmitting}
                 />
                 <label htmlFor="photo-upload" className="cursor-pointer">
                   <div className="text-4xl mb-2">📱</div>
@@ -125,8 +178,12 @@ const PhotoContest = () => {
               </div>
             </div>
 
-            <Button type="submit" className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-full text-lg font-medium">
-              Submit Entry
+            <Button 
+              type="submit" 
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-full text-lg font-medium"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit Entry'}
             </Button>
           </form>
         </div>

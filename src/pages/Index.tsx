@@ -4,6 +4,7 @@ import Header from '@/components/Header';
 import LiveSection from '@/components/LiveSection';
 import WeatherWidget from '@/components/WeatherWidget';
 import LanguageSelector from '@/components/LanguageSelector';
+import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,28 +13,53 @@ const Index = () => {
   const navigate = useNavigate();
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
   const [contestPhotos, setContestPhotos] = useState<any[]>([]);
+  const [showContacts, setShowContacts] = useState(false);
 
   useEffect(() => {
     fetchContestPhotos();
   }, []);
 
   const fetchContestPhotos = async () => {
-    // This would fetch photos from contest submissions
-    // For now, using placeholder data
-    setContestPhotos([
-      {
-        id: 1,
-        image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        title: "Morning Prayer",
-        description: "Beautiful morning aarti ceremony"
-      },
-      {
-        id: 2,
-        image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        title: "Temple View",
-        description: "Magnificent temple architecture"
+    try {
+      const { data, error } = await supabase
+        .from('photo_contest_submissions')
+        .select('*')
+        .eq('is_approved', true)
+        .order('created_at', { ascending: false })
+        .limit(2);
+
+      if (error) {
+        console.error('Error fetching contest photos:', error);
+        return;
       }
-    ]);
+
+      if (data && data.length > 0) {
+        setContestPhotos(data.map(photo => ({
+          id: photo.id,
+          image_url: photo.image_url,
+          title: `Photo by ${photo.name}`,
+          description: photo.description || 'Contest submission'
+        })));
+      } else {
+        // Fallback to placeholder images
+        setContestPhotos([
+          {
+            id: 1,
+            image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Morning Prayer",
+            description: "Beautiful morning aarti ceremony"
+          },
+          {
+            id: 2,
+            image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Temple View",
+            description: "Magnificent temple architecture"
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching contest photos:', error);
+    }
   };
 
   const facilityItems = [
@@ -45,7 +71,7 @@ const Index = () => {
     {
       icon: '📞',
       label: t('centralised_contact'),
-      path: '/facility/centralised-contact'
+      action: () => setShowContacts(true)
     },
     {
       icon: '🖼️',
@@ -122,6 +148,25 @@ const Index = () => {
     }
   ];
 
+  if (showContacts) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="app-gradient text-white px-4 py-3 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <button onClick={() => setShowContacts(false)} className="text-white">
+              ← 
+            </button>
+            <h1 className="text-lg font-semibold">{t('centralised_contact')}</h1>
+          </div>
+        </div>
+        
+        <div className="px-4 py-6">
+          <ContactCategoryFilter />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -182,7 +227,7 @@ const Index = () => {
             {facilityItems.map((item, index) => (
               <div 
                 key={index}
-                onClick={() => navigate(item.path)}
+                onClick={() => item.path ? navigate(item.path) : item.action?.()}
                 className="flex flex-col items-center space-y-2 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
               >
                 <div className="card-gradient w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">

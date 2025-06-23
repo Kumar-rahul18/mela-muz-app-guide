@@ -261,6 +261,39 @@ export type Database = {
         }
         Relationships: []
       }
+      photo_contest_submissions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_approved: boolean | null
+          name: string
+          phone: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_approved?: boolean | null
+          name: string
+          phone: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_approved?: boolean | null
+          name?: string
+          phone?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           aadhar_number: string | null
