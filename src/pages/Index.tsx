@@ -297,6 +297,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 
+// ✅ Add FacilityIcon Component to Fix TS2304
 interface FacilityIconProps {
   icon: string;
   label: string;
@@ -349,6 +350,7 @@ const Index = () => {
           description: photo.description || 'Contest submission'
         })));
       } else {
+        // Fallback to placeholder images
         setContestPhotos([
           {
             id: 1,
@@ -370,10 +372,71 @@ const Index = () => {
   };
 
   const facilityItems = [
-    { icon: '🚻', label: 'Toilet', type: 'toilet' },
-    { icon: '🚿', label: 'Bathroom', type: 'bathroom' },
-    { icon: '📋', label: 'Lost & Found', type: 'lost-found' },
-    { icon: '🍽️', label: 'Bhandara', type: 'bhandara' }
+    {
+      icon: '🗺️',
+      label: t('mela_route'),
+      path: '/facility/mela-route'
+    },
+    {
+      icon: '📞',
+      label: t('centralised_contact'),
+      action: () => setShowContacts(true)
+    },
+    {
+      icon: '🖼️',
+      label: t('gallery'),
+      path: '/gallery'
+    },
+    {
+      icon: '🏧',
+      label: t('atm'),
+      path: '/facility/atm'
+    },
+    {
+      icon: '🚰',
+      label: t('drinking_water'),
+      path: '/facility/drinking-water'
+    },
+    {
+      icon: '🚻',
+      label: t('toilet'),
+      path: '/facility/toilet'
+    },
+    {
+      icon: '🛁',
+      label: t('bathroom'), 
+      path: '/facility/bathroom'
+    },
+    {
+      icon: '🛏️',
+      label: t('rest_room'),
+      path: '/facility/rest-room'
+    },
+    {
+      icon: '🏛️',
+      label: t('dharamshala'),
+      path: '/facility/dharamshala'
+    },
+    {
+      icon: '🏕️',
+      label: t('shivir'),
+      path: '/facility/shivir'
+    },
+    {
+      icon: '🏥',
+      label: t('health_centre'),
+      path: '/facility/health-centre'
+    },
+    {
+      icon: '🅿️',
+      label: t('parking'),
+      path: '/facility/parking'
+    },
+    {
+      icon: '📦',
+      label: 'Lost & Found',
+      path: '/lost-found'
+    }
   ];
 
   const quickAccessItems = [
@@ -404,11 +467,13 @@ const Index = () => {
       <div className="min-h-screen bg-gray-50">
         <div className="app-gradient text-white px-4 py-3 shadow-lg">
           <div className="flex items-center space-x-3">
-            <button onClick={() => setShowContacts(false)} className="text-white">←</button>
+            <button onClick={() => setShowContacts(false)} className="text-white">
+              ← 
+            </button>
             <h1 className="text-lg font-semibold">{t('centralised_contact')}</h1>
           </div>
         </div>
-
+        
         <div className="px-4 py-6">
           <ContactCategoryFilter />
         </div>
@@ -419,12 +484,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-
-      <LanguageSelector
-        isOpen={showLanguageSelector}
-        onClose={() => setShowLanguageSelector(false)}
+      
+      <LanguageSelector 
+        isOpen={showLanguageSelector} 
+        onClose={() => setShowLanguageSelector(false)} 
       />
-
+      
       <div className="px-4 py-6 space-y-6">
         {/* Photo Contest Banner */}
         <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
@@ -435,7 +500,7 @@ const Index = () => {
                 <h2 className="text-lg font-bold">{t('photo_contest')}</h2>
               </div>
               <p className="text-sm text-white/90 mb-3">{t('submit_entry')}</p>
-              <button
+              <button 
                 onClick={() => navigate('/photo-contest')}
                 className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors"
               >
@@ -446,14 +511,14 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Photo Gallery */}
+        {/* Photo Gallery from Contest */}
         <div className="animate-fade-in">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('pic_of_day')}</h2>
           <div className="grid grid-cols-2 gap-3">
             {contestPhotos.slice(0, 2).map((photo) => (
               <div key={photo.id} className="relative rounded-2xl overflow-hidden shadow-sm">
-                <img
-                  src={photo.image_url}
+                <img 
+                  src={photo.image_url} 
                   alt={photo.title}
                   className="w-full h-32 object-cover"
                 />
@@ -473,15 +538,27 @@ const Index = () => {
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">🏛️ Facilities</h2>
           <div className="px-4">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {facilityItems.map((item, index) => (
-                <FacilityIcon
-                  key={index}
-                  icon={item.icon}
-                  label={item.label}
-                  type={item.type}
-                />
-              ))}
+            <div className="grid grid-cols-4 gap-4">
+              <FacilityIcon
+                icon="🚻"
+                label="Toilet"
+                type="toilet"
+              />
+              <FacilityIcon
+                icon="🚿"
+                label="Bathroom"
+                type="bathroom"
+              />
+              <FacilityIcon
+                icon="📋"
+                label="Lost & Found"
+                type="lost-found"
+              />
+              <FacilityIcon
+                icon="🍽️"
+                label="Bhandara"
+                type="bhandara"
+              />
             </div>
           </div>
         </div>
@@ -491,7 +568,7 @@ const Index = () => {
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('contacts')}</h2>
           <div className="grid grid-cols-2 gap-3">
             {quickAccessItems.map((item, index) => (
-              <div
+              <div 
                 key={index}
                 onClick={item.action}
                 className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
