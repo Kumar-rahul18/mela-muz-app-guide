@@ -7,7 +7,7 @@ import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
-import FacilityIcon from '@/components/FacilityIcon'; // adjust the path as needed
+import FacilityIcon from '@/components/FacilityIcon';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -41,7 +41,6 @@ const Index = () => {
           description: photo.description || 'Contest submission'
         })));
       } else {
-        // Fallback to placeholder images
         setContestPhotos([
           {
             id: 1,
@@ -63,94 +62,26 @@ const Index = () => {
   };
 
   const facilityItems = [
-    {
-      icon: '🗺️',
-      label: t('mela_route'),
-      path: '/facility/mela-route'
-    },
-    {
-      icon: '📞',
-      label: t('centralised_contact'),
-      action: () => setShowContacts(true)
-    },
-    {
-      icon: '🖼️',
-      label: t('gallery'),
-      path: '/gallery'
-    },
-    {
-      icon: '🏧',
-      label: t('atm'),
-      path: '/facility/atm'
-    },
-    {
-      icon: '🚰',
-      label: t('drinking_water'),
-      path: '/facility/drinking-water'
-    },
-    {
-      icon: '🚻',
-      label: t('toilet'),
-      path: '/facility/toilet'
-    },
-    {
-      icon: '🛁',
-      label: t('bathroom'), 
-      path: '/facility/bathroom'
-    },
-    {
-      icon: '🛏️',
-      label: t('rest_room'),
-      path: '/facility/rest-room'
-    },
-    {
-      icon: '🏛️',
-      label: t('dharamshala'),
-      path: '/facility/dharamshala'
-    },
-    {
-      icon: '🏕️',
-      label: t('shivir'),
-      path: '/facility/shivir'
-    },
-    {
-      icon: '🏥',
-      label: t('health_centre'),
-      path: '/facility/health-centre'
-    },
-    {
-      icon: '🅿️',
-      label: t('parking'),
-      path: '/facility/parking'
-    },
-    {
-      icon: '📦',
-      label: 'Lost & Found',
-      path: '/lost-found'
-    }
+    { icon: '🗺️', label: t('mela_route'), path: '/facility/mela-route' },
+    { icon: '📞', label: t('centralised_contact'), action: () => setShowContacts(true) },
+    { icon: '🖼️', label: t('gallery'), path: '/gallery' },
+    { icon: '🏧', label: t('atm'), path: '/facility/atm' },
+    { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
+    { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
+    { icon: '🛁', label: t('bathroom'), path: '/facility/bathroom' },
+    { icon: '🛏️', label: t('rest_room'), path: '/facility/rest-room' },
+    { icon: '🏛️', label: t('dharamshala'), path: '/facility/dharamshala' },
+    { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
+    { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
+    { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
+    { icon: '📦', label: 'Lost & Found', path: '/lost-found' }
   ];
 
   const quickAccessItems = [
-    {
-      icon: '🚨',
-      label: t('ambulance'),
-      action: () => window.open('tel:108', '_self')
-    },
-    {
-      icon: '🌤️',
-      label: t('weather'),
-      component: <WeatherWidget />
-    },
-    {
-      icon: '📞',
-      label: t('control_room'),
-      action: () => window.open('tel:102', '_self')
-    },
-    {
-      icon: '🛠️',
-      label: t('help_desk'),
-      action: () => window.open('tel:1800-123-4567', '_self')
-    }
+    { icon: '🚨', label: t('ambulance'), action: () => window.open('tel:108', '_self') },
+    { icon: '🌤️', label: t('weather'), component: <WeatherWidget /> },
+    { icon: '📞', label: t('control_room'), action: () => window.open('tel:102', '_self') },
+    { icon: '🛠️', label: t('help_desk'), action: () => window.open('tel:1800-123-4567', '_self') }
   ];
 
   if (showContacts) {
@@ -158,13 +89,10 @@ const Index = () => {
       <div className="min-h-screen bg-gray-50">
         <div className="app-gradient text-white px-4 py-3 shadow-lg">
           <div className="flex items-center space-x-3">
-            <button onClick={() => setShowContacts(false)} className="text-white">
-              ← 
-            </button>
+            <button onClick={() => setShowContacts(false)} className="text-white">←</button>
             <h1 className="text-lg font-semibold">{t('centralised_contact')}</h1>
           </div>
         </div>
-        
         <div className="px-4 py-6">
           <ContactCategoryFilter />
         </div>
@@ -175,13 +103,10 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      
-      <LanguageSelector 
-        isOpen={showLanguageSelector} 
-        onClose={() => setShowLanguageSelector(false)} 
-      />
+      <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       
       <div className="px-4 py-6 space-y-6">
+
         {/* Photo Contest Banner */}
         <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
           <div className="flex items-center justify-between">
@@ -230,26 +155,16 @@ const Index = () => {
           <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">🏛️ Facilities</h2>
           <div className="px-4">
             <div className="grid grid-cols-4 gap-4">
-              <FacilityIcon
-                icon="🚻"
-                label="Toilet"
-                type="toilet"
-              />
-              <FacilityIcon
-                icon="🚿"
-                label="Bathroom"
-                type="bathroom"
-              />
-              <FacilityIcon
-                icon="📋"
-                label="Lost & Found"
-                type="lost-found"
-              />
-              <FacilityIcon
-                icon="🍽️"
-                label="Bhandara"
-                type="bhandara"
-              />
+              {facilityItems
+                .filter(item => item.path) // Only those with a path
+                .map((item, index) => (
+                  <FacilityIcon
+                    key={index}
+                    icon={item.icon}
+                    label={item.label}
+                    type={item.path.split('/').pop() || 'unknown'}
+                  />
+              ))}
             </div>
           </div>
         </div>
@@ -281,12 +196,10 @@ const Index = () => {
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );
 };
 
 export default Index;
-
-
-
