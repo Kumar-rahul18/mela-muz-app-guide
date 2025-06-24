@@ -261,6 +261,30 @@ export type Database = {
         }
         Relationships: []
       }
+      "import check": {
+        Row: {
+          created_at: string
+          id: number
+          Name: string | null
+          phone_number: number | null
+          serial_number: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          Name?: string | null
+          phone_number?: number | null
+          serial_number?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          Name?: string | null
+          phone_number?: number | null
+          serial_number?: number | null
+        }
+        Relationships: []
+      }
       photo_contest_submissions: {
         Row: {
           created_at: string

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import LiveSection from '@/components/LiveSection';
@@ -24,7 +23,6 @@ const Index = () => {
       const { data, error } = await supabase
         .from('photo_contest_submissions')
         .select('*')
-        .eq('is_approved', true)
         .order('created_at', { ascending: false })
         .limit(2);
 

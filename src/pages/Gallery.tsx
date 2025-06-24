@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ interface Submission {
   description: string;
   image_url: string;
   created_at: string;
+  name: string;
 }
 
 const Gallery = () => {
@@ -59,8 +61,13 @@ const Gallery = () => {
                   alt={photo.description || 'Photo'}
                   className="w-full h-48 object-cover"
                 />
-                <div className="p-2 text-sm text-gray-700">
-                  {photo.description || <span className="italic text-gray-400">No description</span>}
+                <div className="p-2">
+                  <div className="text-sm font-medium text-gray-800 mb-1">
+                    By {photo.name}
+                  </div>
+                  <div className="text-sm text-gray-700">
+                    {photo.description || <span className="italic text-gray-400">No description</span>}
+                  </div>
                 </div>
               </div>
             ))}
