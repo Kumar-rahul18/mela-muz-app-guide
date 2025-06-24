@@ -2,12 +2,12 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { X, Upload, Image as ImageIcon } from 'lucide-react';
 
 interface LostFoundFormData {
   name: string;
@@ -49,6 +49,17 @@ const LostFoundForm: React.FC<LostFoundFormProps> = ({ onSuccess }) => {
       const previews = fileArray.map(file => URL.createObjectURL(file));
       setImagePreviews(previews);
     }
+  };
+
+  const removeImage = (index: number) => {
+    const newImages = images.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    
+    // Revoke the URL to prevent memory leaks
+    URL.revokeObjectURL(imagePreviews[index]);
+    
+    setImages(newImages);
+    setImagePreviews(newPreviews);
   };
 
   const uploadImages = async (): Promise<string[]> => {
@@ -134,7 +145,7 @@ const LostFoundForm: React.FC<LostFoundFormProps> = ({ onSuccess }) => {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
               control={form.control}
               name="name"
@@ -192,7 +203,8 @@ const LostFoundForm: React.FC<LostFoundFormProps> = ({ onSuccess }) => {
             />
 
             {watchType === 'Found' && (
-              <>
+              <div className="space-y-4 p-4 bg-green-50 rounded-lg border border-green-200">
+                <h4 className="font-medium text-green-800">Found Item Details</h4>
                 <FormField
                   control={form.control}
                   name="submitted_at"
@@ -220,28 +232,61 @@ const LostFoundForm: React.FC<LostFoundFormProps> = ({ onSuccess }) => {
                     </FormItem>
                   )}
                 />
-              </>
+              </div>
             )}
 
-            <div className="space-y-2">
+            <div className="space-y-4">
               <label className="text-sm font-medium">Upload Images (Max 3)</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImageChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-              />
+              
+              {/* Upload Button */}
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <Upload className="w-8 h-8 mb-2 text-gray-500" />
+                    <p className="mb-2 text-sm text-gray-500">
+                      <span className="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+                    <p className="text-xs text-gray-500">PNG, JPG or GIF (MAX. 3 files)</p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Image Previews */}
               {imagePreviews.length > 0 && (
-                <div className="grid grid-cols-3 gap-2 mt-2">
-                  {imagePreviews.map((preview, index) => (
-                    <img
-                      key={index}
-                      src={preview}
-                      alt={`Preview ${index + 1}`}
-                      className="w-full h-20 object-cover rounded border"
-                    />
-                  ))}
+                <div className="space-y-2">
+                  <p className="text-sm font-medium text-gray-700">Selected Images:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group">
+                        <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-gray-200 shadow-sm">
+                          <img
+                            src={preview}
+                            alt={`Preview ${index + 1}`}
+                            className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all" />
+                          <button
+                            type="button"
+                            onClick={() => removeImage(index)}
+                            className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="mt-1 flex items-center text-xs text-gray-500">
+                          <ImageIcon className="w-3 h-3 mr-1" />
+                          <span className="truncate">{images[index]?.name}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

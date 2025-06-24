@@ -224,24 +224,32 @@ const Index = () => {
         {/* Live Section */}
         <LiveSection />
 
-        {/* Facilities */}
-        <div className="animate-fade-in">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('facilities')}</h2>
-          <div className="grid grid-cols-4 gap-3">
-            {facilityItems.map((item, index) => (
-              <div 
-                key={index}
-                onClick={() => item.path ? navigate(item.path) : item.action?.()}
-                className="flex flex-col items-center space-y-2 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
-              >
-                <div className="card-gradient w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg">
-                  <span className="text-xl">{item.icon}</span>
-                </div>
-                <span className="text-xs text-gray-600 text-center font-medium leading-tight">
-                  {item.label}
-                </span>
-              </div>
-            ))}
+        {/* Facilities Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">🏛️ Facilities</h2>
+          <div className="px-4">
+            <div className="grid grid-cols-4 gap-4">
+              <FacilityIcon
+                icon="🚻"
+                label="Toilet"
+                type="toilet"
+              />
+              <FacilityIcon
+                icon="🚿"
+                label="Bathroom"
+                type="bathroom"
+              />
+              <FacilityIcon
+                icon="📋"
+                label="Lost & Found"
+                type="lost-found"
+              />
+              <FacilityIcon
+                icon="🍽️"
+                label="Bhandara"
+                type="bhandara"
+              />
+            </div>
           </div>
         </div>
 

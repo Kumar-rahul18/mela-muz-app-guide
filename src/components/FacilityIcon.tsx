@@ -12,7 +12,11 @@ const FacilityIcon: React.FC<FacilityIconProps> = ({ icon, label, type }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(`/facility/${type}`);
+    if (type === 'lost-found') {
+      navigate('/lost-found');
+    } else {
+      navigate(`/facility/${type}`);
+    }
   };
 
   return (
