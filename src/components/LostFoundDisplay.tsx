@@ -34,7 +34,12 @@ const LostFoundDisplay: React.FC = () => {
       if (error) {
         console.error('Error fetching items:', error);
       } else {
-        setItems(data || []);
+        // Type assertion to ensure proper typing
+        const typedData = (data || []).map(item => ({
+          ...item,
+          type: item.type as 'Lost' | 'Found'
+        }));
+        setItems(typedData);
       }
     } catch (error) {
       console.error('Error fetching items:', error);
