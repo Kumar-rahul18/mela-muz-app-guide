@@ -7,6 +7,7 @@ import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import FacilityIcon from '@/components/FacilityIcon'; // adjust the path as needed
 
 const Index = () => {
   const navigate = useNavigate();
