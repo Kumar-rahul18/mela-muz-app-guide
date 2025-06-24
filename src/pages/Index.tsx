@@ -121,6 +121,11 @@ const Index = () => {
       icon: '🅿️',
       label: t('parking'),
       path: '/facility/parking'
+    },
+    {
+      icon: '📦',
+      label: 'Lost & Found',
+      path: '/lost-found'
     }
   ];
 

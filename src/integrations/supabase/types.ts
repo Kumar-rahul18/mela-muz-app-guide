@@ -285,6 +285,42 @@ export type Database = {
         }
         Relationships: []
       }
+      lost_found_items: {
+        Row: {
+          created_at: string
+          helpdesk_contact: string | null
+          id: string
+          images: string[]
+          name: string
+          phone: string
+          submitted_at: string | null
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          helpdesk_contact?: string | null
+          id?: string
+          images?: string[]
+          name: string
+          phone: string
+          submitted_at?: string | null
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          helpdesk_contact?: string | null
+          id?: string
+          images?: string[]
+          name?: string
+          phone?: string
+          submitted_at?: string | null
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       photo_contest_submissions: {
         Row: {
           created_at: string

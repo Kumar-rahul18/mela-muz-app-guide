@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,10 +16,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import History from "./pages/History";
 import FacilityRoute from "./pages/FacilityRoute";
-import Gallery from './pages/Gallery'; // adjust the path as needed
-
-
-
+import Gallery from './pages/Gallery';
+import LostFound from './pages/LostFound';
 
 const queryClient = new QueryClient();
 
@@ -40,6 +39,7 @@ const App = () => (
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/gallery" element={<Gallery />} />
+            <Route path="/lost-found" element={<LostFound />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
