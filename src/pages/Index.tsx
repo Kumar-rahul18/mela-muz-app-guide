@@ -23,6 +23,7 @@ const Index = () => {
       const { data, error } = await supabase
         .from('photo_contest_submissions')
         .select('*')
+        .eq('is_approved', true)
         .order('created_at', { ascending: false })
         .limit(2);
 
@@ -74,7 +75,7 @@ const Index = () => {
     {
       icon: '🖼️',
       label: t('gallery'),
-      path: '/facility/gallery'
+      path: '/gallery'
     },
     {
       icon: '🏧',
