@@ -21,6 +21,7 @@ const VehicleRegistrationForm = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    console.log('Input changed:', name, value);
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -28,6 +29,7 @@ const VehicleRegistrationForm = () => {
   };
 
   const handlePhotoSelected = (file: File) => {
+    console.log('Photo selected:', file.name, file.size);
     setVehiclePhoto(file);
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -71,17 +73,23 @@ const VehicleRegistrationForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted');
+    console.log('Form data:', formData);
+    console.log('Vehicle photo:', vehiclePhoto);
     
     if (!formData.owner_name || !formData.phone_number || !vehiclePhoto) {
+      console.log('Validation failed - missing fields');
       toast.error('Please fill all fields and upload a vehicle photo');
       return;
     }
 
     if (!/^[0-9]{10}$/.test(formData.phone_number)) {
+      console.log('Validation failed - invalid phone number');
       toast.error('Please enter a valid 10-digit phone number');
       return;
     }
 
+    console.log('Validation passed, starting registration...');
     setLoading(true);
 
     try {
@@ -208,7 +216,14 @@ const VehicleRegistrationForm = () => {
         />
       </div>
 
-      <Button type="submit" disabled={loading} className="w-full">
+      <Button 
+        type="submit" 
+        disabled={loading} 
+        className="w-full"
+        onClick={(e) => {
+          console.log('Button clicked!');
+        }}
+      >
         {loading ? 'Registering...' : 'Register Vehicle'}
       </Button>
     </form>
