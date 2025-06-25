@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Camera, Upload, CheckCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
+import CameraUpload from "@/components/CameraUpload";
 
 const VehicleRegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -26,35 +27,41 @@ const VehicleRegistrationForm = () => {
     }));
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setVehiclePhoto(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handlePhotoSelected = (file: File) => {
+    setVehiclePhoto(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhotoPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const uploadPhoto = async (file: File, vehicleId: string) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${vehicleId}-${Date.now()}.${fileExt}`;
-    
-    const { data, error } = await supabase.storage
-      .from('vehicle-photos')
-      .upload(fileName, file);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${vehicleId}-${Date.now()}.${fileExt}`;
+      
+      const { data, error } = await supabase.storage
+        .from('vehicle-photos')
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
 
-    if (error) {
+      if (error) {
+        console.error('Storage upload error:', error);
+        throw error;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('vehicle-photos')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error) {
+      console.error('Error in uploadPhoto:', error);
       throw error;
     }
-
-    const { data: { publicUrl } } = supabase.storage
-      .from('vehicle-photos')
-      .getPublicUrl(fileName);
-
-    return publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -73,20 +80,27 @@ const VehicleRegistrationForm = () => {
     setLoading(true);
 
     try {
+      console.log('Starting vehicle registration...');
+      
       // Generate vehicle ID
       const { data: vehicleIdData, error: vehicleIdError } = await supabase
         .rpc('generate_vehicle_id');
 
       if (vehicleIdError) {
+        console.error('Vehicle ID generation error:', vehicleIdError);
         throw vehicleIdError;
       }
 
       const vehicleId = vehicleIdData;
+      console.log('Generated vehicle ID:', vehicleId);
 
       // Upload photo
+      console.log('Uploading photo...');
       const photoUrl = await uploadPhoto(vehiclePhoto, vehicleId);
+      console.log('Photo uploaded successfully:', photoUrl);
 
       // Save vehicle registration
+      console.log('Saving vehicle registration...');
       const { error: insertError } = await supabase
         .from('vehicle_registrations')
         .insert({
@@ -97,9 +111,11 @@ const VehicleRegistrationForm = () => {
         });
 
       if (insertError) {
+        console.error('Insert error:', insertError);
         throw insertError;
       }
 
+      console.log('Vehicle registered successfully!');
       setRegisteredVehicle(vehicleId);
       toast.success(`Vehicle registered successfully! ID: ${vehicleId}`);
       
@@ -172,41 +188,12 @@ const VehicleRegistrationForm = () => {
           />
         </div>
 
-        <div>
-          <Label htmlFor="vehicle_photo">Vehicle Photo *</Label>
-          <div className="mt-2">
-            <input
-              id="vehicle_photo"
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="hidden"
-              required
-            />
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => document.getElementById('vehicle_photo')?.click()}
-              className="w-full flex items-center gap-2"
-            >
-              <Camera className="h-4 w-4" />
-              {vehiclePhoto ? 'Change Photo' : 'Upload Vehicle Photo'}
-            </Button>
-          </div>
-        </div>
-
-        {photoPreview && (
-          <div className="mt-4">
-            <Label>Photo Preview</Label>
-            <div className="mt-2 border rounded-lg p-2">
-              <img
-                src={photoPreview}
-                alt="Vehicle preview"
-                className="w-full h-48 object-cover rounded"
-              />
-            </div>
-          </div>
-        )}
+        <CameraUpload
+          label="Vehicle Photo"
+          onPhotoSelected={handlePhotoSelected}
+          preview={photoPreview}
+          required
+        />
       </div>
 
       <Button type="submit" disabled={loading} className="w-full">

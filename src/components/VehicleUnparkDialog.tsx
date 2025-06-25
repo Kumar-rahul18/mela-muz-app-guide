@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Camera, User } from "lucide-react";
+import CameraUpload from "@/components/CameraUpload";
 
 interface Vehicle {
   id: string;
@@ -35,16 +35,13 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUnparkerPhoto(file);
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
+  const handlePhotoSelected = (file: File) => {
+    setUnparkerPhoto(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhotoPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const uploadPhoto = async (file: File) => {
@@ -53,7 +50,10 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
     
     const { data, error } = await supabase.storage
       .from('vehicle-photos')
-      .upload(fileName, file);
+      .upload(fileName, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
 
     if (error) {
       throw error;
@@ -154,41 +154,12 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
             />
           </div>
 
-          <div>
-            <Label htmlFor="unparker_photo">Photo of Person Taking Vehicle *</Label>
-            <div className="mt-2">
-              <input
-                id="unparker_photo"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="hidden"
-                required
-              />
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => document.getElementById('unparker_photo')?.click()}
-                className="w-full flex items-center gap-2"
-              >
-                <Camera className="h-4 w-4" />
-                {unparkerPhoto ? 'Change Photo' : 'Upload Photo'}
-              </Button>
-            </div>
-          </div>
-
-          {photoPreview && (
-            <div>
-              <Label>Photo Preview</Label>
-              <div className="mt-2 border rounded-lg p-2">
-                <img
-                  src={photoPreview}
-                  alt="Unparker preview"
-                  className="w-full h-32 object-cover rounded"
-                />
-              </div>
-            </div>
-          )}
+          <CameraUpload
+            label="Photo of Person Taking Vehicle"
+            onPhotoSelected={handlePhotoSelected}
+            preview={photoPreview}
+            required
+          />
 
           <DialogFooter className="flex gap-2">
             <Button type="button" variant="outline" onClick={handleClose}>
