@@ -65,14 +65,13 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
     <div className="space-y-2">
       <Label>{label} {required && '*'}</Label>
       
-      {/* Hidden file inputs */}
+      {/* Hidden file inputs - removed required attribute to prevent focus issues */}
       <input
         ref={fileInputRef}
         type="file"
         accept={accept}
         onChange={handleFileChange}
         className="hidden"
-        required={required}
       />
       <input
         ref={cameraInputRef}
