@@ -73,9 +73,7 @@ const VehicleRegistrationForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Form submitted');
-    console.log('Form data:', formData);
-    console.log('Vehicle photo:', vehiclePhoto);
+    console.log('Form submitted with data:', formData, 'Photo:', vehiclePhoto);
     
     if (!formData.owner_name || !formData.phone_number || !vehiclePhoto) {
       console.log('Validation failed - missing fields');
@@ -89,14 +87,12 @@ const VehicleRegistrationForm = () => {
       return;
     }
 
-    console.log('Validation passed, starting registration...');
+    console.log('Starting vehicle registration process...');
     setLoading(true);
 
     try {
-      console.log('Starting vehicle registration...');
-      
       // Generate vehicle ID
-      console.log('Generating vehicle ID...');
+      console.log('Calling generate_vehicle_id function...');
       const { data: vehicleIdData, error: vehicleIdError } = await supabase
         .rpc('generate_vehicle_id');
 
@@ -109,16 +105,16 @@ const VehicleRegistrationForm = () => {
       console.log('Generated vehicle ID:', vehicleId);
 
       if (!vehicleId) {
-        throw new Error('Failed to generate vehicle ID');
+        throw new Error('No vehicle ID returned from function');
       }
 
       // Upload photo
-      console.log('Uploading photo...');
+      console.log('Starting photo upload...');
       const photoUrl = await uploadPhoto(vehiclePhoto, vehicleId);
-      console.log('Photo uploaded successfully:', photoUrl);
+      console.log('Photo uploaded successfully, URL:', photoUrl);
 
       // Save vehicle registration
-      console.log('Saving vehicle registration...');
+      console.log('Saving vehicle registration to database...');
       const { data: insertData, error: insertError } = await supabase
         .from('vehicle_registrations')
         .insert({
@@ -131,7 +127,7 @@ const VehicleRegistrationForm = () => {
         .select();
 
       if (insertError) {
-        console.error('Insert error:', insertError);
+        console.error('Database insert error:', insertError);
         throw new Error(`Failed to save vehicle registration: ${insertError.message}`);
       }
 
@@ -145,7 +141,7 @@ const VehicleRegistrationForm = () => {
       setPhotoPreview(null);
 
     } catch (error) {
-      console.error('Error registering vehicle:', error);
+      console.error('Registration error:', error);
       toast.error(error.message || 'Failed to register vehicle. Please try again.');
     } finally {
       setLoading(false);
@@ -153,6 +149,7 @@ const VehicleRegistrationForm = () => {
   };
 
   const resetForm = () => {
+    console.log('Resetting form...');
     setRegisteredVehicle(null);
     setFormData({ owner_name: '', phone_number: '' });
     setVehiclePhoto(null);
@@ -220,9 +217,6 @@ const VehicleRegistrationForm = () => {
         type="submit" 
         disabled={loading} 
         className="w-full"
-        onClick={(e) => {
-          console.log('Button clicked!');
-        }}
       >
         {loading ? 'Registering...' : 'Register Vehicle'}
       </Button>
