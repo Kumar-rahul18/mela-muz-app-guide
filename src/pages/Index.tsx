@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import LiveSection from '@/components/LiveSection';
@@ -99,7 +100,7 @@ const Index = () => {
       path: '/gallery',
       action: () => navigate('/gallery'),
     },
-    { icon: '🧠', label: 'Mela Quiz', path: '/mela-quiz' },
+    { icon: '🧠', label: 'Mela Quiz', action: () => navigate('/mela-quiz') },
     { icon: '🏧', label: t('atm'), path: '/facility/atm' },
     { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
     { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
@@ -109,7 +110,7 @@ const Index = () => {
     { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
     { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
     { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
-    { icon: '📦', label: 'Lost & Found', path: '/lost-found' },
+    { icon: '📦', label: 'Lost & Found', action: () => navigate('/lost-found') },
     { icon: '🍽️', label: 'Bhandara', path: '/facility/bhandara' },
   ];
 

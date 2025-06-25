@@ -125,6 +125,7 @@ const MelaQuiz = () => {
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
 
   useEffect(() => {
+    console.log('MelaQuiz component mounted');
     // Load previous attempts from localStorage
     const savedAttempts = localStorage.getItem('melaQuizAttempts');
     if (savedAttempts) {
@@ -152,6 +153,7 @@ const MelaQuiz = () => {
   };
 
   const handleRegister = () => {
+    console.log('Register button clicked', userInfo);
     if (!userInfo.name.trim()) {
       setError('Please enter your name');
       return;
@@ -169,6 +171,7 @@ const MelaQuiz = () => {
     }
 
     setError('');
+    console.log('Starting quiz...');
     setCurrentStep('quiz');
   };
 
@@ -412,6 +415,8 @@ const MelaQuiz = () => {
       </CardContent>
     </Card>
   );
+
+  console.log('Current step:', currentStep);
 
   return (
     <div className="min-h-screen bg-gray-50">
