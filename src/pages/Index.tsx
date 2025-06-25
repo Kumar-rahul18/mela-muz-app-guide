@@ -21,43 +21,71 @@ const Index = () => {
 
   const fetchContestPhotos = async () => {
     try {
+      console.log('Fetching contest photos for Index page...');
+      
       const { data, error } = await supabase
         .from('photo_contest_submissions')
-        .select('*')
-        .eq('is_approved', true)
+        .select('id, image_url, name, created_at')
         .order('created_at', { ascending: false })
         .limit(2);
 
       if (error) {
-        console.error('Error fetching contest photos:', error);
-        return;
-      }
-
-      if (data && data.length > 0) {
-        setContestPhotos(data.map(photo => ({
-          id: photo.id,
-          image_url: photo.image_url,
-          title: `Photo by ${photo.name}`,
-          description: photo.description || 'Contest submission'
-        })));
-      } else {
+        console.error('Error fetching contest photos for Index:', error);
+        // Set fallback images if there's an error
         setContestPhotos([
           {
             id: 1,
             image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
             title: "Morning Prayer",
-            description: "Beautiful morning aarti ceremony"
           },
           {
             id: 2,
             image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
             title: "Temple View",
-            description: "Magnificent temple architecture"
+          }
+        ]);
+        return;
+      }
+
+      console.log('Fetched contest photos for Index:', data);
+      
+      if (data && data.length > 0) {
+        setContestPhotos(data.map(photo => ({
+          id: photo.id,
+          image_url: photo.image_url,
+          title: `Photo by ${photo.name}`,
+        })));
+      } else {
+        console.log('No contest photos found, using fallback images');
+        // Set fallback images if no data
+        setContestPhotos([
+          {
+            id: 1,
+            image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Morning Prayer",
+          },
+          {
+            id: 2,
+            image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Temple View",
           }
         ]);
       }
     } catch (error) {
-      console.error('Error fetching contest photos:', error);
+      console.error('Unexpected error fetching contest photos for Index:', error);
+      // Set fallback images on unexpected error
+      setContestPhotos([
+        {
+          id: 1,
+          image_url: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          title: "Morning Prayer",
+        },
+        {
+          id: 2,
+          image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          title: "Temple View",
+        }
+      ]);
     }
   };
 
@@ -138,6 +166,11 @@ const Index = () => {
                   src={photo.image_url} 
                   alt={photo.title}
                   className="w-full h-32 object-cover"
+                  onError={(e) => {
+                    console.error('Image failed to load:', photo.image_url);
+                    const target = e.target as HTMLImageElement;
+                    target.src = "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                 <div className="absolute bottom-2 left-2 right-2">

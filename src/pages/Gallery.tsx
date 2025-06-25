@@ -8,7 +8,6 @@ interface Submission {
   image_url: string;
   created_at: string;
   name: string;
-  description?: string;
   is_approved: boolean;
 }
 
@@ -22,18 +21,18 @@ const Gallery = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        console.log('Fetching photos from photo_contest_submissions...');
+        console.log('Fetching all photos from photo_contest_submissions...');
         
         const { data, error } = await supabase
           .from('photo_contest_submissions')
-          .select('id, image_url, created_at, name, description, is_approved')
+          .select('id, image_url, created_at, name, is_approved')
           .order('created_at', { ascending: false });
 
         if (error) {
           console.error('Error fetching photos:', error);
           setError('Failed to load photos');
         } else {
-          console.log('Fetched photos:', data);
+          console.log('Successfully fetched photos:', data);
           setPhotos(data || []);
         }
       } catch (err) {
@@ -114,11 +113,6 @@ const Gallery = () => {
                     <div className="text-sm font-medium text-gray-800">
                       By {photo.name}
                     </div>
-                    {photo.description && (
-                      <div className="text-xs text-gray-500 mt-1 line-clamp-2">
-                        {photo.description}
-                      </div>
-                    )}
                   </div>
                 </div>
               ))}
