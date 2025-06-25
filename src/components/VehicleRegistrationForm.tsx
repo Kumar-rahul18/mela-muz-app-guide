@@ -41,6 +41,8 @@ const VehicleRegistrationForm = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `${vehicleId}-${Date.now()}.${fileExt}`;
       
+      console.log('Uploading photo with filename:', fileName);
+      
       const { data, error } = await supabase.storage
         .from('vehicle-photos')
         .upload(fileName, file, {
@@ -53,14 +55,17 @@ const VehicleRegistrationForm = () => {
         throw error;
       }
 
+      console.log('Photo uploaded successfully:', data);
+
       const { data: { publicUrl } } = supabase.storage
         .from('vehicle-photos')
         .getPublicUrl(fileName);
 
+      console.log('Public URL generated:', publicUrl);
       return publicUrl;
     } catch (error) {
       console.error('Error in uploadPhoto:', error);
-      throw error;
+      throw new Error(`Failed to upload photo: ${error.message}`);
     }
   };
 
@@ -83,16 +88,21 @@ const VehicleRegistrationForm = () => {
       console.log('Starting vehicle registration...');
       
       // Generate vehicle ID
+      console.log('Generating vehicle ID...');
       const { data: vehicleIdData, error: vehicleIdError } = await supabase
         .rpc('generate_vehicle_id');
 
       if (vehicleIdError) {
         console.error('Vehicle ID generation error:', vehicleIdError);
-        throw vehicleIdError;
+        throw new Error(`Failed to generate vehicle ID: ${vehicleIdError.message}`);
       }
 
       const vehicleId = vehicleIdData;
       console.log('Generated vehicle ID:', vehicleId);
+
+      if (!vehicleId) {
+        throw new Error('Failed to generate vehicle ID');
+      }
 
       // Upload photo
       console.log('Uploading photo...');
@@ -101,21 +111,23 @@ const VehicleRegistrationForm = () => {
 
       // Save vehicle registration
       console.log('Saving vehicle registration...');
-      const { error: insertError } = await supabase
+      const { data: insertData, error: insertError } = await supabase
         .from('vehicle_registrations')
         .insert({
           vehicle_id: vehicleId,
           owner_name: formData.owner_name,
           phone_number: formData.phone_number,
           vehicle_photo_url: photoUrl,
-        });
+          parking_status: 'parked'
+        })
+        .select();
 
       if (insertError) {
         console.error('Insert error:', insertError);
-        throw insertError;
+        throw new Error(`Failed to save vehicle registration: ${insertError.message}`);
       }
 
-      console.log('Vehicle registered successfully!');
+      console.log('Vehicle registered successfully:', insertData);
       setRegisteredVehicle(vehicleId);
       toast.success(`Vehicle registered successfully! ID: ${vehicleId}`);
       
@@ -126,7 +138,7 @@ const VehicleRegistrationForm = () => {
 
     } catch (error) {
       console.error('Error registering vehicle:', error);
-      toast.error('Failed to register vehicle. Please try again.');
+      toast.error(error.message || 'Failed to register vehicle. Please try again.');
     } finally {
       setLoading(false);
     }

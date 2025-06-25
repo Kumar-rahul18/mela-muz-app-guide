@@ -43,17 +43,21 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && validateFile(file)) {
+      console.log('File selected:', file.name, 'Size:', file.size, 'Type:', file.type);
       onPhotoSelected(file);
+      toast.success('Photo selected successfully!');
     }
-    // Reset the input
+    // Reset the input to allow selecting the same file again
     e.target.value = '';
   };
 
   const handleCameraCapture = () => {
+    console.log('Opening camera...');
     cameraInputRef.current?.click();
   };
 
   const handleFileUpload = () => {
+    console.log('Opening file picker...');
     fileInputRef.current?.click();
   };
 
