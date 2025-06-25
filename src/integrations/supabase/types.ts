@@ -447,12 +447,90 @@ export type Database = {
         }
         Relationships: []
       }
+      vehicle_registrations: {
+        Row: {
+          created_at: string
+          id: string
+          owner_name: string
+          parking_status: string
+          phone_number: string
+          registered_by: string | null
+          updated_at: string
+          vehicle_id: string
+          vehicle_number: string
+          vehicle_photo_url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_name: string
+          parking_status?: string
+          phone_number: string
+          registered_by?: string | null
+          updated_at?: string
+          vehicle_id: string
+          vehicle_number: string
+          vehicle_photo_url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_name?: string
+          parking_status?: string
+          phone_number?: string
+          registered_by?: string | null
+          updated_at?: string
+          vehicle_id?: string
+          vehicle_number?: string
+          vehicle_photo_url?: string
+        }
+        Relationships: []
+      }
+      vehicle_unparking_records: {
+        Row: {
+          id: string
+          unparked_at: string
+          unparked_by: string | null
+          unparker_phone: string
+          unparker_photo_url: string
+          vehicle_registration_id: string | null
+        }
+        Insert: {
+          id?: string
+          unparked_at?: string
+          unparked_by?: string | null
+          unparker_phone: string
+          unparker_photo_url: string
+          vehicle_registration_id?: string | null
+        }
+        Update: {
+          id?: string
+          unparked_at?: string
+          unparked_by?: string | null
+          unparker_phone?: string
+          unparker_photo_url?: string
+          vehicle_registration_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_unparking_records_vehicle_registration_id_fkey"
+            columns: ["vehicle_registration_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_registrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
       generate_complaint_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_vehicle_id: {
         Args: Record<PropertyKey, never>
         Returns: string
       }
