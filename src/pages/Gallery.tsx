@@ -8,6 +8,8 @@ interface Submission {
   image_url: string;
   created_at: string;
   name: string;
+  description?: string;
+  is_approved: boolean;
 }
 
 const Gallery = () => {
@@ -20,7 +22,7 @@ const Gallery = () => {
     const fetchPhotos = async () => {
       const { data, error } = await supabase
         .from('photo_contest_submissions')
-        .select('id, image_url, created_at, name')
+        .select('id, image_url, created_at, name, description, is_approved')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -43,7 +45,7 @@ const Gallery = () => {
           <button onClick={() => navigate('/')} className="text-white">
             ← 
           </button>
-          <h1 className="text-lg font-semibold">Gallery</h1>
+          <h1 className="text-lg font-semibold">Photo Contest Gallery</h1>
         </div>
       </div>
 
@@ -53,22 +55,43 @@ const Gallery = () => {
         ) : photos.length === 0 ? (
           <div className="text-center py-20 text-gray-500">No photos submitted yet.</div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {photos.map((photo) => (
-              <div key={photo.id} className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-105" onClick={() => setSelectedImage(photo.image_url)}>
-                <img
-                  src={photo.image_url}
-                  alt={`Photo by ${photo.name}`}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-2">
-                  <div className="text-sm font-medium text-gray-800">
-                    By {photo.name}
+          <>
+            <div className="mb-4 text-center">
+              <p className="text-gray-600 text-sm">
+                {photos.length} photo{photos.length !== 1 ? 's' : ''} submitted to the contest
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {photos.map((photo) => (
+                <div 
+                  key={photo.id} 
+                  className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-105 relative" 
+                  onClick={() => setSelectedImage(photo.image_url)}
+                >
+                  <img
+                    src={photo.image_url}
+                    alt={`Photo by ${photo.name}`}
+                    className="w-full h-48 object-cover"
+                  />
+                  {photo.is_approved && (
+                    <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                      ✓ Approved
+                    </div>
+                  )}
+                  <div className="p-2">
+                    <div className="text-sm font-medium text-gray-800">
+                      By {photo.name}
+                    </div>
+                    {photo.description && (
+                      <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                        {photo.description}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
 
