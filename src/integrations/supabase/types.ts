@@ -457,7 +457,6 @@ export type Database = {
           registered_by: string | null
           updated_at: string
           vehicle_id: string
-          vehicle_number: string
           vehicle_photo_url: string
         }
         Insert: {
@@ -469,7 +468,6 @@ export type Database = {
           registered_by?: string | null
           updated_at?: string
           vehicle_id: string
-          vehicle_number: string
           vehicle_photo_url: string
         }
         Update: {
@@ -481,7 +479,6 @@ export type Database = {
           registered_by?: string | null
           updated_at?: string
           vehicle_id?: string
-          vehicle_number?: string
           vehicle_photo_url?: string
         }
         Relationships: []

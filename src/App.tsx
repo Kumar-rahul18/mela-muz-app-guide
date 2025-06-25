@@ -13,6 +13,7 @@ import FacilityDetail from "./pages/FacilityDetail";
 import Events from "./pages/Events";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import VehicleAdmin from "./pages/VehicleAdmin";
 import NotFound from "./pages/NotFound";
 import History from "./pages/History";
 import FacilityRoute from "./pages/FacilityRoute";
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/facility/:type" element={<FacilityRoute />} />
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/vehicle" element={<VehicleAdmin />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/lost-found" element={<LostFound />} />
             <Route path="*" element={<NotFound />} />
