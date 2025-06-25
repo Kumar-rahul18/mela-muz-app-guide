@@ -101,7 +101,7 @@ const VehicleRegistrationForm = () => {
         .rpc('generate_vehicle_id');
 
       if (vehicleIdError) {
-        console.error('Vehicle ID generation error:', vehicleIdError);
+        console.error('generate_vehicle_id FAILED', vehicleIdError);
         throw new Error(`Failed to generate vehicle ID: ${vehicleIdError.message}`);
       }
 
