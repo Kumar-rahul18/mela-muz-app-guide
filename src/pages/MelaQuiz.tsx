@@ -22,62 +22,92 @@ interface QuizAttempt {
 const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 1,
-    question: "Baba Garibnath Dham is located in which state?",
-    options: ["Uttarakhand", "Himachal Pradesh", "Haryana", "Punjab"],
-    correct: 0
+    question: "What is the significance of Baba Garibnath Dham?",
+    options: [
+      "It is a modern temple built in the 21st century",
+      "It is a sacred place dedicated to Lord Shiva",
+      "It is primarily a tourist destination",
+      "It is a government heritage site"
+    ],
+    correct: 1
   },
   {
     id: 2,
-    question: "What is the significance of Shravani Mela?",
-    options: ["Festival of lights", "Monsoon pilgrimage", "Harvest festival", "New Year celebration"],
-    correct: 1
-  },
-  {
-    id: 3,
-    question: "During which month does Shravani Mela primarily take place?",
-    options: ["Kartik", "Chaitra", "Shravan", "Bhadrapada"],
+    question: "During which Hindu month is Shravani Mela primarily celebrated?",
+    options: ["Kartik", "Chaitra", "Shravan (Sawan)", "Bhadrapada"],
     correct: 2
   },
   {
+    id: 3,
+    question: "What do devotees typically carry during the Shravani Mela pilgrimage?",
+    options: [
+      "Holy water (Ganga Jal) in decorated pots (Kanwar)",
+      "Prasad offerings",
+      "Religious books",
+      "Flowers and fruits"
+    ],
+    correct: 0
+  },
+  {
     id: 4,
-    question: "What do devotees carry during Shravani Mela?",
-    options: ["Flowers", "Kanwar with Ganga water", "Fruits", "Sweets"],
-    correct: 1
+    question: "Baba Garibnath is considered to be which form of Lord Shiva?",
+    options: [
+      "Nataraja",
+      "Rudra",
+      "A compassionate form who helps the poor and needy",
+      "Mahakaal"
+    ],
+    correct: 2
   },
   {
     id: 5,
-    question: "Baba Garibnath is considered as:",
-    options: ["Lord Vishnu", "Lord Shiva", "Lord Ganesha", "Lord Hanuman"],
+    question: "What is the main ritual performed by Kanwariyas during Shravani Mela?",
+    options: [
+      "Offering flowers to the deity",
+      "Carrying holy water from the Ganges to offer to Lord Shiva",
+      "Performing classical dances",
+      "Reciting religious texts"
+    ],
     correct: 1
   },
   {
     id: 6,
-    question: "The word 'Garibnath' means:",
-    options: ["Lord of the poor", "Mountain lord", "River lord", "Forest lord"],
-    correct: 0
+    question: "How long does the Shravani Mela typically last?",
+    options: ["One day", "One week", "The entire month of Shravan", "15 days"],
+    correct: 2
   },
   {
     id: 7,
-    question: "What is the traditional color worn during Shravani Mela?",
-    options: ["Red", "Yellow", "Saffron/Orange", "White"],
+    question: "What color of clothing do most Kanwariyas wear during the pilgrimage?",
+    options: ["White", "Red", "Saffron/Orange", "Yellow"],
     correct: 2
   },
   {
     id: 8,
-    question: "How long does the Shravani Mela typically last?",
-    options: ["1 week", "Entire month of Shravan", "15 days", "3 days"],
+    question: "What is the literal meaning of \"Garibnath\"?",
+    options: [
+      "Lord of the Mountains",
+      "Lord of the Poor/Needy",
+      "Lord of Knowledge",
+      "Lord of Wealth"
+    ],
     correct: 1
   },
   {
     id: 9,
-    question: "What is the main offering made to Baba Garibnath?",
-    options: ["Rice", "Flowers", "Water from Ganga", "Coconut"],
-    correct: 2
+    question: "Which river's water is considered most sacred for the Shravani Mela rituals?",
+    options: ["Yamuna", "Saraswati", "Narmada", "Ganga (Ganges)"],
+    correct: 3
   },
   {
     id: 10,
-    question: "Devotees walk barefoot during Shravani Mela as a sign of:",
-    options: ["Tradition", "Devotion and humility", "Comfort", "Custom"],
+    question: "What is the primary purpose of the Shravani Mela pilgrimage?",
+    options: [
+      "Social gathering and entertainment",
+      "Seeking blessings, purification, and fulfilling religious vows",
+      "Cultural preservation",
+      "Economic activities"
+    ],
     correct: 1
   }
 ];
@@ -153,6 +183,12 @@ const MelaQuiz = () => {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       handleSubmitQuiz();
+    }
+  };
+
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
     }
   };
 
@@ -270,7 +306,7 @@ const MelaQuiz = () => {
         <div className="flex justify-between">
           <Button
             variant="outline"
-            onClick={() => setCurrentQuestion(Math.max(0, currentQuestion - 1))}
+            onClick={handlePreviousQuestion}
             disabled={currentQuestion === 0}
           >
             Previous
