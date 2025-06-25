@@ -16,22 +16,32 @@ const Gallery = () => {
   const [photos, setPhotos] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPhotos = async () => {
-      const { data, error } = await supabase
-        .from('photo_contest_submissions')
-        .select('id, image_url, created_at, name, description, is_approved')
-        .order('created_at', { ascending: false });
+      try {
+        console.log('Fetching photos from photo_contest_submissions...');
+        
+        const { data, error } = await supabase
+          .from('photo_contest_submissions')
+          .select('id, image_url, created_at, name, description, is_approved')
+          .order('created_at', { ascending: false });
 
-      if (error) {
-        console.error('Error fetching photos:', error);
-      } else {
-        setPhotos(data || []);
+        if (error) {
+          console.error('Error fetching photos:', error);
+          setError('Failed to load photos');
+        } else {
+          console.log('Fetched photos:', data);
+          setPhotos(data || []);
+        }
+      } catch (err) {
+        console.error('Unexpected error:', err);
+        setError('An unexpected error occurred');
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     fetchPhotos();
@@ -52,8 +62,13 @@ const Gallery = () => {
       <div className="p-4">
         {loading ? (
           <div className="text-center py-20 text-gray-500">Loading photos...</div>
+        ) : error ? (
+          <div className="text-center py-20 text-red-500">{error}</div>
         ) : photos.length === 0 ? (
-          <div className="text-center py-20 text-gray-500">No photos submitted yet.</div>
+          <div className="text-center py-20 text-gray-500">
+            <p>No photos submitted yet.</p>
+            <p className="text-xs mt-2">Photos from the photo contest will appear here once submitted.</p>
+          </div>
         ) : (
           <>
             <div className="mb-4 text-center">
@@ -75,6 +90,14 @@ const Gallery = () => {
                     src={photo.image_url}
                     alt={`Photo by ${photo.name}`}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      console.error('Image failed to load:', photo.image_url);
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      target.parentElement?.insertAdjacentHTML('afterbegin', 
+                        '<div class="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-400">Image not available</div>'
+                      );
+                    }}
                   />
                   <div className="absolute top-2 right-2">
                     {photo.is_approved ? (

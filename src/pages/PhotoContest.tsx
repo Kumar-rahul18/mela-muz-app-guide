@@ -42,11 +42,14 @@ const PhotoContest = () => {
       const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `${fileName}`;
 
+      console.log('Uploading file to photo-contest bucket:', filePath);
+
       const { error: uploadError } = await supabase.storage
         .from('photo-contest')
         .upload(filePath, formData.image);
 
       if (uploadError) {
+        console.error('Upload error:', uploadError);
         throw uploadError;
       }
 
@@ -55,8 +58,10 @@ const PhotoContest = () => {
         .from('photo-contest')
         .getPublicUrl(filePath);
 
+      console.log('Generated public URL:', publicUrl);
+
       // Save submission to database
-      const { error: dbError } = await supabase
+      const { data, error: dbError } = await supabase
         .from('photo_contest_submissions')
         .insert([
           {
@@ -65,11 +70,15 @@ const PhotoContest = () => {
             description: formData.description,
             image_url: publicUrl
           }
-        ]);
+        ])
+        .select();
 
       if (dbError) {
+        console.error('Database error:', dbError);
         throw dbError;
       }
+
+      console.log('Successfully saved submission:', data);
 
       toast({
         title: "Photo submitted successfully!",
