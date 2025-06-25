@@ -60,6 +60,9 @@ const Gallery = () => {
               <p className="text-gray-600 text-sm">
                 {photos.length} photo{photos.length !== 1 ? 's' : ''} submitted to the contest
               </p>
+              <p className="text-gray-500 text-xs mt-1">
+                All submissions are shown here regardless of approval status
+              </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {photos.map((photo) => (
@@ -73,11 +76,17 @@ const Gallery = () => {
                     alt={`Photo by ${photo.name}`}
                     className="w-full h-48 object-cover"
                   />
-                  {photo.is_approved && (
-                    <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
-                      ✓ Approved
-                    </div>
-                  )}
+                  <div className="absolute top-2 right-2">
+                    {photo.is_approved ? (
+                      <div className="bg-green-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                        ✓ Approved
+                      </div>
+                    ) : (
+                      <div className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-semibold">
+                        Pending
+                      </div>
+                    )}
+                  </div>
                   <div className="p-2">
                     <div className="text-sm font-medium text-gray-800">
                       By {photo.name}
