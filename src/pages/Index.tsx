@@ -16,21 +16,22 @@ const Index = () => {
   const [showContacts, setShowContacts] = useState(false);
 
   useEffect(() => {
-    fetchContestPhotos();
+    fetchApprovedContestPhotos();
   }, []);
 
-  const fetchContestPhotos = async () => {
+  const fetchApprovedContestPhotos = async () => {
     try {
-      console.log('Fetching contest photos for Index page...');
+      console.log('Fetching approved contest photos for Index page...');
       
       const { data, error } = await supabase
         .from('photo_contest_submissions')
         .select('id, image_url, name, created_at')
+        .eq('is_approved', true)  // Only fetch approved photos
         .order('created_at', { ascending: false })
         .limit(2);
 
       if (error) {
-        console.error('Error fetching contest photos for Index:', error);
+        console.error('Error fetching approved contest photos for Index:', error);
         // Set fallback images if there's an error
         setContestPhotos([
           {
@@ -47,7 +48,7 @@ const Index = () => {
         return;
       }
 
-      console.log('Fetched contest photos for Index:', data);
+      console.log('Fetched approved contest photos for Index:', data);
       
       if (data && data.length > 0) {
         setContestPhotos(data.map(photo => ({
@@ -56,8 +57,8 @@ const Index = () => {
           title: `Photo by ${photo.name}`,
         })));
       } else {
-        console.log('No contest photos found, using fallback images');
-        // Set fallback images if no data
+        console.log('No approved contest photos found, using fallback images');
+        // Set fallback images if no approved data
         setContestPhotos([
           {
             id: 1,
@@ -72,7 +73,7 @@ const Index = () => {
         ]);
       }
     } catch (error) {
-      console.error('Unexpected error fetching contest photos for Index:', error);
+      console.error('Unexpected error fetching approved contest photos for Index:', error);
       // Set fallback images on unexpected error
       setContestPhotos([
         {
@@ -156,7 +157,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Photo Gallery from Contest */}
+        {/* Photo Gallery from Contest - Only Approved Photos */}
         <div className="animate-fade-in">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('pic_of_day')}</h2>
           <div className="grid grid-cols-2 gap-3">
