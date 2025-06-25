@@ -25,7 +25,7 @@ const Gallery = () => {
         
         const { data, error } = await supabase
           .from('photo_contest_submissions')
-          .select('id, image_url, created_at, name, is_approved')
+          .select('id, image_url, created_at, name') //is_approved
           .order('created_at', { ascending: false });
 
         if (error) {
