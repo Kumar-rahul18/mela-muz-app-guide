@@ -90,46 +90,28 @@ const Index = () => {
     }
   };
 
-  // const facilityItems = [
-  //   { icon: '🗺️', label: t('mela_route'), path: '/facility/mela-route' },
-  //   { icon: '📞', label: t('centralised_contact'), action: () => setShowContacts(true) },
-  //   { icon: '🖼️', label: t('gallery'), path: '/gallery' },
-  //   { icon: '🏧', label: t('atm'), path: '/facility/atm' },
-  //   { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
-  //   { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
-  //   { icon: '🛁', label: t('bathroom'), path: '/facility/bathroom' },
-  //   { icon: '🛏️', label: t('rest_room'), path: '/facility/rest-room' },
-  //   { icon: '🏛️', label: t('dharamshala'), path: '/facility/dharamshala' },
-  //   { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
-  //   { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
-  //   { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
-  //   { icon: '📦', label: 'Lost & Found', path: '/lost-found' },
-  //   { icon: '🍽️', label: 'Bhandara', path: '/facility/bhandara' }
-  // ];
-
-  /* ---------- facilities grid ---------- */
-const facilityItems = [
-  { icon: '🗺️', label: t('mela_route'), path: '/facility/mela-route' },
-  { icon: '📞', label: t('centralised_contact'), action: () => setShowContacts(true) },
-  {
-    icon: '🖼️',
-    label: t('gallery'),
-    path: '/gallery',
-    action: () => navigate('/gallery'), // ← makes the tile open Gallery
-  },
-  { icon: '🏧', label: t('atm'), path: '/facility/atm' },
-  { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
-  { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
-  { icon: '🛁', label: t('bathroom'), path: '/facility/bathroom' },
-  { icon: '🛏️', label: t('rest_room'), path: '/facility/rest-room' },
-  { icon: '🏛️', label: t('dharamshala'), path: '/facility/dharamshala' },
-  { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
-  { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
-  { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
-  { icon: '📦', label: 'Lost & Found', path: '/lost-found' },
-  { icon: '🍽️', label: 'Bhandara', path: '/facility/bhandara' },
-];
-
+  const facilityItems = [
+    { icon: '🗺️', label: t('mela_route'), path: '/facility/mela-route' },
+    { icon: '📞', label: t('centralised_contact'), action: () => setShowContacts(true) },
+    {
+      icon: '🖼️',
+      label: t('gallery'),
+      path: '/gallery',
+      action: () => navigate('/gallery'),
+    },
+    { icon: '🧠', label: 'Mela Quiz', path: '/mela-quiz' },
+    { icon: '🏧', label: t('atm'), path: '/facility/atm' },
+    { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
+    { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
+    { icon: '🛁', label: t('bathroom'), path: '/facility/bathroom' },
+    { icon: '🛏️', label: t('rest_room'), path: '/facility/rest-room' },
+    { icon: '🏛️', label: t('dharamshala'), path: '/facility/dharamshala' },
+    { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
+    { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
+    { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
+    { icon: '📦', label: 'Lost & Found', path: '/lost-found' },
+    { icon: '🍽️', label: 'Bhandara', path: '/facility/bhandara' },
+  ];
 
   const quickAccessItems = [
     { icon: '🚨', label: t('ambulance'), action: () => window.open('tel:108', '_self') },

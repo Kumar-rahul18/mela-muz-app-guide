@@ -19,6 +19,7 @@ import History from "./pages/History";
 import FacilityRoute from "./pages/FacilityRoute";
 import Gallery from './pages/Gallery';
 import LostFound from './pages/LostFound';
+import MelaQuiz from './pages/MelaQuiz';
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="/admin/vehicle" element={<VehicleAdmin />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/lost-found" element={<LostFound />} />
+            <Route path="/mela-quiz" element={<MelaQuiz />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
