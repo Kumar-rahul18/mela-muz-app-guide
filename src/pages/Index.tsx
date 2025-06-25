@@ -101,6 +101,7 @@ const Index = () => {
       action: () => navigate('/gallery'),
     },
     { icon: '🧠', label: 'Mela Quiz', action: () => navigate('/mela-quiz') },
+    { icon: '🏨', label: 'Paid Hotels', path: '/facility/paid-hotels' },
     { icon: '🏧', label: t('atm'), path: '/facility/atm' },
     { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
     { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },

@@ -86,6 +86,10 @@ const AdminDashboard: React.FC = () => {
   const [contactDesignation, setContactDesignation] = useState('');
   const [contactCategory, setContactCategory] = useState('general');
   
+  // Add new state for managed facilities
+  const [managedFacilities, setManagedFacilities] = useState<Facility[]>([]);
+  const [selectedFacilityType, setSelectedFacilityType] = useState<string>('paid-hotels');
+  
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
@@ -144,7 +148,8 @@ const AdminDashboard: React.FC = () => {
       fetchCrowdStatuses(),
       fetchEvents(),
       fetchFacilities(),
-      fetchContacts()
+      fetchContacts(),
+      fetchManagedFacilities()
     ]);
   };
 
@@ -225,6 +230,25 @@ const AdminDashboard: React.FC = () => {
       setContacts(data || []);
     } catch (error) {
       console.error('Error fetching contacts:', error);
+    }
+  };
+
+  const fetchManagedFacilities = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('facilities')
+        .select('*')
+        .in('facility_type', ['paid-hotels', 'atm', 'parking', 'bhandara'])
+        .order('facility_type');
+
+      if (error) {
+        console.error('Error fetching managed facilities:', error);
+        return;
+      }
+
+      setManagedFacilities(data || []);
+    } catch (error) {
+      console.error('Error fetching managed facilities:', error);
     }
   };
 
@@ -479,6 +503,62 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const addManagedFacility = async () => {
+    if (!selectedFacilityType || !facilityName) {
+      toast.error('Please fill required fields');
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('facilities')
+        .insert([{
+          facility_type: selectedFacilityType,
+          name: facilityName,
+          contact_number: facilityContact || null,
+          location_name: facilityLocationName || null,
+          google_maps_link: facilityMapsLink || null,
+          is_active: true
+        }]);
+
+      if (error) {
+        console.error('Error adding managed facility:', error);
+        toast.error(`Failed to add facility: ${error.message}`);
+        return;
+      }
+
+      toast.success('Facility added successfully');
+      setFacilityName('');
+      setFacilityContact('');
+      setFacilityLocationName('');
+      setFacilityMapsLink('');
+      await fetchManagedFacilities();
+    } catch (error) {
+      console.error('Error adding managed facility:', error);
+      toast.error('Failed to add facility');
+    }
+  };
+
+  const deleteManagedFacility = async (facilityId: string) => {
+    try {
+      const { error } = await supabase
+        .from('facilities')
+        .delete()
+        .eq('id', facilityId);
+
+      if (error) {
+        console.error('Error deleting managed facility:', error);
+        toast.error('Failed to delete facility');
+        return;
+      }
+
+      toast.success('Facility deleted successfully');
+      await fetchManagedFacilities();
+    } catch (error) {
+      console.error('Error deleting managed facility:', error);
+    }
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('adminSession');
     navigate('/');
@@ -511,11 +591,12 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs defaultValue="crowd" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="crowd">Crowd Status</TabsTrigger>
             <TabsTrigger value="events">Events</TabsTrigger>
             <TabsTrigger value="facilities">Facilities</TabsTrigger>
             <TabsTrigger value="contacts">Contacts</TabsTrigger>
+            <TabsTrigger value="managed-facilities">Managed Facilities</TabsTrigger>
           </TabsList>
 
           <TabsContent value="crowd" className="space-y-6">
@@ -921,6 +1002,123 @@ const AdminDashboard: React.FC = () => {
                           Delete
                         </Button>
                       </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="managed-facilities" className="space-y-6">
+            <Card className="border-indigo-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-100 to-pink-100">
+                <CardTitle className="text-indigo-800">Manage Facilities</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Facility Type *</label>
+                    <Select value={selectedFacilityType} onValueChange={setSelectedFacilityType}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="paid-hotels">Paid Hotels</SelectItem>
+                        <SelectItem value="atm">ATM</SelectItem>
+                        <SelectItem value="parking">Parking</SelectItem>
+                        <SelectItem value="bhandara">Bhandara</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Facility Name *</label>
+                    <Input
+                      value={facilityName}
+                      onChange={(e) => setFacilityName(e.target.value)}
+                      placeholder="Enter facility name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Contact Number</label>
+                    <Input
+                      value={facilityContact}
+                      onChange={(e) => setFacilityContact(e.target.value)}
+                      placeholder="Enter contact number"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Location Name</label>
+                    <Input
+                      value={facilityLocationName}
+                      onChange={(e) => setFacilityLocationName(e.target.value)}
+                      placeholder="Enter location name"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-2 text-indigo-700">Google Maps Link</label>
+                  <Input
+                    value={facilityMapsLink}
+                    onChange={(e) => setFacilityMapsLink(e.target.value)}
+                    placeholder="Enter Google Maps link"
+                  />
+                </div>
+                <Button onClick={addManagedFacility} className="w-full bg-gradient-to-r from-indigo-500 to-pink-500 hover:from-indigo-600 hover:to-pink-600">
+                  Add Facility
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="border-indigo-200 shadow-lg">
+              <CardHeader className="bg-gradient-to-r from-indigo-100 to-pink-100">
+                <CardTitle className="text-indigo-800">Current Managed Facilities</CardTitle>
+              </CardHeader>
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  {['paid-hotels', 'atm', 'parking', 'bhandara'].map((type) => (
+                    <div key={type}>
+                      <h3 className="font-semibold text-indigo-800 mb-2 capitalize">
+                        {type.replace('-', ' ')}
+                      </h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {managedFacilities
+                          .filter(facility => facility.facility_type === type)
+                          .map((facility) => (
+                            <div key={facility.id} className="border border-indigo-200 rounded-lg p-3 bg-gradient-to-r from-indigo-50 to-pink-50">
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <h4 className="font-medium text-indigo-800">{facility.name}</h4>
+                                  {facility.contact_number && (
+                                    <p className="text-xs text-indigo-600">{facility.contact_number}</p>
+                                  )}
+                                  {facility.location_name && (
+                                    <p className="text-xs text-indigo-500">{facility.location_name}</p>
+                                  )}
+                                  {facility.google_maps_link && (
+                                    <a 
+                                      href={facility.google_maps_link} 
+                                      target="_blank" 
+                                      rel="noopener noreferrer"
+                                      className="text-xs text-blue-600 hover:underline"
+                                    >
+                                      View on Maps
+                                    </a>
+                                  )}
+                                </div>
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => deleteManagedFacility(facility.id)}
+                                >
+                                  Delete
+                                </Button>
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                      {managedFacilities.filter(facility => facility.facility_type === type).length === 0 && (
+                        <p className="text-sm text-gray-500 italic">No facilities added yet</p>
+                      )}
                     </div>
                   ))}
                 </div>

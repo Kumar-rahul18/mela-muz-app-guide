@@ -1,86 +1,148 @@
 
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeft, MapPin, Phone, ExternalLink } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
+
+interface Facility {
+  id: string;
+  facility_type: string;
+  name: string;
+  contact_number: string;
+  location_name: string;
+  google_maps_link: string;
+  is_active: boolean;
+}
 
 const FacilityDetail = () => {
+  const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
-  const { type } = useParams();
+  const { t } = useLanguage();
+  const [facilities, setFacilities] = useState<Facility[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const facilityData = {
-    'ambulance': {
-      title: 'Ambulance Services',
-      icon: '🚑',
-      description: 'Emergency medical assistance available 24/7 during the mela period.',
-      contact: '+91-9876543210',
-      location: 'Near Main Entrance Gate',
-      features: ['24/7 Availability', 'Trained Medical Staff', 'Emergency Equipment', 'Quick Response']
-    },
-    'police-station': {
-      title: 'Police Station',
-      icon: '👮',
-      description: 'Security and law enforcement services for visitor safety.',
-      contact: '+91-9876543211',
-      location: 'Central Security Post',
-      features: ['24/7 Security', 'Lost & Found', 'Emergency Response', 'Crowd Management']
-    },
-    'toilet': {
-      title: 'Public Toilets',
-      icon: '🚻',
-      description: 'Clean and well-maintained restroom facilities.',
-      contact: 'Maintenance: +91-9876543212',
-      location: 'Multiple locations throughout the mela',
-      features: ['Clean Facilities', 'Regular Maintenance', 'Accessibility Features', 'Hand Washing']
-    },
-    'parking': {
-      title: 'Parking Areas',
-      icon: '🅿️',
-      description: 'Designated parking spaces for vehicles of all types.',
-      contact: 'Parking Help: +91-9876543213',
-      location: 'Multiple parking zones',
-      features: ['Two Wheeler Parking', 'Four Wheeler Parking', 'Bus Parking', 'Security Available']
-    },
-    'health-centre': {
-      title: 'Health Centre',
-      icon: '🏥',
-      description: 'Medical facility providing basic healthcare services.',
-      contact: '+91-9876543214',
-      location: 'Near Information Center',
-      features: ['First Aid', 'Basic Treatment', 'Medicine Availability', 'Qualified Doctors']
+  const facilityConfig = {
+    'paid-hotels': {
+      title: 'Paid Hotels',
+      icon: '🏨',
+      description: 'Comfortable accommodation options near the mela grounds'
     },
     'atm': {
-      title: 'ATM Services',
+      title: t('atm'),
       icon: '🏧',
-      description: 'Banking and cash withdrawal facilities.',
-      contact: 'Bank Support: 1800-xxx-xxxx',
-      location: 'Near Main Market Area',
-      features: ['24/7 Cash Withdrawal', 'Multiple Bank ATMs', 'Balance Inquiry', 'Mini Statements']
+      description: 'ATM and banking facilities for your convenience'
     },
-    'fire-brigade': {
-      title: 'Fire Brigade',
-      icon: '🚒',
-      description: 'Fire safety and emergency response services.',
-      contact: '+91-9876543215',
-      location: 'Emergency Services Area',
-      features: ['Fire Safety', 'Emergency Response', 'Rescue Operations', 'Safety Equipment']
+    'parking': {
+      title: t('parking'),
+      icon: '🅿️',
+      description: 'Secure parking facilities for vehicles'
     },
-    'gallery': {
-      title: 'Photo Gallery',
-      icon: '🖼️',
-      description: 'View beautiful moments captured during the mela.',
-      contact: 'Gallery Admin: +91-9876543216',
-      location: 'Information Center',
-      features: ['Daily Photos', 'Event Highlights', 'Download Options', 'Contest Entries']
+    'bhandara': {
+      title: 'Bhandara',
+      icon: '🍽️',
+      description: 'Free food service and community kitchen'
+    },
+    'drinking-water': {
+      title: t('drinking_water'),
+      icon: '🚰',
+      description: 'Clean drinking water stations'
+    },
+    'toilet': {
+      title: t('toilet'),
+      icon: '🚻',
+      description: 'Public toilet facilities'
+    },
+    'bathroom': {
+      title: t('bathroom'),
+      icon: '🛁',
+      description: 'Bathroom and washing facilities'
+    },
+    'rest-room': {
+      title: t('rest_room'),
+      icon: '🛏️',
+      description: 'Rest areas and relaxation spaces'
+    },
+    'dharamshala': {
+      title: t('dharamshala'),
+      icon: '🏛️',
+      description: 'Traditional accommodation facilities'
+    },
+    'shivir': {
+      title: t('shivir'),
+      icon: '🏕️',
+      description: 'Camp and temporary stay arrangements'
+    },
+    'health-centre': {
+      title: t('health_centre'),
+      icon: '🏥',
+      description: 'Medical facilities and health services'
+    },
+    'mela-route': {
+      title: t('mela_route'),
+      icon: '🗺️',
+      description: 'Route information and directions to the mela'
     }
   };
 
-  const facility = facilityData[type as keyof typeof facilityData] || {
-    title: 'Facility Information',
-    icon: '📍',
-    description: 'Detailed information about this facility.',
-    contact: 'Contact information not available',
-    location: 'Location details',
-    features: ['Service 1', 'Service 2', 'Service 3', 'Service 4']
+  useEffect(() => {
+    if (type) {
+      fetchFacilities();
+    }
+  }, [type]);
+
+  const fetchFacilities = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('facilities')
+        .select('*')
+        .eq('facility_type', type)
+        .eq('is_active', true)
+        .order('name');
+
+      if (error) {
+        console.error('Error fetching facilities:', error);
+        return;
+      }
+
+      setFacilities(data || []);
+    } catch (error) {
+      console.error('Error fetching facilities:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleMapClick = (mapsLink: string) => {
+    if (mapsLink) {
+      window.open(mapsLink, '_blank');
+    }
+  };
+
+  const handleCallClick = (phoneNumber: string) => {
+    if (phoneNumber) {
+      window.open(`tel:${phoneNumber}`, '_self');
+    }
+  };
+
+  const config = facilityConfig[type as keyof typeof facilityConfig];
+
+  if (!config) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">Facility Not Found</h2>
+          <Button onClick={() => navigate('/')} variant="outline">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Go Back
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -88,68 +150,84 @@ const FacilityDetail = () => {
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
         <div className="flex items-center space-x-3">
           <button onClick={() => navigate('/')} className="text-white">
-            ← 
+            <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-semibold">{facility.title}</h1>
+          <div className="flex items-center space-x-2">
+            <span className="text-2xl">{config.icon}</span>
+            <h1 className="text-lg font-semibold">{config.title}</h1>
+          </div>
         </div>
       </div>
 
       <div className="px-4 py-6">
-        {/* Facility Header */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-4 card-gradient rounded-2xl flex items-center justify-center">
-              <span className="text-3xl">{facility.icon}</span>
-            </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">{facility.title}</h2>
-            <p className="text-gray-600">{facility.description}</p>
-          </div>
+        <div className="mb-6">
+          <p className="text-gray-600 text-sm">{config.description}</p>
         </div>
 
-        {/* Contact Information */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Contact Information</h3>
-          <div className="space-y-3">
-            <div className="flex items-center space-x-3">
-              <span className="text-lg">📞</span>
-              <div>
-                <p className="text-sm text-gray-500">Phone</p>
-                <p className="font-medium text-gray-800">{facility.contact}</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <span className="text-lg">📍</span>
-              <div>
-                <p className="text-sm text-gray-500">Location</p>
-                <p className="font-medium text-gray-800">{facility.location}</p>
-              </div>
-            </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="text-gray-500">Loading facilities...</div>
           </div>
-        </div>
-
-        {/* Features */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Available Services</h3>
-          <div className="grid grid-cols-2 gap-3">
-            {facility.features.map((feature, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm text-gray-700">{feature}</span>
-              </div>
+        ) : facilities.length > 0 ? (
+          <div className="space-y-4">
+            {facilities.map((facility) => (
+              <Card key={facility.id} className="shadow-sm border border-gray-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg font-semibold text-gray-800">
+                    {facility.name}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {facility.location_name && (
+                    <div className="flex items-center text-gray-600">
+                      <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                      <span className="text-sm">{facility.location_name}</span>
+                    </div>
+                  )}
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {facility.contact_number && (
+                      <Button 
+                        onClick={() => handleCallClick(facility.contact_number)}
+                        size="sm"
+                        className="bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <Phone className="w-4 h-4 mr-2" />
+                        Call
+                      </Button>
+                    )}
+                    
+                    {facility.google_maps_link && (
+                      <Button 
+                        onClick={() => handleMapClick(facility.google_maps_link)}
+                        size="sm"
+                        variant="outline"
+                        className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Navigate
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </div>
-
-        {/* Map Placeholder */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Location Map</h3>
-          <div className="bg-gray-100 rounded-lg h-48 flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <span className="text-4xl mb-2 block">🗺️</span>
-              <p className="text-sm">Interactive map coming soon</p>
+        ) : (
+          <div className="text-center py-8">
+            <div className="text-gray-500 mb-4">
+              <span className="text-4xl">{config.icon}</span>
             </div>
+            <h3 className="text-lg font-medium text-gray-800 mb-2">No facilities available</h3>
+            <p className="text-gray-600 text-sm mb-4">
+              Currently there are no {config.title.toLowerCase()} facilities listed.
+            </p>
+            <Button onClick={() => navigate('/')} variant="outline">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Go Back
+            </Button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
