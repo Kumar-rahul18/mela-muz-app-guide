@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 interface QuizQuestion {
   id: number;
   question: string;
+  questionHi: string;
   options: string[];
+  optionsHi: string[];
   correct: number;
 }
 
@@ -24,90 +25,140 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
   {
     id: 1,
     question: "What is the significance of Baba Garibnath Dham?",
+    questionHi: "बाबा गरीबनाथ धाम का क्या महत्व है?",
     options: [
       "It is a modern temple built in the 21st century",
       "It is a sacred place dedicated to Lord Shiva",
       "It is primarily a tourist destination",
       "It is a government heritage site"
     ],
+    optionsHi: [
+      "यह 21वीं सदी में बना एक आधुनिक मंदिर है",
+      "यह भगवान शिव को समर्पित एक पवित्र स्थान है",
+      "यह मुख्यतः एक पर्यटन स्थल है",
+      "यह एक सरकारी विरासत स्थल है"
+    ],
     correct: 1
   },
   {
     id: 2,
     question: "During which Hindu month is Shravani Mela primarily celebrated?",
+    questionHi: "श्रावणी मेला मुख्यतः किस हिंदू महीने में मनाया जाता है?",
     options: ["Kartik", "Chaitra", "Shravan (Sawan)", "Bhadrapada"],
+    optionsHi: ["कार्तिक", "चैत्र", "श्रावण (सावन)", "भाद्रपद"],
     correct: 2
   },
   {
     id: 3,
     question: "What do devotees typically carry during the Shravani Mela pilgrimage?",
+    questionHi: "श्रावणी मेला तीर्थयात्रा के दौरान भक्त आमतौर पर क्या लेकर जाते हैं?",
     options: [
       "Holy water (Ganga Jal) in decorated pots (Kanwar)",
       "Prasad offerings",
       "Religious books",
       "Flowers and fruits"
     ],
+    optionsHi: [
+      "सजे हुए बर्तनों (कांवर) में पवित्र जल (गंगा जल)",
+      "प्रसाद की भेंट",
+      "धार्मिक पुस्तकें",
+      "फूल और फल"
+    ],
     correct: 0
   },
   {
     id: 4,
     question: "Baba Garibnath is considered to be which form of Lord Shiva?",
+    questionHi: "बाबा गरीबनाथ को भगवान शिव के किस रूप का माना जाता है?",
     options: [
       "Nataraja",
       "Rudra",
       "A compassionate form who helps the poor and needy",
       "Mahakaal"
     ],
+    optionsHi: [
+      "नटराज",
+      "रुद्र",
+      "एक दयालु रूप जो गरीबों और जरूरतमंदों की मदद करता है",
+      "महाकाल"
+    ],
     correct: 2
   },
   {
     id: 5,
     question: "What is the main ritual performed by Kanwariyas during Shravani Mela?",
+    questionHi: "श्रावणी मेला के दौरान कांवरियों द्वारा किया जाने वाला मुख्य अनुष्ठान क्या है?",
     options: [
       "Offering flowers to the deity",
       "Carrying holy water from the Ganges to offer to Lord Shiva",
       "Performing classical dances",
       "Reciting religious texts"
     ],
+    optionsHi: [
+      "देवता को फूल चढ़ाना",
+      "गंगा से पवित्र जल लाकर भगवान शिव को चढ़ाना",
+      "शास्त्रीय नृत्य करना",
+      "धार्मिक ग्रंथों का पाठ करना"
+    ],
     correct: 1
   },
   {
     id: 6,
     question: "How long does the Shravani Mela typically last?",
+    questionHi: "श्रावणी मेला आमतौर पर कितने समय तक चलता है?",
     options: ["One day", "One week", "The entire month of Shravan", "15 days"],
+    optionsHi: ["एक दिन", "एक सप्ताह", "पूरा श्रावण महीना", "15 दिन"],
     correct: 2
   },
   {
     id: 7,
     question: "What color of clothing do most Kanwariyas wear during the pilgrimage?",
+    questionHi: "तीर्थयात्रा के दौरान अधिकांश कांवरिया किस रंग के कपड़े पहनते हैं?",
     options: ["White", "Red", "Saffron/Orange", "Yellow"],
+    optionsHi: ["सफेद", "लाल", "केसरिया/नारंगी", "पीला"],
     correct: 2
   },
   {
     id: 8,
     question: "What is the literal meaning of \"Garibnath\"?",
+    questionHi: "\"गरीबनाथ\" का शाब्दिक अर्थ क्या है?",
     options: [
       "Lord of the Mountains",
       "Lord of the Poor/Needy",
       "Lord of Knowledge",
       "Lord of Wealth"
     ],
+    optionsHi: [
+      "पर्वतों के स्वामी",
+      "गरीबों/जरूरतमंदों के स्वामी",
+      "ज्ञान के स्वामी",
+      "धन के स्वामी"
+    ],
     correct: 1
   },
   {
     id: 9,
     question: "Which river's water is considered most sacred for the Shravani Mela rituals?",
+    questionHi: "श्रावणी मेला अनुष्ठानों के लिए किस नदी का पानी सबसे पवित्र माना जाता है?",
     options: ["Yamuna", "Saraswati", "Narmada", "Ganga (Ganges)"],
+    optionsHi: ["यमुना", "सरस्वती", "नर्मदा", "गंगा"],
     correct: 3
   },
   {
     id: 10,
     question: "What is the primary purpose of the Shravani Mela pilgrimage?",
+    questionHi: "श्रावणी मेला तीर्थयात्रा का मुख्य उद्देश्य क्या है?",
     options: [
       "Social gathering and entertainment",
       "Seeking blessings, purification, and fulfilling religious vows",
       "Cultural preservation",
       "Economic activities"
+    ],
+    optionsHi: [
+      "सामाजिक मेल-जोल और मनोरंजन",
+      "आशीर्वाद पाना, शुद्धीकरण, और धार्मिक मन्नतें पूरी करना",
+      "सांस्कृतिक संरक्षण",
+      "आर्थिक गतिविधियां"
     ],
     correct: 1
   }
@@ -115,7 +166,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
 
 const MelaQuiz = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [currentStep, setCurrentStep] = useState<'register' | 'quiz' | 'result' | 'leaderboard'>('register');
   const [userInfo, setUserInfo] = useState({ name: '', phone: '' });
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -157,18 +208,18 @@ const MelaQuiz = () => {
   const handleRegister = () => {
     console.log('Register button clicked', userInfo);
     if (!userInfo.name.trim()) {
-      setError('Please enter your name');
+      setError(language === 'hi' ? 'कृपया अपना नाम दर्ज करें' : 'Please enter your name');
       return;
     }
     if (!validatePhone(userInfo.phone)) {
-      setError('Please enter a valid 10-digit phone number');
+      setError(language === 'hi' ? 'कृपया एक वैध 10 अंकों का फोन नंबर दर्ज करें' : 'Please enter a valid 10-digit phone number');
       return;
     }
 
     // Check if phone number already attempted
     const existingAttempt = attempts.find(attempt => attempt.phone === userInfo.phone);
     if (existingAttempt) {
-      setError('This phone number has already attempted the quiz');
+      setError(language === 'hi' ? 'इस फोन नंबर से पहले ही प्रश्नोत्तरी का प्रयास किया जा चुका है' : 'This phone number has already attempted the quiz');
       return;
     }
 
@@ -282,69 +333,75 @@ const MelaQuiz = () => {
     </Card>
   );
 
-  const renderQuiz = () => (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <div className="flex justify-between items-center">
-          <CardTitle className="text-lg font-bold">
-            {t('question_of').replace('{current}', (currentQuestion + 1).toString()).replace('{total}', QUIZ_QUESTIONS.length.toString())}
-          </CardTitle>
-          <div className="flex items-center space-x-2 text-orange-600 font-bold">
-            <Timer size={20} />
-            <span>{formatTime(timeLeft)}</span>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div className="bg-gray-50 p-4 rounded-md">
-          <h3 className="text-lg font-medium mb-4">
-            {QUIZ_QUESTIONS[currentQuestion].question}
-          </h3>
-          <div className="space-y-2">
-            {QUIZ_QUESTIONS[currentQuestion].options.map((option, index) => (
-              <button
-                key={index}
-                onClick={() => handleAnswerSelect(index)}
-                className={`w-full p-3 text-left rounded-md border transition-colors ${
-                  answers[currentQuestion] === index
-                    ? 'bg-orange-100 border-orange-500 text-orange-700'
-                    : 'bg-white border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                {String.fromCharCode(65 + index)}. {option}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="flex justify-between items-center">
-          <Button
-            variant="outline"
-            onClick={handlePreviousQuestion}
-            disabled={currentQuestion === 0}
-          >
-            {t('previous')}
-          </Button>
-          
-          <Button
-            variant="outline"
-            onClick={handleSkipQuestion}
-            className="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
-          >
-            <SkipForward size={16} />
-            <span>{t('skip_question')}</span>
-          </Button>
+  const renderQuiz = () => {
+    const currentQuizQuestion = QUIZ_QUESTIONS[currentQuestion];
+    const questionText = language === 'hi' ? currentQuizQuestion.questionHi : currentQuizQuestion.question;
+    const optionsArray = language === 'hi' ? currentQuizQuestion.optionsHi : currentQuizQuestion.options;
 
-          <Button
-            onClick={handleNextQuestion}
-            disabled={answers[currentQuestion] === undefined}
-            className="bg-orange-500 hover:bg-orange-600"
-          >
-            {currentQuestion === QUIZ_QUESTIONS.length - 1 ? t('submit_quiz') : t('next_question')}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  );
+    return (
+      <Card className="w-full max-w-2xl mx-auto">
+        <CardHeader>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-lg font-bold">
+              {t('question_of').replace('{current}', (currentQuestion + 1).toString()).replace('{total}', QUIZ_QUESTIONS.length.toString())}
+            </CardTitle>
+            <div className="flex items-center space-x-2 text-orange-600 font-bold">
+              <Timer size={20} />
+              <span>{formatTime(timeLeft)}</span>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-gray-50 p-4 rounded-md">
+            <h3 className="text-lg font-medium mb-4">
+              {questionText}
+            </h3>
+            <div className="space-y-2">
+              {optionsArray.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleAnswerSelect(index)}
+                  className={`w-full p-3 text-left rounded-md border transition-colors ${
+                    answers[currentQuestion] === index
+                      ? 'bg-orange-100 border-orange-500 text-orange-700'
+                      : 'bg-white border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  {String.fromCharCode(65 + index)}. {option}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="flex justify-between items-center">
+            <Button
+              variant="outline"
+              onClick={handlePreviousQuestion}
+              disabled={currentQuestion === 0}
+            >
+              {t('previous')}
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={handleSkipQuestion}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
+            >
+              <SkipForward size={16} />
+              <span>{t('skip_question')}</span>
+            </Button>
+
+            <Button
+              onClick={handleNextQuestion}
+              disabled={answers[currentQuestion] === undefined}
+              className="bg-orange-500 hover:bg-orange-600"
+            >
+              {currentQuestion === QUIZ_QUESTIONS.length - 1 ? t('submit_quiz') : t('next_question')}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderResult = () => (
     <Card className="w-full max-w-md mx-auto">
@@ -414,7 +471,7 @@ const MelaQuiz = () => {
                 <div>
                   <div className="font-medium">{attempt.name}</div>
                   <div className="text-sm text-gray-500">
-                    {new Date(attempt.timestamp).toLocaleDateString()}
+                    {new Date(attempt.timestamp).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN')}
                   </div>
                 </div>
               </div>
