@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Search, User, Phone, Car, Camera, CheckCircle } from "lucide-react";
+import { Search, User, Phone, Car, Camera, CheckCircle, MapPin } from "lucide-react";
 import VehicleUnparkDialog from "@/components/VehicleUnparkDialog";
 
 interface Vehicle {
@@ -16,6 +16,7 @@ interface Vehicle {
   phone_number: string;
   vehicle_photo_url: string;
   parking_status: string;
+  parking_location: string;
   created_at: string;
 }
 
@@ -24,6 +25,17 @@ const VehicleSearch = () => {
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState(false);
   const [showUnparkDialog, setShowUnparkDialog] = useState(false);
+
+  const getParkingLocationLabel = (location: string) => {
+    const parkingMap: { [key: string]: string } = {
+      'parking-1': 'Parking 1',
+      'parking-2': 'Parking 2',
+      'parking-3': 'Parking 3',
+      'parking-4': 'Parking 4',
+      'parking-5': 'Parking 5',
+    };
+    return parkingMap[location] || location;
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +143,16 @@ const VehicleSearch = () => {
                   <div>
                     <p className="text-sm text-gray-600">Phone Number</p>
                     <p className="font-semibold">{vehicle.phone_number}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className="bg-yellow-100 p-2 rounded">
+                    <MapPin className="h-4 w-4 text-yellow-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-600">Parking Location</p>
+                    <p className="font-semibold">{getParkingLocationLabel(vehicle.parking_location)}</p>
                   </div>
                 </div>
 

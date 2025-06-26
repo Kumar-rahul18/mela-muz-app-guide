@@ -15,6 +15,7 @@ interface Vehicle {
   phone_number: string;
   vehicle_photo_url: string;
   parking_status: string;
+  parking_location: string;
 }
 
 interface VehicleUnparkDialogProps {
@@ -31,22 +32,33 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
   onSuccess
 }) => {
   const [unparkerPhone, setUnparkerPhone] = useState('');
-  const [unparkerPhoto, setUnparkerPhoto] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [unparkerPhoto1, setUnparkerPhoto1] = useState<File | null>(null);
+  const [unparkerPhoto2, setUnparkerPhoto2] = useState<File | null>(null);
+  const [photoPreview1, setPhotoPreview1] = useState<string | null>(null);
+  const [photoPreview2, setPhotoPreview2] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handlePhotoSelected = (file: File) => {
-    setUnparkerPhoto(file);
+  const handlePhoto1Selected = (file: File) => {
+    setUnparkerPhoto1(file);
     const reader = new FileReader();
     reader.onload = (e) => {
-      setPhotoPreview(e.target?.result as string);
+      setPhotoPreview1(e.target?.result as string);
     };
     reader.readAsDataURL(file);
   };
 
-  const uploadPhoto = async (file: File) => {
+  const handlePhoto2Selected = (file: File) => {
+    setUnparkerPhoto2(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhotoPreview2(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const uploadPhoto = async (file: File, suffix: string = '') => {
     const fileExt = file.name.split('.').pop();
-    const fileName = `unparker-${vehicle.vehicle_id}-${Date.now()}.${fileExt}`;
+    const fileName = `unparker-${vehicle.vehicle_id}-${Date.now()}${suffix}.${fileExt}`;
     
     const { data, error } = await supabase.storage
       .from('vehicle-photos')
@@ -69,8 +81,8 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!unparkerPhone || !unparkerPhoto) {
-      toast.error('Please provide phone number and photo');
+    if (!unparkerPhone || !unparkerPhoto1) {
+      toast.error('Please provide phone number and at least the first photo');
       return;
     }
 
@@ -82,17 +94,29 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
     setLoading(true);
 
     try {
-      // Upload unparker photo
-      const photoUrl = await uploadPhoto(unparkerPhoto);
+      // Upload first photo (required)
+      const photoUrl1 = await uploadPhoto(unparkerPhoto1, '-1');
+      
+      // Upload second photo if provided
+      let photoUrl2 = null;
+      if (unparkerPhoto2) {
+        photoUrl2 = await uploadPhoto(unparkerPhoto2, '-2');
+      }
 
       // Create unparking record
+      const unparkingData: any = {
+        vehicle_registration_id: vehicle.id,
+        unparker_phone: unparkerPhone,
+        unparker_photo_url: photoUrl1,
+      };
+
+      if (photoUrl2) {
+        unparkingData.unparker_photo_url_2 = photoUrl2;
+      }
+
       const { error: unparkError } = await supabase
         .from('vehicle_unparking_records')
-        .insert({
-          vehicle_registration_id: vehicle.id,
-          unparker_phone: unparkerPhone,
-          unparker_photo_url: photoUrl,
-        });
+        .insert(unparkingData);
 
       if (unparkError) {
         throw unparkError;
@@ -125,8 +149,10 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
 
   const handleClose = () => {
     setUnparkerPhone('');
-    setUnparkerPhoto(null);
-    setPhotoPreview(null);
+    setUnparkerPhoto1(null);
+    setUnparkerPhoto2(null);
+    setPhotoPreview1(null);
+    setPhotoPreview2(null);
     onClose();
   };
 
@@ -155,10 +181,17 @@ const VehicleUnparkDialog: React.FC<VehicleUnparkDialogProps> = ({
           </div>
 
           <CameraUpload
-            label="Photo of Person Taking Vehicle"
-            onPhotoSelected={handlePhotoSelected}
-            preview={photoPreview}
+            label="Photo of Person Taking Vehicle (Required) *"
+            onPhotoSelected={handlePhoto1Selected}
+            preview={photoPreview1}
             required
+          />
+
+          <CameraUpload
+            label="Additional Photo (Optional)"
+            onPhotoSelected={handlePhoto2Selected}
+            preview={photoPreview2}
+            required={false}
           />
 
           <DialogFooter className="flex gap-2">

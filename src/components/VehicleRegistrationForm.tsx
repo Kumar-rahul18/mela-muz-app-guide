@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -13,11 +14,20 @@ const VehicleRegistrationForm = () => {
   const [formData, setFormData] = useState({
     owner_name: '',
     phone_number: '',
+    parking_location: '',
   });
   const [vehiclePhoto, setVehiclePhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [registeredVehicle, setRegisteredVehicle] = useState<string | null>(null);
+
+  const parkingOptions = [
+    { value: 'parking-1', label: 'Parking 1' },
+    { value: 'parking-2', label: 'Parking 2' },
+    { value: 'parking-3', label: 'Parking 3' },
+    { value: 'parking-4', label: 'Parking 4' },
+    { value: 'parking-5', label: 'Parking 5' },
+  ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -25,6 +35,14 @@ const VehicleRegistrationForm = () => {
     setFormData(prev => ({
       ...prev,
       [name]: value
+    }));
+  };
+
+  const handleParkingLocationChange = (value: string) => {
+    console.log('Parking location changed:', value);
+    setFormData(prev => ({
+      ...prev,
+      parking_location: value
     }));
   };
 
@@ -75,9 +93,9 @@ const VehicleRegistrationForm = () => {
     e.preventDefault();
     console.log('Form submitted with data:', formData, 'Photo:', vehiclePhoto);
     
-    if (!formData.owner_name || !formData.phone_number || !vehiclePhoto) {
+    if (!formData.owner_name || !formData.phone_number || !formData.parking_location || !vehiclePhoto) {
       console.log('Validation failed - missing fields');
-      toast.error('Please fill all fields and upload a vehicle photo');
+      toast.error('Please fill all fields, select parking location, and upload a vehicle photo');
       return;
     }
 
@@ -121,6 +139,7 @@ const VehicleRegistrationForm = () => {
           vehicle_id: vehicleId,
           owner_name: formData.owner_name,
           phone_number: formData.phone_number,
+          parking_location: formData.parking_location,
           vehicle_photo_url: photoUrl,
           parking_status: 'parked'
         })
@@ -136,7 +155,7 @@ const VehicleRegistrationForm = () => {
       toast.success(`Vehicle registered successfully! ID: ${vehicleId}`);
       
       // Reset form
-      setFormData({ owner_name: '', phone_number: '' });
+      setFormData({ owner_name: '', phone_number: '', parking_location: '' });
       setVehiclePhoto(null);
       setPhotoPreview(null);
 
@@ -151,7 +170,7 @@ const VehicleRegistrationForm = () => {
   const resetForm = () => {
     console.log('Resetting form...');
     setRegisteredVehicle(null);
-    setFormData({ owner_name: '', phone_number: '' });
+    setFormData({ owner_name: '', phone_number: '', parking_location: '' });
     setVehiclePhoto(null);
     setPhotoPreview(null);
   };
@@ -203,6 +222,22 @@ const VehicleRegistrationForm = () => {
             maxLength={10}
             required
           />
+        </div>
+
+        <div>
+          <Label htmlFor="parking_location">Parking Location *</Label>
+          <Select value={formData.parking_location} onValueChange={handleParkingLocationChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select parking location" />
+            </SelectTrigger>
+            <SelectContent>
+              {parkingOptions.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <CameraUpload

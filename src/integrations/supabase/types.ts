@@ -452,6 +452,7 @@ export type Database = {
           created_at: string
           id: string
           owner_name: string
+          parking_location: string
           parking_status: string
           phone_number: string
           registered_by: string | null
@@ -463,6 +464,7 @@ export type Database = {
           created_at?: string
           id?: string
           owner_name: string
+          parking_location: string
           parking_status?: string
           phone_number: string
           registered_by?: string | null
@@ -474,6 +476,7 @@ export type Database = {
           created_at?: string
           id?: string
           owner_name?: string
+          parking_location?: string
           parking_status?: string
           phone_number?: string
           registered_by?: string | null
@@ -490,6 +493,7 @@ export type Database = {
           unparked_by: string | null
           unparker_phone: string
           unparker_photo_url: string
+          unparker_photo_url_2: string | null
           vehicle_registration_id: string | null
         }
         Insert: {
@@ -498,6 +502,7 @@ export type Database = {
           unparked_by?: string | null
           unparker_phone: string
           unparker_photo_url: string
+          unparker_photo_url_2?: string | null
           vehicle_registration_id?: string | null
         }
         Update: {
@@ -506,6 +511,7 @@ export type Database = {
           unparked_by?: string | null
           unparker_phone?: string
           unparker_photo_url?: string
+          unparker_photo_url_2?: string | null
           vehicle_registration_id?: string | null
         }
         Relationships: [
