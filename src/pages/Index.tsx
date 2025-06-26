@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import LiveSection from '@/components/LiveSection';
@@ -15,10 +14,22 @@ const Index = () => {
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
   const [contestPhotos, setContestPhotos] = useState<any[]>([]);
   const [showContacts, setShowContacts] = useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
 
   useEffect(() => {
     fetchApprovedContestPhotos();
   }, []);
+
+  // Auto-slide effect for pictures
+  useEffect(() => {
+    if (contestPhotos.length > 0) {
+      const interval = setInterval(() => {
+        setCurrentPhotoIndex((prev) => (prev + 1) % contestPhotos.length);
+      }, 3000); // Change picture every 3 seconds
+
+      return () => clearInterval(interval);
+    }
+  }, [contestPhotos.length]);
 
   const fetchApprovedContestPhotos = async () => {
     try {
@@ -29,11 +40,11 @@ const Index = () => {
         .select('id, image_url, name, created_at')
         .eq('is_approved', true)  // Only fetch approved photos
         .order('created_at', { ascending: false })
-        .limit(2);
+        .limit(5); // Limit to 5 photos for the carousel
 
       if (error) {
         console.error('Error fetching approved contest photos for Index:', error);
-        // Set fallback images if there's an error
+        // Set 5 fallback images if there's an error
         setContestPhotos([
           {
             id: 1,
@@ -44,6 +55,21 @@ const Index = () => {
             id: 2,
             image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
             title: "Temple View",
+          },
+          {
+            id: 3,
+            image_url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Evening Aarti",
+          },
+          {
+            id: 4,
+            image_url: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Cultural Dance",
+          },
+          {
+            id: 5,
+            image_url: "https://images.unsplash.com/photo-1566495757213-570fdc4b71b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Festival Crowd",
           }
         ]);
         return;
@@ -59,7 +85,7 @@ const Index = () => {
         })));
       } else {
         console.log('No approved contest photos found, using fallback images');
-        // Set fallback images if no approved data
+        // Set 5 fallback images if no approved data
         setContestPhotos([
           {
             id: 1,
@@ -70,12 +96,27 @@ const Index = () => {
             id: 2,
             image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
             title: "Temple View",
+          },
+          {
+            id: 3,
+            image_url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Evening Aarti",
+          },
+          {
+            id: 4,
+            image_url: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Cultural Dance",
+          },
+          {
+            id: 5,
+            image_url: "https://images.unsplash.com/photo-1566495757213-570fdc4b71b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+            title: "Festival Crowd",
           }
         ]);
       }
     } catch (error) {
       console.error('Unexpected error fetching approved contest photos for Index:', error);
-      // Set fallback images on unexpected error
+      // Set 5 fallback images on unexpected error
       setContestPhotos([
         {
           id: 1,
@@ -86,6 +127,21 @@ const Index = () => {
           id: 2,
           image_url: "https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
           title: "Temple View",
+        },
+        {
+          id: 3,
+          image_url: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          title: "Evening Aarti",
+        },
+        {
+          id: 4,
+          image_url: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          title: "Cultural Dance",
+        },
+        {
+          id: 5,
+          image_url: "https://images.unsplash.com/photo-1566495757213-570fdc4b71b0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+          title: "Festival Crowd",
         }
       ]);
     }
@@ -165,28 +221,43 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Photo Gallery from Contest - Only Approved Photos */}
+        {/* Pic of the Day - Single Sliding Image */}
         <div className="animate-fade-in">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('pic_of_day')}</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {contestPhotos.slice(0, 2).map((photo) => (
-              <div key={photo.id} className="relative rounded-2xl overflow-hidden shadow-sm">
-                <img 
-                  src={photo.image_url} 
-                  alt={photo.title}
-                  className="w-full h-32 object-cover"
-                  onError={(e) => {
-                    console.error('Image failed to load:', photo.image_url);
-                    const target = e.target as HTMLImageElement;
-                    target.src = "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-                  }}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                <div className="absolute bottom-2 left-2 right-2">
-                  <p className="text-white text-xs font-medium">{photo.title}</p>
+          <div className="relative rounded-2xl overflow-hidden shadow-lg">
+            {contestPhotos.length > 0 && (
+              <>
+                <div className="relative h-48 w-full">
+                  <img 
+                    src={contestPhotos[currentPhotoIndex]?.image_url} 
+                    alt={contestPhotos[currentPhotoIndex]?.title}
+                    className="w-full h-full object-cover transition-opacity duration-500"
+                    onError={(e) => {
+                      console.error('Image failed to load:', contestPhotos[currentPhotoIndex]?.image_url);
+                      const target = e.target as HTMLImageElement;
+                      target.src = "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <p className="text-white text-sm font-medium">{contestPhotos[currentPhotoIndex]?.title}</p>
+                  </div>
                 </div>
-              </div>
-            ))}
+                
+                {/* Dots Indicator */}
+                <div className="absolute bottom-2 right-4 flex space-x-1">
+                  {contestPhotos.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentPhotoIndex(index)}
+                      className={`w-2 h-2 rounded-full transition-colors ${
+                        index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
 
