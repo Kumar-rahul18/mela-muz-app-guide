@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Timer } from 'lucide-react';
+import { Timer, SkipForward } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface QuizQuestion {
   id: number;
@@ -114,6 +115,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
 
 const MelaQuiz = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState<'register' | 'quiz' | 'result' | 'leaderboard'>('register');
   const [userInfo, setUserInfo] = useState({ name: '', phone: '' });
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -181,6 +183,14 @@ const MelaQuiz = () => {
     setAnswers(newAnswers);
   };
 
+  const handleSkipQuestion = () => {
+    if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
+      setCurrentQuestion(currentQuestion + 1);
+    } else {
+      handleSubmitQuiz();
+    }
+  };
+
   const handleNextQuestion = () => {
     if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
@@ -228,28 +238,28 @@ const MelaQuiz = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold text-orange-600">
-          🧠 Mela Quiz Registration
+          🧠 {t('quiz_registration')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Full Name</label>
+          <label className="block text-sm font-medium mb-1">{t('full_name')}</label>
           <input
             type="text"
             value={userInfo.name}
             onChange={(e) => setUserInfo({...userInfo, name: e.target.value})}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            placeholder="Enter your full name"
+            placeholder={t('enter_name')}
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-1">Phone Number</label>
+          <label className="block text-sm font-medium mb-1">{t('phone_number')}</label>
           <input
             type="tel"
             value={userInfo.phone}
             onChange={(e) => setUserInfo({...userInfo, phone: e.target.value})}
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
-            placeholder="Enter 10-digit phone number"
+            placeholder={t('enter_phone')}
             maxLength={10}
           />
         </div>
@@ -257,16 +267,16 @@ const MelaQuiz = () => {
           <div className="text-red-500 text-sm">{error}</div>
         )}
         <div className="bg-yellow-50 p-3 rounded-md text-sm text-yellow-800">
-          <strong>Quiz Rules:</strong>
+          <strong>{t('quiz_rules')}</strong>
           <ul className="mt-1 space-y-1">
-            <li>• 10 questions about Baba Garibnath Dham & Shravani Mela</li>
-            <li>• 10 minutes time limit</li>
-            <li>• One attempt per phone number</li>
-            <li>• Questions will auto-submit when time expires</li>
+            <li>{t('quiz_rule_1')}</li>
+            <li>{t('quiz_rule_2')}</li>
+            <li>{t('quiz_rule_3')}</li>
+            <li>{t('quiz_rule_4')}</li>
           </ul>
         </div>
         <Button onClick={handleRegister} className="w-full bg-orange-500 hover:bg-orange-600">
-          Start Quiz
+          {t('start_quiz')}
         </Button>
       </CardContent>
     </Card>
@@ -277,7 +287,7 @@ const MelaQuiz = () => {
       <CardHeader>
         <div className="flex justify-between items-center">
           <CardTitle className="text-lg font-bold">
-            Question {currentQuestion + 1} of {QUIZ_QUESTIONS.length}
+            {t('question_of').replace('{current}', (currentQuestion + 1).toString()).replace('{total}', QUIZ_QUESTIONS.length.toString())}
           </CardTitle>
           <div className="flex items-center space-x-2 text-orange-600 font-bold">
             <Timer size={20} />
@@ -306,20 +316,30 @@ const MelaQuiz = () => {
             ))}
           </div>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center">
           <Button
             variant="outline"
             onClick={handlePreviousQuestion}
             disabled={currentQuestion === 0}
           >
-            Previous
+            {t('previous')}
           </Button>
+          
+          <Button
+            variant="outline"
+            onClick={handleSkipQuestion}
+            className="flex items-center space-x-2 text-gray-600 hover:text-gray-800"
+          >
+            <SkipForward size={16} />
+            <span>{t('skip_question')}</span>
+          </Button>
+
           <Button
             onClick={handleNextQuestion}
             disabled={answers[currentQuestion] === undefined}
             className="bg-orange-500 hover:bg-orange-600"
           >
-            {currentQuestion === QUIZ_QUESTIONS.length - 1 ? 'Submit Quiz' : 'Next Question'}
+            {currentQuestion === QUIZ_QUESTIONS.length - 1 ? t('submit_quiz') : t('next_question')}
           </Button>
         </div>
       </CardContent>
@@ -330,7 +350,7 @@ const MelaQuiz = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold text-green-600">
-          🎉 Quiz Completed!
+          🎉 {t('quiz_completed')}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center space-y-4">
@@ -338,13 +358,13 @@ const MelaQuiz = () => {
           <div className="text-3xl font-bold text-green-600 mb-2">
             {score}/{QUIZ_QUESTIONS.length}
           </div>
-          <div className="text-gray-600">Your Score</div>
+          <div className="text-gray-600">{t('your_score')}</div>
         </div>
         <div className="bg-blue-50 p-4 rounded-lg">
           <div className="text-2xl font-bold text-blue-600 mb-1">
-            Rank #{rank}
+            {t('rank')}{rank}
           </div>
-          <div className="text-gray-600">Your Position</div>
+          <div className="text-gray-600">{t('your_position')}</div>
         </div>
         <div className="space-y-2">
           <Button
@@ -352,13 +372,13 @@ const MelaQuiz = () => {
             variant="outline"
             className="w-full"
           >
-            View Leaderboard
+            {t('view_leaderboard')}
           </Button>
           <Button
             onClick={() => navigate('/')}
             className="w-full bg-orange-500 hover:bg-orange-600"
           >
-            Back to Home
+            {t('back_to_home')}
           </Button>
         </div>
       </CardContent>
@@ -369,7 +389,7 @@ const MelaQuiz = () => {
     <Card className="w-full max-w-2xl mx-auto">
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold text-purple-600">
-          🏆 Leaderboard
+          🏆 {t('leaderboard')}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -409,7 +429,7 @@ const MelaQuiz = () => {
             onClick={() => navigate('/')}
             className="bg-orange-500 hover:bg-orange-600"
           >
-            Back to Home
+            {t('back_to_home')}
           </Button>
         </div>
       </CardContent>
@@ -426,7 +446,7 @@ const MelaQuiz = () => {
           <button onClick={() => navigate('/')} className="text-white">
             ←
           </button>
-          <h1 className="text-lg font-semibold">Mela Quiz</h1>
+          <h1 className="text-lg font-semibold">{t('mela_quiz')}</h1>
         </div>
       </div>
 

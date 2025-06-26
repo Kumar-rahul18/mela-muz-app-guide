@@ -26,9 +26,8 @@ const LostFound = () => {
           </div>
           <Button
             onClick={() => setActiveView(activeView === 'form' ? 'display' : 'form')}
-            variant="outline"
             size="sm"
-            className="text-white border-white hover:bg-white hover:text-gray-900"
+            className="bg-white text-purple-600 hover:bg-gray-100 font-semibold px-4 py-2 shadow-md border-2 border-white"
           >
             {activeView === 'form' ? 'View Items' : 'Submit Item'}
           </Button>

@@ -79,7 +79,33 @@ const translations = {
     'moderate': 'Moderate',
     'poor': 'Poor',
     'very_poor': 'Very Poor',
-    'severe': 'Severe'
+    'severe': 'Severe',
+
+    // Quiz translations
+    'mela_quiz': 'Mela Quiz',
+    'quiz_registration': 'Mela Quiz Registration',
+    'full_name': 'Full Name',
+    'phone_number': 'Phone Number',
+    'enter_name': 'Enter your full name',
+    'enter_phone': 'Enter 10-digit phone number',
+    'quiz_rules': 'Quiz Rules:',
+    'quiz_rule_1': '• 10 questions about Baba Garibnath Dham & Shravani Mela',
+    'quiz_rule_2': '• 10 minutes time limit',
+    'quiz_rule_3': '• One attempt per phone number',
+    'quiz_rule_4': '• Questions will auto-submit when time expires',
+    'start_quiz': 'Start Quiz',
+    'question_of': 'Question {current} of {total}',
+    'previous': 'Previous',
+    'next_question': 'Next Question',
+    'submit_quiz': 'Submit Quiz',
+    'skip_question': 'Skip Question',
+    'quiz_completed': 'Quiz Completed!',
+    'your_score': 'Your Score',
+    'your_position': 'Your Position',
+    'rank': 'Rank #',
+    'view_leaderboard': 'View Leaderboard',
+    'back_to_home': 'Back to Home',
+    'leaderboard': 'Leaderboard'
   },
   hi: {
     // App title
@@ -150,7 +176,33 @@ const translations = {
     'moderate': 'मध्यम',
     'poor': 'खराब',
     'very_poor': 'बहुत खराब',
-    'severe': 'गंभीर'
+    'severe': 'गंभीर',
+
+    // Quiz translations
+    'mela_quiz': 'मेला प्रश्नोत्तरी',
+    'quiz_registration': 'मेला प्रश्नोत्तरी पंजीकरण',
+    'full_name': 'पूरा नाम',
+    'phone_number': 'फोन नंबर',
+    'enter_name': 'अपना पूरा नाम दर्ज करें',
+    'enter_phone': '10 अंकों का फोन नंबर दर्ज करें',
+    'quiz_rules': 'प्रश्नोत्तरी नियम:',
+    'quiz_rule_1': '• बाबा गरीबनाथ धाम और श्रावणी मेला के बारे में 10 प्रश्न',
+    'quiz_rule_2': '• 10 मिनट की समय सीमा',
+    'quiz_rule_3': '• प्रति फोन नंबर एक प्रयास',
+    'quiz_rule_4': '• समय समाप्त होने पर प्रश्न स्वचालित रूप से जमा हो जाएंगे',
+    'start_quiz': 'प्रश्नोत्तरी शुरू करें',
+    'question_of': 'प्रश्न {current} का {total}',
+    'previous': 'पिछला',
+    'next_question': 'अगला प्रश्न',
+    'submit_quiz': 'प्रश्नोत्तरी जमा करें',
+    'skip_question': 'प्रश्न छोड़ें',
+    'quiz_completed': 'प्रश्नोत्तरी पूरी हुई!',
+    'your_score': 'आपका स्कोर',
+    'your_position': 'आपकी स्थिति',
+    'rank': 'रैंक #',
+    'view_leaderboard': 'लीडरबोर्ड देखें',
+    'back_to_home': 'होम पर वापस',
+    'leaderboard': 'लीडरबोर्ड'
   }
 };
 
@@ -161,7 +213,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   const t = (key: string): string => {
-    return translations[language][key as keyof typeof translations['en']] || key;
+    // Handle template strings with placeholders
+    const template = translations[language][key as keyof typeof translations['en']] || key;
+    return template;
   };
 
   return (
