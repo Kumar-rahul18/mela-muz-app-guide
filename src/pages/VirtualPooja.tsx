@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -351,14 +350,15 @@ const VirtualPooja = () => {
                     {/* Circular path for diya */}
                     <div className="absolute inset-0 rounded-full border-2 border-yellow-400 opacity-30"></div>
                     
-                    {/* Moving diya */}
+                    {/* Moving diya with hand-like circular motion */}
                     <div 
-                      className="absolute w-8 h-8 flex items-center justify-center animate-spin-slow"
+                      className="absolute w-8 h-8 flex items-center justify-center"
                       style={{ 
                         top: '0px', 
                         left: '50%', 
                         transform: 'translateX(-50%)',
-                        transformOrigin: '50% 64px'
+                        transformOrigin: '50% 64px',
+                        animation: 'aarti-circular 3s ease-in-out infinite'
                       }}
                     >
                       <div className="text-3xl animate-pulse">🪔</div>
@@ -490,6 +490,13 @@ const VirtualPooja = () => {
         }
         .animate-spin-slow {
           animation: spin-slow 3s linear infinite;
+        }
+        @keyframes aarti-circular {
+          0% { transform: translateX(-50%) rotate(0deg) translateX(64px) rotate(0deg); }
+          25% { transform: translateX(-50%) rotate(90deg) translateX(64px) rotate(-90deg); }
+          50% { transform: translateX(-50%) rotate(180deg) translateX(64px) rotate(-180deg); }
+          75% { transform: translateX(-50%) rotate(270deg) translateX(64px) rotate(-270deg); }
+          100% { transform: translateX(-50%) rotate(360deg) translateX(64px) rotate(-360deg); }
         }
         `}
       </style>
