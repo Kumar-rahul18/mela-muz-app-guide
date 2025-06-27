@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,6 +21,7 @@ import Gallery from './pages/Gallery';
 import LostFound from './pages/LostFound';
 import MelaQuiz from './pages/MelaQuiz';
 import VirtualPooja from './pages/VirtualPooja';
+import CameraFilters from './pages/CameraFilters';
 
 const queryClient = new QueryClient();
 
@@ -45,6 +47,7 @@ const App = () => (
             <Route path="/lost-found" element={<LostFound />} />
             <Route path="/mela-quiz" element={<MelaQuiz />} />
             <Route path="/virtual-pooja" element={<VirtualPooja />} />
+            <Route path="/camera-filters" element={<CameraFilters />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
