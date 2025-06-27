@@ -40,7 +40,7 @@ const VirtualPooja = () => {
   useEffect(() => {
     // Start background music with reduced volume
     if (backgroundMusicRef.current && backgroundMusicEnabled) {
-      backgroundMusicRef.current.volume = 0.25; // Reduced from 0.3 to 0.25
+      backgroundMusicRef.current.volume = 0.48; // Reduced from 0.3 to 0.25
       backgroundMusicRef.current.play().catch(console.error);
     }
     
@@ -97,7 +97,7 @@ const VirtualPooja = () => {
         setActionMessage('');
         setIsActionActive(false);
       }, 3000);
-    }, 27000);
+    }, 29000);
   };
 
   const handleAartiKaren = () => {
@@ -252,7 +252,7 @@ const VirtualPooja = () => {
         <div className="mb-6">
           <div className="flex justify-center items-center space-x-2 mb-2">
             <span className="text-sm text-orange-800 font-medium">
-              चरण {currentStep + 1} / 4
+              चरण {currentStep } / 4
             </span>
           </div>
           <div className="w-full bg-orange-200 rounded-full h-2">
