@@ -77,7 +77,7 @@ const VirtualPooja = () => {
         setActionMessage('');
         setIsActionActive(false);
       }, 3000);
-    }, 15000);
+    }, 1000);
   };
 
   const handleMantraPadhen = () => {
