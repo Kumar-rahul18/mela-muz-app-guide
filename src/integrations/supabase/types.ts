@@ -384,6 +384,36 @@ export type Database = {
         }
         Relationships: []
       }
+      quiz_attempts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          phone: string
+          score: number
+          total_questions: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          phone: string
+          score: number
+          total_questions?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          phone?: string
+          score?: number
+          total_questions?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tax_records: {
         Row: {
           amount: number

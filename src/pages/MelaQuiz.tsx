@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Timer, SkipForward } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface QuizQuestion {
   id: number;
@@ -15,10 +17,12 @@ interface QuizQuestion {
 }
 
 interface QuizAttempt {
+  id?: string;
   name: string;
   phone: string;
   score: number;
-  timestamp: number;
+  total_questions: number;
+  created_at?: string;
 }
 
 const QUIZ_QUESTIONS: QuizQuestion[] = [
@@ -167,6 +171,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
 const MelaQuiz = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const queryClient = useQueryClient();
   const [currentStep, setCurrentStep] = useState<'register' | 'quiz' | 'result' | 'leaderboard'>('register');
   const [userInfo, setUserInfo] = useState({ name: '', phone: '' });
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -175,15 +180,66 @@ const MelaQuiz = () => {
   const [score, setScore] = useState(0);
   const [rank, setRank] = useState(0);
   const [error, setError] = useState('');
-  const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
+  const [existingAttempt, setExistingAttempt] = useState<QuizAttempt | null>(null);
+
+  // Fetch quiz attempts from database
+  const { data: attempts = [], isLoading } = useQuery({
+    queryKey: ['quiz-attempts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('quiz_attempts')
+        .select('*')
+        .order('score', { ascending: false })
+        .order('created_at', { ascending: true });
+      
+      if (error) {
+        console.error('Error fetching quiz attempts:', error);
+        throw error;
+      }
+      
+      return data as QuizAttempt[];
+    }
+  });
+
+  // Check if phone number already exists
+  const checkExistingAttempt = async (phone: string) => {
+    const { data, error } = await supabase
+      .from('quiz_attempts')
+      .select('*')
+      .eq('phone', phone)
+      .maybeSingle();
+    
+    if (error && error.code !== 'PGRST116') {
+      console.error('Error checking existing attempt:', error);
+      throw error;
+    }
+    
+    return data;
+  };
+
+  // Mutation to save quiz attempt
+  const saveAttemptMutation = useMutation({
+    mutationFn: async (attempt: Omit<QuizAttempt, 'id' | 'created_at'>) => {
+      const { data, error } = await supabase
+        .from('quiz_attempts')
+        .insert([attempt])
+        .select()
+        .single();
+      
+      if (error) {
+        console.error('Error saving quiz attempt:', error);
+        throw error;
+      }
+      
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['quiz-attempts'] });
+    }
+  });
 
   useEffect(() => {
     console.log('MelaQuiz component mounted');
-    // Load previous attempts from localStorage
-    const savedAttempts = localStorage.getItem('melaQuizAttempts');
-    if (savedAttempts) {
-      setAttempts(JSON.parse(savedAttempts));
-    }
   }, []);
 
   useEffect(() => {
@@ -205,7 +261,7 @@ const MelaQuiz = () => {
     return /^[6-9]\d{9}$/.test(phone);
   };
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     console.log('Register button clicked', userInfo);
     if (!userInfo.name.trim()) {
       setError(language === 'hi' ? 'कृपया अपना नाम दर्ज करें' : 'Please enter your name');
@@ -216,16 +272,29 @@ const MelaQuiz = () => {
       return;
     }
 
-    // Check if phone number already attempted
-    const existingAttempt = attempts.find(attempt => attempt.phone === userInfo.phone);
-    if (existingAttempt) {
-      setError(language === 'hi' ? 'इस फोन नंबर से पहले ही प्रश्नोत्तरी का प्रयास किया जा चुका है' : 'This phone number has already attempted the quiz');
-      return;
-    }
+    try {
+      // Check if phone number already attempted
+      const existing = await checkExistingAttempt(userInfo.phone);
+      if (existing) {
+        setExistingAttempt(existing);
+        setScore(existing.score);
+        const sortedAttempts = [...attempts].sort((a, b) => {
+          if (b.score !== a.score) return b.score - a.score;
+          return new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime();
+        });
+        const userRank = sortedAttempts.findIndex(attempt => attempt.phone === userInfo.phone) + 1;
+        setRank(userRank);
+        setCurrentStep('result');
+        return;
+      }
 
-    setError('');
-    console.log('Starting quiz...');
-    setCurrentStep('quiz');
+      setError('');
+      console.log('Starting quiz...');
+      setCurrentStep('quiz');
+    } catch (error) {
+      console.error('Error during registration:', error);
+      setError(language === 'hi' ? 'कुछ गलत हुआ है, कृपया फिर से कोशिश करें' : 'Something went wrong, please try again');
+    }
   };
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -256,33 +325,36 @@ const MelaQuiz = () => {
     }
   };
 
-  const handleSubmitQuiz = () => {
+  const handleSubmitQuiz = async () => {
     const calculatedScore = answers.reduce((total, answer, index) => {
       return total + (answer === QUIZ_QUESTIONS[index].correct ? 1 : 0);
     }, 0);
 
-    const newAttempt: QuizAttempt = {
+    const newAttempt = {
       name: userInfo.name,
       phone: userInfo.phone,
       score: calculatedScore,
-      timestamp: Date.now()
+      total_questions: QUIZ_QUESTIONS.length
     };
 
-    const updatedAttempts = [...attempts, newAttempt];
-    
-    // Sort by score (descending) and then by timestamp (ascending) for tie-breaking
-    updatedAttempts.sort((a, b) => {
-      if (b.score !== a.score) return b.score - a.score;
-      return a.timestamp - b.timestamp;
-    });
+    try {
+      await saveAttemptMutation.mutateAsync(newAttempt);
+      
+      // Calculate rank after saving
+      const updatedAttempts = [...attempts, newAttempt].sort((a, b) => {
+        if (b.score !== a.score) return b.score - a.score;
+        return new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime();
+      });
+      
+      const userRank = updatedAttempts.findIndex(attempt => attempt.phone === userInfo.phone) + 1;
 
-    const userRank = updatedAttempts.findIndex(attempt => attempt.phone === userInfo.phone) + 1;
-
-    setAttempts(updatedAttempts);
-    setScore(calculatedScore);
-    setRank(userRank);
-    localStorage.setItem('melaQuizAttempts', JSON.stringify(updatedAttempts));
-    setCurrentStep('result');
+      setScore(calculatedScore);
+      setRank(userRank);
+      setCurrentStep('result');
+    } catch (error) {
+      console.error('Error saving quiz attempt:', error);
+      setError(language === 'hi' ? 'परिणाम सहेजने में त्रुटि' : 'Error saving results');
+    }
   };
 
   const renderRegistration = () => (
@@ -407,7 +479,7 @@ const MelaQuiz = () => {
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
         <CardTitle className="text-center text-xl font-bold text-green-600">
-          🎉 {t('quiz_completed')}
+          🎉 {existingAttempt ? (language === 'hi' ? 'आपका परिणाम' : 'Your Previous Result') : t('quiz_completed')}
         </CardTitle>
       </CardHeader>
       <CardContent className="text-center space-y-4">
@@ -423,6 +495,13 @@ const MelaQuiz = () => {
           </div>
           <div className="text-gray-600">{t('your_position')}</div>
         </div>
+        {existingAttempt && (
+          <div className="bg-yellow-50 p-3 rounded-lg text-sm text-yellow-800">
+            {language === 'hi' 
+              ? 'आपने पहले ही इस प्रश्नोत्तरी का प्रयास किया है।' 
+              : 'You have already attempted this quiz.'}
+          </div>
+        )}
         <div className="space-y-2">
           <Button
             onClick={() => setCurrentStep('leaderboard')}
@@ -450,37 +529,43 @@ const MelaQuiz = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-2">
-          {attempts.slice(0, 10).map((attempt, index) => (
-            <div
-              key={attempt.phone}
-              className={`flex justify-between items-center p-3 rounded-md ${
-                attempt.phone === userInfo.phone
-                  ? 'bg-yellow-100 border border-yellow-400'
-                  : 'bg-gray-50'
-              }`}
-            >
-              <div className="flex items-center space-x-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                  index === 0 ? 'bg-yellow-500' :
-                  index === 1 ? 'bg-gray-400' :
-                  index === 2 ? 'bg-orange-500' : 'bg-blue-500'
-                }`}>
-                  {index + 1}
-                </div>
-                <div>
-                  <div className="font-medium">{attempt.name}</div>
-                  <div className="text-sm text-gray-500">
-                    {new Date(attempt.timestamp).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN')}
+        {isLoading ? (
+          <div className="text-center py-8">
+            <div className="text-gray-500">{language === 'hi' ? 'लोड हो रहा है...' : 'Loading...'}</div>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {attempts.slice(0, 10).map((attempt, index) => (
+              <div
+                key={attempt.id || attempt.phone}
+                className={`flex justify-between items-center p-3 rounded-md ${
+                  attempt.phone === userInfo.phone
+                    ? 'bg-yellow-100 border border-yellow-400'
+                    : 'bg-gray-50'
+                }`}
+              >
+                <div className="flex items-center space-x-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
+                    index === 0 ? 'bg-yellow-500' :
+                    index === 1 ? 'bg-gray-400' :
+                    index === 2 ? 'bg-orange-500' : 'bg-blue-500'
+                  }`}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-medium">{attempt.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {attempt.created_at ? new Date(attempt.created_at).toLocaleDateString(language === 'hi' ? 'hi-IN' : 'en-IN') : ''}
+                    </div>
                   </div>
                 </div>
+                <div className="text-lg font-bold text-green-600">
+                  {attempt.score}/{attempt.total_questions}
+                </div>
               </div>
-              <div className="text-lg font-bold text-green-600">
-                {attempt.score}/{QUIZ_QUESTIONS.length}
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="mt-6 text-center">
           <Button
             onClick={() => navigate('/')}
