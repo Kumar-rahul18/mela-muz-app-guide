@@ -38,9 +38,9 @@ const VirtualPooja = () => {
   ]);
 
   useEffect(() => {
-    // Start background music
+    // Start background music with reduced volume
     if (backgroundMusicRef.current && backgroundMusicEnabled) {
-      backgroundMusicRef.current.volume = 0.3;
+      backgroundMusicRef.current.volume = 0.25; // Reduced from 0.3 to 0.25
       backgroundMusicRef.current.play().catch(console.error);
     }
     
@@ -53,10 +53,13 @@ const VirtualPooja = () => {
 
   const playSound = (type: 'bell' | 'mantra' | 'aarti') => {
     if (type === 'mantra' && mantraAudioRef.current) {
+      mantraAudioRef.current.volume = 1.0; // Full volume for foreground sounds
       mantraAudioRef.current.play().catch(console.error);
     } else if (type === 'aarti' && aartiAudioRef.current) {
+      aartiAudioRef.current.volume = 1.0; // Full volume for foreground sounds
       aartiAudioRef.current.play().catch(console.error);
     } else if (type === 'bell' && bellAudioRef.current) {
+      bellAudioRef.current.volume = 1.0; // Full volume for foreground sounds
       bellAudioRef.current.play().catch(console.error);
     }
     console.log(`Playing ${type} sound`);
@@ -190,7 +193,7 @@ const VirtualPooja = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
-      {/* Background Audio */}
+      {/* Background Audio with reduced volume */}
       <audio ref={backgroundMusicRef} loop>
         <source src="https://mela-muz-app-guide.vercel.app/deep-om-chants-with-reverb-229614.mp3" type="audio/mpeg" />
       </audio>
@@ -272,11 +275,11 @@ const VirtualPooja = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-xl opacity-60 scale-110 animate-spin-slow" />
             )}
             
-            {/* Shivling Image Placeholder */}
+            {/* Jyotirlinga Image */}
             <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden shadow-2xl">
               <img 
-                src="/placeholder-shivling.jpg" 
-                alt="Shivling" 
+                src="https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//jyotirlinga.jpeg" 
+                alt="Jyotirlinga" 
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   // Fallback to gradient background with Om symbol if image fails to load
@@ -290,42 +293,96 @@ const VirtualPooja = () => {
                 }}
               />
               
-              {/* Enhanced Jal Animation */}
+              {/* Enhanced Jal Animation with Water Droplets and Flowers */}
               {showJalAnimation && (
-                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
                   <div className="flex flex-col items-center">
                     <div className="text-4xl animate-bounce mb-2">🫗</div>
                     <div className="relative">
-                      {/* Multiple water streams */}
+                      {/* Multiple water streams with droplets */}
+                      {[...Array(8)].map((_, i) => (
+                        <div key={`water-${i}`} className="absolute">
+                          <div
+                            className="w-1 bg-blue-400 opacity-80 animate-pulse rounded-full"
+                            style={{
+                              height: '70px',
+                              left: `${i * 6 - 24}px`,
+                              animationDelay: `${i * 0.1}s`,
+                              animationDuration: '1.2s'
+                            }}
+                          />
+                          {/* Water droplets */}
+                          <div
+                            className="absolute w-2 h-2 bg-blue-300 rounded-full animate-bounce opacity-70"
+                            style={{
+                              left: `${i * 6 - 24}px`,
+                              top: `${60 + (i % 3) * 10}px`,
+                              animationDelay: `${i * 0.15}s`,
+                              animationDuration: '1s'
+                            }}
+                          >💧</div>
+                        </div>
+                      ))}
+                      
+                      {/* Floating flowers */}
                       {[...Array(5)].map((_, i) => (
                         <div
-                          key={i}
-                          className="absolute w-1 bg-blue-400 opacity-80 animate-pulse"
+                          key={`flower-${i}`}
+                          className="absolute text-xl animate-pulse"
                           style={{
-                            height: '60px',
-                            left: `${i * 8 - 16}px`,
-                            animationDelay: `${i * 0.2}s`,
-                            animationDuration: '1.5s'
+                            left: `${i * 10 - 20}px`,
+                            top: `${40 + (i % 2) * 20}px`,
+                            animationDelay: `${i * 0.3}s`,
+                            animationDuration: '2s'
                           }}
-                        />
+                        >
+                          {['🌸', '🌼', '🌺', '🌻', '🌷'][i]}
+                        </div>
                       ))}
                     </div>
-                    <div className="mt-12 text-2xl animate-bounce">💧</div>
                   </div>
                 </div>
               )}
               
-              {/* Enhanced Aarti Animation */}
+              {/* Enhanced Aarti Animation with Circular Moving Diya */}
               {showAarti && (
-                <div className="absolute -right-12 top-1/2 transform -translate-y-1/2">
-                  <div className="relative">
-                    <div className="text-4xl animate-spin-slow">🪔</div>
-                    {/* Light rays */}
-                    <div className="absolute inset-0 animate-pulse">
-                      <div className="absolute w-8 h-1 bg-yellow-400 opacity-60 top-1/2 left-full transform -translate-y-1/2"></div>
-                      <div className="absolute w-6 h-1 bg-orange-400 opacity-60 top-1/3 left-full transform -translate-y-1/2 rotate-45"></div>
-                      <div className="absolute w-6 h-1 bg-red-400 opacity-60 top-2/3 left-full transform -translate-y-1/2 -rotate-45"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="relative w-32 h-32">
+                    {/* Circular path for diya */}
+                    <div className="absolute inset-0 rounded-full border-2 border-yellow-400 opacity-30"></div>
+                    
+                    {/* Moving diya */}
+                    <div 
+                      className="absolute w-8 h-8 flex items-center justify-center animate-spin-slow"
+                      style={{ 
+                        top: '0px', 
+                        left: '50%', 
+                        transform: 'translateX(-50%)',
+                        transformOrigin: '50% 64px'
+                      }}
+                    >
+                      <div className="text-3xl animate-pulse">🪔</div>
                     </div>
+                    
+                    {/* Light rays emanating from center */}
+                    <div className="absolute inset-0 animate-pulse">
+                      {[...Array(8)].map((_, i) => (
+                        <div
+                          key={`ray-${i}`}
+                          className="absolute w-1 h-8 bg-yellow-400 opacity-60"
+                          style={{
+                            top: '50%',
+                            left: '50%',
+                            transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-20px)`,
+                            transformOrigin: 'center',
+                            animationDelay: `${i * 0.1}s`
+                          }}
+                        />
+                      ))}
+                    </div>
+                    
+                    {/* Central glow */}
+                    <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-20 animate-pulse scale-75"></div>
                   </div>
                 </div>
               )}
