@@ -97,7 +97,7 @@ const VirtualPooja = () => {
         setActionMessage('');
         setIsActionActive(false);
       }, 3000);
-    }, 15000);
+    }, 27000);
   };
 
   const handleAartiKaren = () => {
