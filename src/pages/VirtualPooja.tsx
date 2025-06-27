@@ -192,22 +192,22 @@ const VirtualPooja = () => {
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
       {/* Background Audio */}
       <audio ref={backgroundMusicRef} loop>
-        <source src="/placeholder-background-music.mp3" type="audio/mpeg" />
+        <source src="https://mela-muz-app-guide.vercel.app/deep-om-chants-with-reverb-229614.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Mantra Audio */}
       <audio ref={mantraAudioRef} loop>
-        <source src="/placeholder-mantra-chanting.mp3" type="audio/mpeg" />
+        <source src="https://mela-muz-app-guide.vercel.app/Mahamrityunjaya%20Mantra%20108%20Times-1%20(mp3cut.net).mp3" type="audio/mpeg" />
       </audio>
 
       {/* Aarti Audio */}
       <audio ref={aartiAudioRef} loop>
-        <source src="/placeholder-aarti-music.mp3" type="audio/mpeg" />
+        <source src="https://mela-muz-app-guide.vercel.app/51197796_indian-hindu-temple-bells-of-aarti_by_reenamjain_preview.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Bell Audio */}
       <audio ref={bellAudioRef}>
-        <source src="/placeholder-temple-bell.mp3" type="audio/mpeg" />
+        <source src="https://mela-muz-app-guide.vercel.app/5-63535.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Background Particles */}
