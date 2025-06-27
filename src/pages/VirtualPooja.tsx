@@ -162,7 +162,7 @@ const VirtualPooja = () => {
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
       {/* Background Audio */}
       <audio ref={backgroundMusicRef} loop>
-        <source src="/placeholder-background-music.mp3" type="audio/mpeg" />
+        <source src="https://mela-muz-app-guide.vercel.app/shiva-stuti-instrumental-with-om-and-mahadevaya-namaha-364153.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Background Particles */}
