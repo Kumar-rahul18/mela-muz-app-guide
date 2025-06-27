@@ -47,12 +47,14 @@ const CameraFilters = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameRef = useRef<number>();
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<Filter | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filterImages, setFilterImages] = useState<{[key: string]: HTMLImageElement}>({});
+  const [cameraReady, setCameraReady] = useState(false);
 
   // Preload filter images
   useEffect(() => {
@@ -61,8 +63,14 @@ const CameraFilters = () => {
         return new Promise<{id: string, image: HTMLImageElement}>((resolve, reject) => {
           const img = new Image();
           img.crossOrigin = 'anonymous';
-          img.onload = () => resolve({ id: filter.id, image: img });
-          img.onerror = () => reject(new Error(`Failed to load ${filter.name}`));
+          img.onload = () => {
+            console.log(`Loaded filter image: ${filter.name}`);
+            resolve({ id: filter.id, image: img });
+          };
+          img.onerror = () => {
+            console.error(`Failed to load ${filter.name}`);
+            reject(new Error(`Failed to load ${filter.name}`));
+          };
           img.src = filter.overlay;
         });
       });
@@ -85,34 +93,56 @@ const CameraFilters = () => {
 
   const startCamera = useCallback(async () => {
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      console.log('Starting camera...');
+      const constraints = {
         video: { 
-          width: { ideal: 1280 },
-          height: { ideal: 720 },
-          facingMode: 'user'
-        }
-      });
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 },
+          facingMode: 'user',
+          frameRate: { ideal: 30 }
+        },
+        audio: false
+      };
+      
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
+      console.log('Camera stream obtained');
       
       setStream(mediaStream);
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        videoRef.current.onloadedmetadata = () => {
+          console.log('Video metadata loaded');
+          setCameraReady(true);
+        };
+        videoRef.current.oncanplay = () => {
+          console.log('Video can play');
+          videoRef.current?.play();
+        };
       }
       setError(null);
     } catch (err) {
       console.error('Error accessing camera:', err);
-      setError('Unable to access camera. Please check permissions.');
+      setError('Unable to access camera. Please check permissions and try again.');
+      setCameraReady(false);
     }
   }, []);
 
   const stopCamera = useCallback(() => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach(track => {
+        track.stop();
+        console.log('Camera track stopped');
+      });
       setStream(null);
+      setCameraReady(false);
+    }
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
     }
   }, [stream]);
 
   const drawFilter = useCallback(() => {
-    if (!selectedFilter || !videoRef.current || !overlayCanvasRef.current || !filterImages[selectedFilter.id]) {
+    if (!selectedFilter || !videoRef.current || !overlayCanvasRef.current || !filterImages[selectedFilter.id] || !cameraReady) {
       return;
     }
 
@@ -125,86 +155,110 @@ const CameraFilters = () => {
       return;
     }
 
-    // Set canvas size to match video
-    if (canvas.width !== video.videoWidth || canvas.height !== video.videoHeight) {
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-    }
+    // Set canvas size to match video dimensions
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-    // Clear canvas
+    // Clear canvas with transparent background
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Apply filter based on type
-    ctx.globalCompositeOperation = 'source-over';
-    
+    // Save context state
+    ctx.save();
+
+    // Apply filter based on type with improved positioning
     switch (selectedFilter.type) {
       case 'face':
-        // Tilak on forehead - center top
-        const tilakWidth = canvas.width * 0.2;
-        const tilakHeight = tilakWidth * 0.8;
+        // Tilak on forehead - positioned more accurately
+        const tilakSize = Math.min(canvas.width, canvas.height) * 0.15;
         ctx.globalAlpha = 0.9;
         ctx.drawImage(filterImage, 
-          (canvas.width - tilakWidth) / 2, 
-          canvas.height * 0.12, 
-          tilakWidth, 
-          tilakHeight
+          (canvas.width - tilakSize) / 2, 
+          canvas.height * 0.15, 
+          tilakSize, 
+          tilakSize * 0.6
         );
         break;
         
       case 'background':
-        // Trishul & Damru in background - multiple positions
-        const bgWidth = canvas.width * 0.25;
-        const bgHeight = canvas.height * 0.35;
-        ctx.globalAlpha = 0.6;
+        // Trishul & Damru in background - better positioning
+        const bgSize = Math.min(canvas.width, canvas.height) * 0.2;
+        ctx.globalAlpha = 0.7;
         // Left side
         ctx.drawImage(filterImage, 
           canvas.width * 0.05, 
-          canvas.height * 0.25, 
-          bgWidth, 
-          bgHeight
+          canvas.height * 0.3, 
+          bgSize, 
+          bgSize * 1.2
         );
-        // Right side
+        // Right side (mirrored)
+        ctx.scale(-1, 1);
         ctx.drawImage(filterImage, 
-          canvas.width * 0.7, 
-          canvas.height * 0.25, 
-          bgWidth, 
-          bgHeight
+          -canvas.width * 0.95, 
+          canvas.height * 0.3, 
+          bgSize, 
+          bgSize * 1.2
         );
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         break;
         
       case 'aura':
-        // Blue aura around head - larger and more prominent
-        ctx.globalAlpha = 0.4;
+        // Blue aura around head - more prominent and centered
+        const auraSize = Math.min(canvas.width, canvas.height) * 0.6;
+        ctx.globalAlpha = 0.5;
         ctx.globalCompositeOperation = 'screen';
-        const auraSize = canvas.width * 0.8;
+        ctx.filter = 'blur(2px)';
         ctx.drawImage(filterImage, 
           (canvas.width - auraSize) / 2, 
-          canvas.height * 0.05, 
+          canvas.height * 0.1, 
           auraSize, 
           auraSize * 0.8
         );
+        ctx.filter = 'none';
         break;
         
       case 'crown':
-        // Crown on top of head - more prominent
-        const crownWidth = canvas.width * 0.5;
-        const crownHeight = crownWidth * 0.6;
-        ctx.globalAlpha = 0.85;
+        // Crown on top of head - better proportioned
+        const crownWidth = Math.min(canvas.width, canvas.height) * 0.4;
+        const crownHeight = crownWidth * 0.5;
+        ctx.globalAlpha = 0.9;
         ctx.drawImage(filterImage, 
           (canvas.width - crownWidth) / 2, 
-          canvas.height * 0.02, 
+          canvas.height * 0.05, 
           crownWidth, 
           crownHeight
         );
         break;
     }
     
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'source-over';
-  }, [selectedFilter, filterImages]);
+    // Restore context state
+    ctx.restore();
+  }, [selectedFilter, filterImages, cameraReady]);
+
+  // Continuous filter rendering using requestAnimationFrame
+  const renderLoop = useCallback(() => {
+    drawFilter();
+    animationFrameRef.current = requestAnimationFrame(renderLoop);
+  }, [drawFilter]);
+
+  useEffect(() => {
+    if (selectedFilter && cameraReady) {
+      renderLoop();
+    } else if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [selectedFilter, cameraReady, renderLoop]);
 
   const captureImage = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return;
+    if (!videoRef.current || !canvasRef.current || !cameraReady) {
+      console.log('Cannot capture - camera not ready');
+      return;
+    }
 
     setIsCapturing(true);
     const canvas = canvasRef.current;
@@ -213,21 +267,23 @@ const CameraFilters = () => {
 
     if (!ctx) return;
 
+    // Set canvas size to match video
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
 
     // Draw video frame
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-    // Draw filter overlay if selected
+    // Draw filter overlay if selected and overlay canvas exists
     if (selectedFilter && overlayCanvasRef.current) {
       ctx.drawImage(overlayCanvasRef.current, 0, 0);
     }
 
-    const imageData = canvas.toDataURL('image/png');
+    const imageData = canvas.toDataURL('image/png', 0.9);
     setCapturedImage(imageData);
     setIsCapturing(false);
-  }, [selectedFilter]);
+    console.log('Image captured successfully');
+  }, [selectedFilter, cameraReady]);
 
   const downloadImage = useCallback(() => {
     if (!capturedImage) return;
@@ -235,21 +291,16 @@ const CameraFilters = () => {
     const link = document.createElement('a');
     link.download = `shiva-filter-${selectedFilter?.name || 'photo'}-${Date.now()}.png`;
     link.href = capturedImage;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
+    console.log('Image downloaded');
   }, [capturedImage, selectedFilter]);
 
   useEffect(() => {
     startCamera();
     return () => stopCamera();
   }, [startCamera, stopCamera]);
-
-  // Draw filter overlay continuously
-  useEffect(() => {
-    if (!selectedFilter || !filterImages[selectedFilter.id]) return;
-    
-    const interval = setInterval(drawFilter, 50); // 20 FPS for smooth overlay
-    return () => clearInterval(interval);
-  }, [drawFilter, selectedFilter, filterImages]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-4">
@@ -278,21 +329,36 @@ const CameraFilters = () => {
 
         <div className="relative mb-6">
           <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-2xl mx-auto">
+            {!cameraReady && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white">
+                <div className="text-center">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
+                  <p>Initializing camera...</p>
+                </div>
+              </div>
+            )}
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
               className="w-full h-full object-cover"
+              style={{ 
+                display: cameraReady ? 'block' : 'none',
+                transform: 'scaleX(-1)' // Mirror the video for selfie mode
+              }}
             />
             <canvas
               ref={overlayCanvasRef}
               className="absolute top-0 left-0 w-full h-full pointer-events-none"
-              style={{ mixBlendMode: selectedFilter?.type === 'aura' ? 'screen' : 'normal' }}
+              style={{ 
+                display: cameraReady && selectedFilter ? 'block' : 'none',
+                transform: 'scaleX(-1)' // Mirror the overlay to match video
+              }}
             />
           </div>
           
-          {selectedFilter && (
+          {selectedFilter && cameraReady && (
             <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
               ✨ {selectedFilter.name}
             </div>
@@ -304,7 +370,10 @@ const CameraFilters = () => {
           {filters.map((filter) => (
             <button
               key={filter.id}
-              onClick={() => setSelectedFilter(filter)}
+              onClick={() => {
+                setSelectedFilter(filter);
+                console.log(`Selected filter: ${filter.name}`);
+              }}
               className={`relative group rounded-lg overflow-hidden transition-all duration-300 ${
                 selectedFilter?.id === filter.id
                   ? 'ring-4 ring-yellow-400 scale-105 shadow-lg shadow-yellow-400/50'
@@ -335,7 +404,10 @@ const CameraFilters = () => {
         {selectedFilter && (
           <div className="text-center mb-6">
             <Button
-              onClick={() => setSelectedFilter(null)}
+              onClick={() => {
+                setSelectedFilter(null);
+                console.log('Filter cleared');
+              }}
               variant="outline"
               size="sm"
               className="bg-white/10 border-white/20 text-white hover:bg-white/20"
@@ -386,11 +458,11 @@ const CameraFilters = () => {
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
         <Button
           onClick={captureImage}
-          disabled={isCapturing || !stream}
+          disabled={isCapturing || !cameraReady}
           size="lg"
           className={`bg-white text-black hover:bg-gray-100 rounded-full w-16 h-16 shadow-lg border-4 border-white/20 transition-all duration-200 ${
             isCapturing ? 'scale-95' : 'hover:scale-110'
-          }`}
+          } ${!cameraReady ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <Camera className={`w-8 h-8 ${isCapturing ? 'animate-pulse' : ''}`} />
         </Button>
