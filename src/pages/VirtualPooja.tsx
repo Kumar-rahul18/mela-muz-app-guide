@@ -15,6 +15,9 @@ const VirtualPooja = () => {
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
   const backgroundMusicRef = useRef<HTMLAudioElement>(null);
+  const mantraAudioRef = useRef<HTMLAudioElement>(null);
+  const aartiAudioRef = useRef<HTMLAudioElement>(null);
+  const bellAudioRef = useRef<HTMLAudioElement>(null);
   
   const [currentStep, setCurrentStep] = useState(0);
   const [isActionActive, setIsActionActive] = useState(false);
@@ -49,7 +52,13 @@ const VirtualPooja = () => {
   }, [backgroundMusicEnabled]);
 
   const playSound = (type: 'bell' | 'mantra' | 'aarti') => {
-    // Placeholder for audio playback
+    if (type === 'mantra' && mantraAudioRef.current) {
+      mantraAudioRef.current.play().catch(console.error);
+    } else if (type === 'aarti' && aartiAudioRef.current) {
+      aartiAudioRef.current.play().catch(console.error);
+    } else if (type === 'bell' && bellAudioRef.current) {
+      bellAudioRef.current.play().catch(console.error);
+    }
     console.log(`Playing ${type} sound`);
   };
 
@@ -64,8 +73,8 @@ const VirtualPooja = () => {
       setTimeout(() => {
         setActionMessage('');
         setIsActionActive(false);
-      }, 2000);
-    }, 3000);
+      }, 3000);
+    }, 15000);
   };
 
   const handleMantraPadhen = () => {
@@ -75,13 +84,17 @@ const VirtualPooja = () => {
     
     setTimeout(() => {
       setShowMantra(false);
+      if (mantraAudioRef.current) {
+        mantraAudioRef.current.pause();
+        mantraAudioRef.current.currentTime = 0;
+      }
       setActionMessage('मंत्र पूर्ण हुआ 🙏');
       completeStep('mantra');
       setTimeout(() => {
         setActionMessage('');
         setIsActionActive(false);
-      }, 2000);
-    }, 5000);
+      }, 3000);
+    }, 15000);
   };
 
   const handleAartiKaren = () => {
@@ -91,13 +104,17 @@ const VirtualPooja = () => {
     
     setTimeout(() => {
       setShowAarti(false);
+      if (aartiAudioRef.current) {
+        aartiAudioRef.current.pause();
+        aartiAudioRef.current.currentTime = 0;
+      }
       setActionMessage('आरती संपन्न हुई 🔥');
       completeStep('aarti');
       setTimeout(() => {
         setActionMessage('');
         setIsActionActive(false);
-      }, 2000);
-    }, 4000);
+      }, 3000);
+    }, 15000);
   };
 
   const handlePrasadChadhana = () => {
@@ -111,8 +128,8 @@ const VirtualPooja = () => {
         setActionMessage('');
         setIsActionActive(false);
         checkPoojaCompletion();
-      }, 2000);
-    }, 2000);
+      }, 3000);
+    }, 15000);
   };
 
   const completeStep = (stepId: string) => {
@@ -131,6 +148,13 @@ const VirtualPooja = () => {
         setPoojaComplete(true);
         setShowAura(true);
         playSound('bell');
+        // Stop bell sound after 3 seconds
+        setTimeout(() => {
+          if (bellAudioRef.current) {
+            bellAudioRef.current.pause();
+            bellAudioRef.current.currentTime = 0;
+          }
+        }, 3000);
       }, 1000);
     }
   };
@@ -158,11 +182,32 @@ const VirtualPooja = () => {
     setShowJalAnimation(false);
   };
 
+  // Get current step to display
+  const getCurrentStepToShow = () => {
+    if (poojaComplete) return null;
+    return steps[currentStep];
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
       {/* Background Audio */}
       <audio ref={backgroundMusicRef} loop>
-        <source src="https://mela-muz-app-guide.vercel.app/shiva-stuti-instrumental-with-om-and-mahadevaya-namaha-364153.mp3" type="audio/mpeg" />
+        <source src="/placeholder-background-music.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Mantra Audio */}
+      <audio ref={mantraAudioRef} loop>
+        <source src="/placeholder-mantra-chanting.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Aarti Audio */}
+      <audio ref={aartiAudioRef} loop>
+        <source src="/placeholder-aarti-music.mp3" type="audio/mpeg" />
+      </audio>
+
+      {/* Bell Audio */}
+      <audio ref={bellAudioRef}>
+        <source src="/placeholder-temple-bell.mp3" type="audio/mpeg" />
       </audio>
 
       {/* Background Particles */}
@@ -227,29 +272,68 @@ const VirtualPooja = () => {
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-xl opacity-60 scale-110 animate-spin-slow" />
             )}
             
-            {/* Shivling Image */}
-            <div className="relative w-48 h-48 mx-auto mb-4 rounded-full bg-gradient-to-b from-gray-600 to-gray-800 shadow-2xl flex items-center justify-center">
-              <div className="text-6xl">🕉</div>
+            {/* Shivling Image Placeholder */}
+            <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden shadow-2xl">
+              <img 
+                src="/placeholder-shivling.jpg" 
+                alt="Shivling" 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Fallback to gradient background with Om symbol if image fails to load
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const parent = target.parentElement;
+                  if (parent) {
+                    parent.classList.add('bg-gradient-to-b', 'from-gray-600', 'to-gray-800', 'flex', 'items-center', 'justify-center');
+                    parent.innerHTML = '<div class="text-6xl text-white">🕉</div>';
+                  }
+                }}
+              />
               
-              {/* Jal Animation */}
+              {/* Enhanced Jal Animation */}
               {showJalAnimation && (
-                <div className="absolute -top-10 left-1/2 transform -translate-x-1/2">
-                  <div className="text-4xl animate-bounce">💧</div>
-                  <div className="w-1 h-20 bg-blue-400 opacity-80 mx-auto animate-pulse" />
+                <div className="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                  <div className="flex flex-col items-center">
+                    <div className="text-4xl animate-bounce mb-2">🫗</div>
+                    <div className="relative">
+                      {/* Multiple water streams */}
+                      {[...Array(5)].map((_, i) => (
+                        <div
+                          key={i}
+                          className="absolute w-1 bg-blue-400 opacity-80 animate-pulse"
+                          style={{
+                            height: '60px',
+                            left: `${i * 8 - 16}px`,
+                            animationDelay: `${i * 0.2}s`,
+                            animationDuration: '1.5s'
+                          }}
+                        />
+                      ))}
+                    </div>
+                    <div className="mt-12 text-2xl animate-bounce">💧</div>
+                  </div>
                 </div>
               )}
               
-              {/* Aarti Animation */}
+              {/* Enhanced Aarti Animation */}
               {showAarti && (
-                <div className="absolute -right-8 top-1/2 transform -translate-y-1/2">
-                  <div className="text-3xl animate-spin-slow">🪔</div>
+                <div className="absolute -right-12 top-1/2 transform -translate-y-1/2">
+                  <div className="relative">
+                    <div className="text-4xl animate-spin-slow">🪔</div>
+                    {/* Light rays */}
+                    <div className="absolute inset-0 animate-pulse">
+                      <div className="absolute w-8 h-1 bg-yellow-400 opacity-60 top-1/2 left-full transform -translate-y-1/2"></div>
+                      <div className="absolute w-6 h-1 bg-orange-400 opacity-60 top-1/3 left-full transform -translate-y-1/2 rotate-45"></div>
+                      <div className="absolute w-6 h-1 bg-red-400 opacity-60 top-2/3 left-full transform -translate-y-1/2 -rotate-45"></div>
+                    </div>
+                  </div>
                 </div>
               )}
               
               {/* Prasad */}
               {showPrasad && (
-                <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
-                  <div className="text-2xl">🍮</div>
+                <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
+                  <div className="text-3xl animate-bounce">🍮</div>
                 </div>
               )}
             </div>
@@ -259,10 +343,13 @@ const VirtualPooja = () => {
           {showMantra && (
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg mb-4 border border-orange-200">
               <div className="text-orange-800 font-serif text-lg leading-relaxed">
-                <div className="text-2xl mb-2">🕉 नमः शिवाय</div>
-                <div className="text-sm text-orange-600">
+                <div className="text-3xl mb-4 animate-pulse">🕉 नमः शिवाय</div>
+                <div className="text-lg text-orange-600 mb-4">
                   ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम्।<br/>
                   उर्वारुकमिव बन्धनान् मृत्योर्मुक्षीय मामृतात्॥
+                </div>
+                <div className="text-sm text-orange-500 italic">
+                  🎵 मंत्र जाप चल रहा है...
                 </div>
               </div>
             </div>
@@ -278,9 +365,10 @@ const VirtualPooja = () => {
           {/* Completion Message */}
           {poojaComplete && (
             <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-orange-300 rounded-2xl p-6 mb-6 animate-fade-in">
-              <div className="text-2xl mb-2">🙏</div>
-              <h2 className="text-xl font-bold text-orange-800 mb-2">पूजा संपूर्ण हुई</h2>
-              <p className="text-orange-700">आपकी पूजा सफलतापूर्वक संपन्न हुई। भगवान शिव आपको आशीर्वाद दें।</p>
+              <div className="text-3xl mb-2">🙏</div>
+              <h2 className="text-xl font-bold text-orange-800 mb-2">🕉 पूजा संपूर्ण हुई 🕉</h2>
+              <p className="text-orange-700 mb-2">आपकी पूजा सफलतापूर्वक संपन्न हुई।</p>
+              <p className="text-orange-600 text-sm mb-4">🔔 भगवान शिव आपको आशीर्वाद दें।</p>
               <Button 
                 onClick={resetPooja}
                 className="mt-4 bg-orange-500 hover:bg-orange-600 text-white"
@@ -291,29 +379,31 @@ const VirtualPooja = () => {
           )}
         </div>
 
-        {/* Action Buttons */}
-        {!poojaComplete && (
-          <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-            {steps.map((step) => (
-              <Button
-                key={step.id}
-                onClick={getStepHandler(step.id)}
-                disabled={isActionActive || step.completed}
-                className={`h-20 text-left flex flex-col items-center justify-center p-4 rounded-2xl font-semibold transition-all duration-300 ${
-                  step.completed 
-                    ? 'bg-green-100 text-green-800 border-2 border-green-300 cursor-not-allowed' 
-                    : isActionActive 
-                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    : 'bg-gradient-to-b from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white shadow-lg hover:shadow-xl active:scale-95'
-                }`}
-              >
-                <div className="text-2xl mb-1">{step.icon}</div>
-                <div className="text-sm text-center leading-tight">
-                  {step.hindi}
-                  {step.completed && <div className="text-xs mt-1">✅ पूर्ण</div>}
-                </div>
-              </Button>
-            ))}
+        {/* Single Action Button - Sequential Display */}
+        {!poojaComplete && getCurrentStepToShow() && (
+          <div className="flex justify-center max-w-md mx-auto">
+            {(() => {
+              const step = getCurrentStepToShow()!;
+              return (
+                <Button
+                  onClick={getStepHandler(step.id)}
+                  disabled={isActionActive}
+                  className={`h-24 w-64 text-left flex flex-col items-center justify-center p-6 rounded-2xl font-semibold transition-all duration-300 ${
+                    isActionActive 
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-gradient-to-b from-orange-400 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white shadow-lg hover:shadow-xl active:scale-95'
+                  }`}
+                >
+                  <div className="text-3xl mb-2">{step.icon}</div>
+                  <div className="text-lg text-center leading-tight">
+                    {step.hindi}
+                  </div>
+                  {isActionActive && (
+                    <div className="text-xs mt-2 animate-pulse">प्रतीक्षा करें...</div>
+                  )}
+                </Button>
+              );
+            })()}
           </div>
         )}
 
@@ -327,12 +417,16 @@ const VirtualPooja = () => {
               <li>3. आरती करें</li>
               <li>4. अंत में प्रसाद चढ़ाएं</li>
             </ol>
+            <p className="text-xs text-orange-600 mt-2">
+              प्रत्येक चरण में 15 सेकंड का समय लगेगा।
+            </p>
           </div>
         )}
       </div>
 
       {/* Custom Styles */}
-      <style>{`
+      <style>
+        {`
         @keyframes spin-slow {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
@@ -340,7 +434,8 @@ const VirtualPooja = () => {
         .animate-spin-slow {
           animation: spin-slow 3s linear infinite;
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
