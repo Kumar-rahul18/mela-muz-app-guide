@@ -340,13 +340,22 @@ const MelaQuiz = () => {
     try {
       await saveAttemptMutation.mutateAsync(newAttempt);
       
-      // Calculate rank after saving
-      const updatedAttempts = [...attempts, newAttempt].sort((a, b) => {
-        if (b.score !== a.score) return b.score - a.score;
-        return new Date(a.created_at || '').getTime() - new Date(b.created_at || '').getTime();
+      // Calculate rank after saving - need to refetch attempts to get the updated list
+      const updatedQuery = await queryClient.fetchQuery({
+        queryKey: ['quiz-attempts'],
+        queryFn: async () => {
+          const { data, error } = await supabase
+            .from('quiz_attempts')
+            .select('*')
+            .order('score', { ascending: false })
+            .order('created_at', { ascending: true });
+          
+          if (error) throw error;
+          return data as QuizAttempt[];
+        }
       });
       
-      const userRank = updatedAttempts.findIndex(attempt => attempt.phone === userInfo.phone) + 1;
+      const userRank = updatedQuery.findIndex(attempt => attempt.phone === userInfo.phone) + 1;
 
       setScore(calculatedScore);
       setRank(userRank);
