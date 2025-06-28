@@ -132,7 +132,7 @@ const VirtualPooja = () => {
       setShowAarti(false);
       if (aartiAudioRef.current) {
         aartiAudioRef.current.pause();
-        aartiAudioRef.current.currentTime = 0;
+        aartiAudioRef.current.currentTime = 500;
       }
       setActionMessage('आरती संपन्न हुई 🔥');
       completeStep('aarti');
