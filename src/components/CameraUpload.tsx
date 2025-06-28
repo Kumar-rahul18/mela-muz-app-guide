@@ -62,10 +62,10 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
   };
 
   return (
-    <div className="space-y-2">
-      <Label>{label} {required && '*'}</Label>
+    <div className="space-y-3">
+      <Label className="text-sm font-medium">{label} {required && <span className="text-red-500">*</span>}</Label>
       
-      {/* Hidden file inputs - removed required attribute to prevent focus issues */}
+      {/* Hidden file inputs with mobile-optimized attributes */}
       <input
         ref={fileInputRef}
         type="file"
@@ -82,41 +82,56 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         className="hidden"
       />
 
-      {/* Upload buttons */}
-      <div className="flex gap-2">
+      {/* Upload options - Mobile-first design */}
+      <div className="space-y-2">
+        {/* Camera button - Primary action for mobile */}
         <Button
           type="button"
-          variant="outline"
           onClick={handleCameraCapture}
-          className="flex-1 flex items-center gap-2"
+          className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium"
         >
-          <Camera className="h-4 w-4" />
-          Take Photo
+          <Camera className="h-5 w-5" />
+          Take Photo with Camera
         </Button>
+        
+        {/* File upload button - Secondary option */}
         <Button
           type="button"
           variant="outline"
           onClick={handleFileUpload}
-          className="flex-1 flex items-center gap-2"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-medium border-2 border-gray-300"
         >
-          <Upload className="h-4 w-4" />
-          Upload File
+          <Upload className="h-5 w-5" />
+          Choose from Gallery
         </Button>
       </div>
 
-      {/* Preview */}
+      {/* Preview section */}
       {preview && (
-        <div className="mt-2">
-          <Label>Photo Preview</Label>
-          <div className="mt-2 border rounded-lg p-2 relative">
+        <div className="mt-3">
+          <Label className="text-sm font-medium text-gray-700">Photo Preview</Label>
+          <div className="mt-2 border-2 border-gray-200 rounded-lg p-2 relative bg-gray-50">
             <img
               src={preview}
               alt="Preview"
-              className="w-full h-32 object-cover rounded"
+              className="w-full h-40 object-cover rounded-md"
             />
+            <div className="absolute top-3 right-3">
+              <div className="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                ✓ Ready
+              </div>
+            </div>
           </div>
         </div>
       )}
+
+      {/* Help text for mobile users */}
+      <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-100">
+        <p className="font-medium text-blue-700 mb-1">📱 Mobile Tips:</p>
+        <p>• Use "Take Photo" for instant camera access</p>
+        <p>• Use "Choose from Gallery" for existing photos</p>
+        <p>• Photos are automatically optimized for upload</p>
+      </div>
     </div>
   );
 };

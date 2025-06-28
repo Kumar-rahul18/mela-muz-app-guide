@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import CameraUpload from '@/components/CameraUpload';
 
 const PhotoContest = () => {
   const navigate = useNavigate();
@@ -15,13 +16,16 @@ const PhotoContest = () => {
     description: '',
     image: null as File | null
   });
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData({ ...formData, image: file });
-    }
+  const handlePhotoSelected = (file: File) => {
+    setFormData({ ...formData, image: file });
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setPhotoPreview(e.target?.result as string);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -120,7 +124,7 @@ const PhotoContest = () => {
             <p className="text-gray-600 text-sm">Share your best Shravani Mela moments and win cash prizes</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Full Name *
@@ -151,7 +155,7 @@ const PhotoContest = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Photo Description(Tell us about the ambience)
+                Photo Description (Tell us about the ambience)
               </label>
               <Textarea
                 value={formData.description}
@@ -162,30 +166,12 @@ const PhotoContest = () => {
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Upload Photo *
-              </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                  id="photo-upload"
-                  disabled={isSubmitting}
-                />
-                <label htmlFor="photo-upload" className="cursor-pointer">
-                  <div className="text-4xl mb-2">📱</div>
-                  <p className="text-gray-600">Tap to select photo</p>
-                  {formData.image && (
-                    <p className="text-green-600 text-sm mt-2">
-                      ✓ {formData.image.name}
-                    </p>
-                  )}
-                </label>
-              </div>
-            </div>
+            <CameraUpload
+              label="Upload Your Contest Photo"
+              onPhotoSelected={handlePhotoSelected}
+              preview={photoPreview}
+              required
+            />
 
             <Button 
               type="submit" 
