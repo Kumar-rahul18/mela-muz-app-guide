@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface LanguageContextType {
   language: 'en' | 'hi';
@@ -212,6 +212,22 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLanguage] = useState<'en' | 'hi'>('en');
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
+  useEffect(() => {
+    // Check if this is a fresh app start
+    const hasSelectedLanguage = sessionStorage.getItem('languageSelected');
+    
+    if (!hasSelectedLanguage) {
+      // Show language selector on fresh app start
+      setShowLanguageSelector(true);
+    }
+  }, []);
+
+  const handleSetLanguage = (lang: 'en' | 'hi') => {
+    setLanguage(lang);
+    // Mark that language has been selected in this session
+    sessionStorage.setItem('languageSelected', 'true');
+  };
+
   const t = (key: string): string => {
     // Handle template strings with placeholders
     const template = translations[language][key as keyof typeof translations['en']] || key;
@@ -221,7 +237,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   return (
     <LanguageContext.Provider value={{
       language,
-      setLanguage,
+      setLanguage: handleSetLanguage,
       t,
       showLanguageSelector,
       setShowLanguageSelector
