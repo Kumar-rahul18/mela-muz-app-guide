@@ -112,17 +112,17 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         className="hidden"
       />
       
-      {/* Direct camera input for APK - with multiple attributes for compatibility */}
+      {/* Direct camera input for APK - with environment capture */}
       <input
         ref={directCameraRef}
         type="file"
         accept="image/*,image/jpeg,image/jpg,image/png"
-        capture="camera"
+        capture="environment"
         onChange={handleFileChange}
         className="hidden"
         // Additional attributes for APK compatibility
         {...(isAPK && {
-          'data-capture': 'camera',
+          'data-capture': 'environment',
           'data-camera': 'environment',
           'webkitdirectory': false
         })}
