@@ -39,18 +39,18 @@ const VirtualPooja = () => {
   const [showAura, setShowAura] = useState(false);
 
   const jyotirlingas: Jyotirlinga[] = [
-    { id: 1, name: 'Somnath', location: 'Veraval, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/1-somnath.jpg' },
-    { id: 2, name: 'Mallikarjuna', location: 'Srisailam, Andhra Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/2-mallikarjuna.jpg' },
-    { id: 3, name: 'Mahakaleshwar', location: 'Ujjain, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/3-mahakaleshwar.jpg' },
-    { id: 4, name: 'Omkareshwar', location: 'Khandwa, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/4-omkareshwar.jpg' },
-    { id: 5, name: 'Kedarnath', location: 'Kedarnath, Uttarakhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/5-kedarnath.jpg' },
-    { id: 6, name: 'Bhimashankar', location: 'Pune, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/6-bhimashankar.jpg' },
-    { id: 7, name: 'Kashi Vishwanath', location: 'Varanasi, Uttar Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/7-kashi-vishwanath.jpg' },
-    { id: 8, name: 'Trimbakeshwar', location: 'Nashik, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/8-trimbakeshwar.jpg' },
-    { id: 9, name: 'Vaidyanath', location: 'Deoghar, Jharkhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/9-vaidyanath.jpg' },
-    { id: 10, name: 'Nageshwar', location: 'Dwarka, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/10-nageshwar.jpg' },
-    { id: 11, name: 'Rameshwaram', location: 'Rameswaram, Tamil Nadu', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/11-rameshwaram.jpg' },
-    { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12-grishneshwar.jpg' }
+    { id: 1, name: 'Somnath', location: 'Veraval, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//1.png' },
+    { id: 2, name: 'Mallikarjuna', location: 'Srisailam, Andhra Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//2.png' },
+    { id: 3, name: 'Mahakaleshwar', location: 'Ujjain, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//3.png' },
+    { id: 4, name: 'Omkareshwar', location: 'Khandwa, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//4.png' },
+    { id: 5, name: 'Kedarnath', location: 'Kedarnath, Uttarakhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//5.png' },
+    { id: 6, name: 'Bhimashankar', location: 'Pune, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//6.png' },
+    { id: 7, name: 'Kashi Vishwanath', location: 'Varanasi, Uttar Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//7.png' },
+    { id: 8, name: 'Trimbakeshwar', location: 'Nashik, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/8.png' },
+    { id: 9, name: 'Vaidyanath', location: 'Deoghar, Jharkhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/9.png' },
+    { id: 10, name: 'Nageshwar', location: 'Dwarka, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/10.png' },
+    { id: 11, name: 'Rameshwaram', location: 'Rameswaram, Tamil Nadu', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/11.png' },
+    { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12.png' }
   ];
 
   const [steps, setSteps] = useState<PoojaStep[]>([
