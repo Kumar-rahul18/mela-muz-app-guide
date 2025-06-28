@@ -42,8 +42,8 @@ export const useFaceDetection = (videoRef: React.RefObject<HTMLVideoElement>) =>
         if (results.detections && results.detections.length > 0) {
           const detections = results.detections.map(detection => ({
             boundingBox: {
-              originX: detection.boundingBox.originX,
-              originY: detection.boundingBox.originY,
+              originX: detection.boundingBox.xCenter - detection.boundingBox.width / 2,
+              originY: detection.boundingBox.yCenter - detection.boundingBox.height / 2,
               width: detection.boundingBox.width,
               height: detection.boundingBox.height,
             },

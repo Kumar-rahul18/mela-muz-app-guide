@@ -163,7 +163,7 @@ const EnhancedFilterRenderer: React.FC<EnhancedFilterRendererProps> = ({
           
           // Main crown
           ctx.globalAlpha = 0.8;
-          ctx.globalCompositeOperation = 'normal';
+          ctx.globalCompositeOperation = 'source-over';
           ctx.filter = 'contrast(1.1) saturate(1.2)';
           ctx.drawImage(filterImage, crownX, crownY, crownWidth, crownHeight);
         }
