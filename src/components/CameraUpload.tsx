@@ -128,19 +128,19 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         })}
       />
 
-      {/* Upload options - Optimized for mobile/APK */}
+      {/* Upload options */}
       <div className="space-y-2">
-        {/* Camera button - Primary action for mobile/APK */}
+        {/* Camera button */}
         <Button
           type="button"
           onClick={handleCameraCapture}
           className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg font-medium text-lg"
         >
           <Camera className="h-6 w-6" />
-          {isAPK ? 'Open Camera (APK Mode)' : 'Take Photo with Camera'}
+          Take Photo with Camera
         </Button>
         
-        {/* File upload button - Secondary option */}
+        {/* File upload button */}
         <Button
           type="button"
           variant="outline"
@@ -168,42 +168,6 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Help text optimized for APK users */}
-      <div className={`text-xs p-3 rounded border ${
-        isAPK 
-          ? 'text-orange-700 bg-orange-50 border-orange-200' 
-          : 'text-blue-700 bg-blue-50 border-blue-200'
-      }`}>
-        <p className="font-medium mb-1">
-          {isAPK ? '📱 APK Mode Tips:' : '📱 Mobile Tips:'}
-        </p>
-        {isAPK ? (
-          <>
-            <p>• Camera button will open your device's camera app</p>
-            <p>• Take photo and it will be automatically selected</p>
-            <p>• If camera doesn't work, use "Choose from Gallery"</p>
-            <p>• Make sure camera permissions are enabled for the app</p>
-          </>
-        ) : (
-          <>
-            <p>• Use "Take Photo" for instant camera access</p>
-            <p>• Use "Choose from Gallery" for existing photos</p>
-            <p>• Photos are automatically optimized for upload</p>
-          </>
-        )}
-      </div>
-
-      {/* APK specific instructions */}
-      {isAPK && (
-        <div className="text-xs text-red-700 bg-red-50 p-2 rounded border border-red-200">
-          <p className="font-medium">⚠️ APK Camera Instructions:</p>
-          <p>1. Tap "Open Camera" button</p>
-          <p>2. Allow camera permission if prompted</p>
-          <p>3. Take photo in camera app</p>
-          <p>4. Photo will appear in preview below</p>
         </div>
       )}
     </div>
