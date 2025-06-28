@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Camera, Download, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,29 +15,29 @@ const filters: Filter[] = [
   {
     id: 'tilak',
     name: 'Shiva Tilak',
-    thumbnail: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=100&h=100&fit=crop',
-    overlay: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=200&h=200&fit=crop',
+    thumbnail: '/lovable-uploads/195b827b-c79e-4753-aa06-394c27e27da1.png',
+    overlay: '/lovable-uploads/195b827b-c79e-4753-aa06-394c27e27da1.png',
     type: 'face'
-  },
-  {
-    id: 'trishul',
-    name: 'Trishul & Damru',
-    thumbnail: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=100&h=100&fit=crop',
-    overlay: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?w=300&h=400&fit=crop',
-    type: 'background'
   },
   {
     id: 'neelkanth',
     name: 'Blue Aura',
-    thumbnail: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=100&h=100&fit=crop',
-    overlay: 'https://images.unsplash.com/photo-1470813740244-df37b8c1edcb?w=400&h=400&fit=crop',
+    thumbnail: '/lovable-uploads/6fc03120-10c1-40d0-b803-c082f6fa91cd.png',
+    overlay: '/lovable-uploads/6fc03120-10c1-40d0-b803-c082f6fa91cd.png',
     type: 'aura'
+  },
+  {
+    id: 'trishul',
+    name: 'Trishul & Damru',
+    thumbnail: '/lovable-uploads/007f17f5-6b20-44ed-b7bc-488836128d04.png',
+    overlay: '/lovable-uploads/007f17f5-6b20-44ed-b7bc-488836128d04.png',
+    type: 'background'
   },
   {
     id: 'crown',
     name: 'Crown & Serpent',
-    thumbnail: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=100&h=100&fit=crop',
-    overlay: 'https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=300&h=200&fit=crop',
+    thumbnail: '/lovable-uploads/36b952a4-30d9-4115-a293-9349e51a028a.png',
+    overlay: '/lovable-uploads/36b952a4-30d9-4115-a293-9349e51a028a.png',
     type: 'crown'
   }
 ];
@@ -168,25 +167,27 @@ const CameraFilters = () => {
     // Apply filter based on type with improved positioning
     switch (selectedFilter.type) {
       case 'face':
-        // Tilak on forehead - positioned more accurately
-        const tilakSize = Math.min(canvas.width, canvas.height) * 0.15;
-        ctx.globalAlpha = 0.9;
+        // Shiva Tilak on forehead - positioned more accurately
+        const tilakSize = Math.min(canvas.width, canvas.height) * 0.25;
+        ctx.globalAlpha = 0.8;
+        ctx.globalCompositeOperation = 'multiply';
         ctx.drawImage(filterImage, 
           (canvas.width - tilakSize) / 2, 
-          canvas.height * 0.15, 
+          canvas.height * 0.1, 
           tilakSize, 
-          tilakSize * 0.6
+          tilakSize
         );
         break;
         
       case 'background':
         // Trishul & Damru in background - better positioning
-        const bgSize = Math.min(canvas.width, canvas.height) * 0.2;
-        ctx.globalAlpha = 0.7;
+        const bgSize = Math.min(canvas.width, canvas.height) * 0.3;
+        ctx.globalAlpha = 0.6;
+        ctx.globalCompositeOperation = 'overlay';
         // Left side
         ctx.drawImage(filterImage, 
           canvas.width * 0.05, 
-          canvas.height * 0.3, 
+          canvas.height * 0.2, 
           bgSize, 
           bgSize * 1.2
         );
@@ -194,7 +195,7 @@ const CameraFilters = () => {
         ctx.scale(-1, 1);
         ctx.drawImage(filterImage, 
           -canvas.width * 0.95, 
-          canvas.height * 0.3, 
+          canvas.height * 0.2, 
           bgSize, 
           bgSize * 1.2
         );
@@ -203,27 +204,28 @@ const CameraFilters = () => {
         
       case 'aura':
         // Blue aura around head - more prominent and centered
-        const auraSize = Math.min(canvas.width, canvas.height) * 0.6;
-        ctx.globalAlpha = 0.5;
+        const auraSize = Math.min(canvas.width, canvas.height) * 0.7;
+        ctx.globalAlpha = 0.4;
         ctx.globalCompositeOperation = 'screen';
-        ctx.filter = 'blur(2px)';
+        ctx.filter = 'blur(3px)';
         ctx.drawImage(filterImage, 
           (canvas.width - auraSize) / 2, 
-          canvas.height * 0.1, 
+          canvas.height * 0.05, 
           auraSize, 
-          auraSize * 0.8
+          auraSize * 0.9
         );
         ctx.filter = 'none';
         break;
         
       case 'crown':
-        // Crown on top of head - better proportioned
-        const crownWidth = Math.min(canvas.width, canvas.height) * 0.4;
-        const crownHeight = crownWidth * 0.5;
-        ctx.globalAlpha = 0.9;
+        // Crown and serpent on top of head - better proportioned
+        const crownWidth = Math.min(canvas.width, canvas.height) * 0.5;
+        const crownHeight = crownWidth * 0.8;
+        ctx.globalAlpha = 0.7;
+        ctx.globalCompositeOperation = 'multiply';
         ctx.drawImage(filterImage, 
           (canvas.width - crownWidth) / 2, 
-          canvas.height * 0.05, 
+          canvas.height * 0.02, 
           crownWidth, 
           crownHeight
         );
@@ -330,7 +332,7 @@ const CameraFilters = () => {
         <div className="relative mb-6">
           <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-2xl mx-auto">
             {!cameraReady && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white">
+              <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white z-10">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
                   <p>Initializing camera...</p>
