@@ -1,8 +1,8 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Camera, Upload, X } from "lucide-react";
+import { Camera, Upload, X, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 
 interface CameraUploadProps {
@@ -22,6 +22,27 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const directCameraRef = useRef<HTMLInputElement>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isAPK, setIsAPK] = useState(false);
+
+  useEffect(() => {
+    // Detect mobile and APK environment
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isMobileDevice = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+    const isWebView = /wv|webview/i.test(userAgent);
+    const isAPKEnvironment = isWebView || window.location.protocol === 'file:' || 
+                            (window as any).Android || (window as any).webkit;
+    
+    setIsMobile(isMobileDevice);
+    setIsAPK(isAPKEnvironment);
+    
+    console.log('Environment detection:', {
+      isMobile: isMobileDevice,
+      isAPK: isAPKEnvironment,
+      userAgent: userAgent
+    });
+  }, []);
 
   const validateFile = (file: File): boolean => {
     // Check file size (15MB limit)
@@ -52,8 +73,13 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
   };
 
   const handleCameraCapture = () => {
-    console.log('Opening camera...');
-    cameraInputRef.current?.click();
+    console.log('Opening camera for APK/Mobile...');
+    if (isAPK || isMobile) {
+      // For APK environments, try multiple approaches
+      directCameraRef.current?.click();
+    } else {
+      cameraInputRef.current?.click();
+    }
   };
 
   const handleFileUpload = () => {
@@ -65,7 +91,9 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
     <div className="space-y-3">
       <Label className="text-sm font-medium">{label} {required && <span className="text-red-500">*</span>}</Label>
       
-      {/* Hidden file inputs with mobile-optimized attributes */}
+      {/* Multiple hidden file inputs for maximum compatibility */}
+      
+      {/* Standard file input */}
       <input
         ref={fileInputRef}
         type="file"
@@ -73,6 +101,8 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         onChange={handleFileChange}
         className="hidden"
       />
+      
+      {/* Camera input with capture attribute */}
       <input
         ref={cameraInputRef}
         type="file"
@@ -81,17 +111,33 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         onChange={handleFileChange}
         className="hidden"
       />
+      
+      {/* Direct camera input for APK - with multiple attributes for compatibility */}
+      <input
+        ref={directCameraRef}
+        type="file"
+        accept="image/*,image/jpeg,image/jpg,image/png"
+        capture="camera"
+        onChange={handleFileChange}
+        className="hidden"
+        // Additional attributes for APK compatibility
+        {...(isAPK && {
+          'data-capture': 'camera',
+          'data-camera': 'environment',
+          'webkitdirectory': false
+        })}
+      />
 
-      {/* Upload options - Mobile-first design */}
+      {/* Upload options - Optimized for mobile/APK */}
       <div className="space-y-2">
-        {/* Camera button - Primary action for mobile */}
+        {/* Camera button - Primary action for mobile/APK */}
         <Button
           type="button"
           onClick={handleCameraCapture}
-          className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-3 rounded-lg font-medium"
+          className="w-full flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-600 text-white py-4 rounded-lg font-medium text-lg"
         >
-          <Camera className="h-5 w-5" />
-          Take Photo with Camera
+          <Camera className="h-6 w-6" />
+          {isAPK ? 'Open Camera (APK Mode)' : 'Take Photo with Camera'}
         </Button>
         
         {/* File upload button - Secondary option */}
@@ -99,9 +145,9 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
           type="button"
           variant="outline"
           onClick={handleFileUpload}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-medium border-2 border-gray-300"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-medium border-2 border-gray-300 text-lg"
         >
-          <Upload className="h-5 w-5" />
+          <Upload className="h-6 w-6" />
           Choose from Gallery
         </Button>
       </div>
@@ -125,13 +171,41 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
         </div>
       )}
 
-      {/* Help text for mobile users */}
-      <div className="text-xs text-gray-500 bg-blue-50 p-2 rounded border border-blue-100">
-        <p className="font-medium text-blue-700 mb-1">📱 Mobile Tips:</p>
-        <p>• Use "Take Photo" for instant camera access</p>
-        <p>• Use "Choose from Gallery" for existing photos</p>
-        <p>• Photos are automatically optimized for upload</p>
+      {/* Help text optimized for APK users */}
+      <div className={`text-xs p-3 rounded border ${
+        isAPK 
+          ? 'text-orange-700 bg-orange-50 border-orange-200' 
+          : 'text-blue-700 bg-blue-50 border-blue-200'
+      }`}>
+        <p className="font-medium mb-1">
+          {isAPK ? '📱 APK Mode Tips:' : '📱 Mobile Tips:'}
+        </p>
+        {isAPK ? (
+          <>
+            <p>• Camera button will open your device's camera app</p>
+            <p>• Take photo and it will be automatically selected</p>
+            <p>• If camera doesn't work, use "Choose from Gallery"</p>
+            <p>• Make sure camera permissions are enabled for the app</p>
+          </>
+        ) : (
+          <>
+            <p>• Use "Take Photo" for instant camera access</p>
+            <p>• Use "Choose from Gallery" for existing photos</p>
+            <p>• Photos are automatically optimized for upload</p>
+          </>
+        )}
       </div>
+
+      {/* APK specific instructions */}
+      {isAPK && (
+        <div className="text-xs text-red-700 bg-red-50 p-2 rounded border border-red-200">
+          <p className="font-medium">⚠️ APK Camera Instructions:</p>
+          <p>1. Tap "Open Camera" button</p>
+          <p>2. Allow camera permission if prompted</p>
+          <p>3. Take photo in camera app</p>
+          <p>4. Photo will appear in preview below</p>
+        </div>
+      )}
     </div>
   );
 };
