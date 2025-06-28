@@ -63,7 +63,7 @@ const VirtualPooja = () => {
   useEffect(() => {
     // Start background music with reduced volume
     if (backgroundMusicRef.current && backgroundMusicEnabled) {
-      backgroundMusicRef.current.volume = 0.48;
+      backgroundMusicRef.current.volume = 0.40;
       backgroundMusicRef.current.play().catch(console.error);
     }
     
@@ -132,7 +132,7 @@ const VirtualPooja = () => {
       setShowAarti(false);
       if (aartiAudioRef.current) {
         aartiAudioRef.current.pause();
-        aartiAudioRef.current.currentTime = 500;
+        aartiAudioRef.current.currentTime = 0;
       }
       setActionMessage('आरती संपन्न हुई 🔥');
       completeStep('aarti');
