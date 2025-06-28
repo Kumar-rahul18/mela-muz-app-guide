@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Camera, Download, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { useFaceDetection } from '@/hooks/useFaceDetection';
+import EnhancedFilterRenderer from '@/components/EnhancedFilterRenderer';
 
 interface Filter {
   id: string;
@@ -46,7 +48,6 @@ const CameraFilters = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayCanvasRef = useRef<HTMLCanvasElement>(null);
-  const animationFrameRef = useRef<number>();
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [selectedFilter, setSelectedFilter] = useState<Filter | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
@@ -54,6 +55,9 @@ const CameraFilters = () => {
   const [error, setError] = useState<string | null>(null);
   const [filterImages, setFilterImages] = useState<{[key: string]: HTMLImageElement}>({});
   const [cameraReady, setCameraReady] = useState(false);
+
+  // Initialize face detection
+  const { faceDetections, isInitialized: faceDetectionReady, startDetection, stopDetection } = useFaceDetection(videoRef);
 
   // Preload filter images
   useEffect(() => {
@@ -112,6 +116,10 @@ const CameraFilters = () => {
         videoRef.current.onloadedmetadata = () => {
           console.log('Video metadata loaded');
           setCameraReady(true);
+          // Start face detection when camera is ready
+          if (faceDetectionReady) {
+            startDetection();
+          }
         };
         videoRef.current.oncanplay = () => {
           console.log('Video can play');
@@ -124,7 +132,7 @@ const CameraFilters = () => {
       setError('Unable to access camera. Please check permissions and try again.');
       setCameraReady(false);
     }
-  }, []);
+  }, [faceDetectionReady, startDetection]);
 
   const stopCamera = useCallback(() => {
     if (stream) {
@@ -135,126 +143,15 @@ const CameraFilters = () => {
       setStream(null);
       setCameraReady(false);
     }
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-  }, [stream]);
+    stopDetection();
+  }, [stream, stopDetection]);
 
-  const drawFilter = useCallback(() => {
-    if (!selectedFilter || !videoRef.current || !overlayCanvasRef.current || !filterImages[selectedFilter.id] || !cameraReady) {
-      return;
-    }
-
-    const canvas = overlayCanvasRef.current;
-    const ctx = canvas.getContext('2d');
-    const video = videoRef.current;
-    const filterImage = filterImages[selectedFilter.id];
-
-    if (!ctx || video.videoWidth === 0 || video.videoHeight === 0) {
-      return;
-    }
-
-    // Set canvas size to match video dimensions
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // Clear canvas with transparent background
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Save context state
-    ctx.save();
-
-    // Apply filter based on type with improved positioning
-    switch (selectedFilter.type) {
-      case 'face':
-        // Shiva Tilak on forehead - positioned more accurately
-        const tilakSize = Math.min(canvas.width, canvas.height) * 0.25;
-        ctx.globalAlpha = 0.8;
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.drawImage(filterImage, 
-          (canvas.width - tilakSize) / 2, 
-          canvas.height * 0.1, 
-          tilakSize, 
-          tilakSize
-        );
-        break;
-        
-      case 'background':
-        // Trishul & Damru in background - better positioning
-        const bgSize = Math.min(canvas.width, canvas.height) * 0.3;
-        ctx.globalAlpha = 0.6;
-        ctx.globalCompositeOperation = 'overlay';
-        // Left side
-        ctx.drawImage(filterImage, 
-          canvas.width * 0.05, 
-          canvas.height * 0.2, 
-          bgSize, 
-          bgSize * 1.2
-        );
-        // Right side (mirrored)
-        ctx.scale(-1, 1);
-        ctx.drawImage(filterImage, 
-          -canvas.width * 0.95, 
-          canvas.height * 0.2, 
-          bgSize, 
-          bgSize * 1.2
-        );
-        ctx.setTransform(1, 0, 0, 1, 0, 0);
-        break;
-        
-      case 'aura':
-        // Blue aura around head - more prominent and centered
-        const auraSize = Math.min(canvas.width, canvas.height) * 0.7;
-        ctx.globalAlpha = 0.4;
-        ctx.globalCompositeOperation = 'screen';
-        ctx.filter = 'blur(3px)';
-        ctx.drawImage(filterImage, 
-          (canvas.width - auraSize) / 2, 
-          canvas.height * 0.05, 
-          auraSize, 
-          auraSize * 0.9
-        );
-        ctx.filter = 'none';
-        break;
-        
-      case 'crown':
-        // Crown and serpent on top of head - better proportioned
-        const crownWidth = Math.min(canvas.width, canvas.height) * 0.5;
-        const crownHeight = crownWidth * 0.8;
-        ctx.globalAlpha = 0.7;
-        ctx.globalCompositeOperation = 'multiply';
-        ctx.drawImage(filterImage, 
-          (canvas.width - crownWidth) / 2, 
-          canvas.height * 0.02, 
-          crownWidth, 
-          crownHeight
-        );
-        break;
-    }
-    
-    // Restore context state
-    ctx.restore();
-  }, [selectedFilter, filterImages, cameraReady]);
-
-  // Continuous filter rendering using requestAnimationFrame
-  const renderLoop = useCallback(() => {
-    drawFilter();
-    animationFrameRef.current = requestAnimationFrame(renderLoop);
-  }, [drawFilter]);
-
+  // Start face detection when both camera and face detection are ready
   useEffect(() => {
-    if (selectedFilter && cameraReady) {
-      renderLoop();
-    } else if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
+    if (cameraReady && faceDetectionReady && !faceDetections.length) {
+      startDetection();
     }
-    
-    return () => {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-    };
-  }, [selectedFilter, cameraReady, renderLoop]);
+  }, [cameraReady, faceDetectionReady, startDetection, faceDetections.length]);
 
   const captureImage = useCallback(() => {
     if (!videoRef.current || !canvasRef.current || !cameraReady) {
@@ -284,7 +181,7 @@ const CameraFilters = () => {
     const imageData = canvas.toDataURL('image/png', 0.9);
     setCapturedImage(imageData);
     setIsCapturing(false);
-    console.log('Image captured successfully');
+    console.log('Image captured successfully with face detection data');
   }, [selectedFilter, cameraReady]);
 
   const downloadImage = useCallback(() => {
@@ -312,8 +209,13 @@ const CameraFilters = () => {
             🕉️ Shiva Camera Filters
           </h1>
           <p className="text-purple-200">
-            Apply divine filters and capture blessed moments
+            Apply divine filters with AI face detection
           </p>
+          {faceDetectionReady && (
+            <p className="text-green-200 text-sm mt-1">
+              ✨ Face Detection Active ({faceDetections.length} face{faceDetections.length !== 1 ? 's' : ''} detected)
+            </p>
+          )}
         </div>
 
         {error && (
@@ -331,11 +233,13 @@ const CameraFilters = () => {
 
         <div className="relative mb-6">
           <div className="relative bg-black rounded-lg overflow-hidden aspect-video max-w-2xl mx-auto">
-            {!cameraReady && (
+            {(!cameraReady || !faceDetectionReady) && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-white z-10">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                  <p>Initializing camera...</p>
+                  <p>
+                    {!cameraReady ? 'Initializing camera...' : 'Loading face detection...'}
+                  </p>
                 </div>
               </div>
             )}
@@ -358,14 +262,45 @@ const CameraFilters = () => {
                 transform: 'scaleX(-1)' // Mirror the overlay to match video
               }}
             />
+            
+            {/* Face detection visualization (optional debug) */}
+            {faceDetections.length > 0 && process.env.NODE_ENV === 'development' && (
+              <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                {faceDetections.map((face, index) => (
+                  <div
+                    key={index}
+                    className="absolute border-2 border-green-400 opacity-50"
+                    style={{
+                      left: `${(1 - face.boundingBox.originX - face.boundingBox.width) * 100}%`,
+                      top: `${face.boundingBox.originY * 100}%`,
+                      width: `${face.boundingBox.width * 100}%`,
+                      height: `${face.boundingBox.height * 100}%`,
+                    }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
           
           {selectedFilter && cameraReady && (
             <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-2 rounded-full text-sm backdrop-blur-sm">
               ✨ {selectedFilter.name}
+              {faceDetectionReady && faceDetections.length > 0 && (
+                <span className="ml-2 text-green-300">👤</span>
+              )}
             </div>
           )}
         </div>
+
+        {/* Enhanced Filter Renderer */}
+        <EnhancedFilterRenderer
+          videoRef={videoRef}
+          canvasRef={overlayCanvasRef}
+          selectedFilter={selectedFilter}
+          filterImages={filterImages}
+          faceDetections={faceDetections}
+          cameraReady={cameraReady && faceDetectionReady}
+        />
 
         {/* Filter Selection */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
