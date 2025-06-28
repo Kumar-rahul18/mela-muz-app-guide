@@ -53,14 +53,29 @@ const WeatherWidget = () => {
             default: return 'Unknown';
           }
         };
+
+        // Calculate exact AQI from PM2.5 values if available
+        const calculateExactAQI = (pm25: number) => {
+          if (pm25 <= 12) return Math.round((50 / 12) * pm25);
+          if (pm25 <= 35.4) return Math.round(((100 - 51) / (35.4 - 12.1)) * (pm25 - 12.1) + 51);
+          if (pm25 <= 55.4) return Math.round(((150 - 101) / (55.4 - 35.5)) * (pm25 - 35.5) + 101);
+          if (pm25 <= 150.4) return Math.round(((200 - 151) / (150.4 - 55.5)) * (pm25 - 55.5) + 151);
+          if (pm25 <= 250.4) return Math.round(((300 - 201) / (250.4 - 150.5)) * (pm25 - 150.5) + 201);
+          return Math.round(((500 - 301) / (500.4 - 250.5)) * (pm25 - 250.5) + 301);
+        };
+
+        let exactAQI = null;
+        if (aqiData?.list[0]?.components?.pm2_5) {
+          exactAQI = calculateExactAQI(aqiData.list[0].components.pm2_5);
+        }
         
         setWeather({
           temperature: Math.round(weatherData.main.temp),
           description: weatherData.weather[0].description,
           humidity: weatherData.main.humidity,
           feels_like: Math.round(weatherData.main.feels_like),
-          aqi: aqiData?.list[0]?.main?.aqi,
-          air_quality_description: aqiData ? getAQIDescription(aqiData.list[0].main.aqi) : undefined
+          aqi: exactAQI || aqiData?.list[0]?.main?.aqi,
+          air_quality_description: exactAQI ? undefined : (aqiData ? getAQIDescription(aqiData.list[0].main.aqi) : undefined)
         });
       }
     } catch (error) {
@@ -112,7 +127,7 @@ const WeatherWidget = () => {
         </p>
         {weather.aqi && (
           <p className="text-xs text-gray-500">
-            AQI: {weather.aqi} ({weather.air_quality_description})
+            AQI: {weather.aqi}{weather.air_quality_description && ` (${weather.air_quality_description})`}
           </p>
         )}
       </div>

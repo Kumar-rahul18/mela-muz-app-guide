@@ -157,7 +157,7 @@ const Index = () => {
       action: () => navigate('/gallery'),
     },
     { icon: '🧠', label: t('mela_quiz'), action: () => navigate('/mela-quiz') },
-    { icon: '🏨', label: 'Paid Hotels', path: '/facility/paid-hotels' },
+    { icon: '🏨', label: t('paid_hotels'), path: '/facility/paid-hotels' },
     { icon: '🏧', label: t('atm'), path: '/facility/atm' },
     { icon: '🚰', label: t('drinking_water'), path: '/facility/drinking-water' },
     { icon: '🚻', label: t('toilet'), path: '/facility/toilet' },
@@ -167,8 +167,8 @@ const Index = () => {
     { icon: '🏕️', label: t('shivir'), path: '/facility/shivir' },
     { icon: '🏥', label: t('health_centre'), path: '/facility/health-centre' },
     { icon: '🅿️', label: t('parking'), path: '/facility/parking' },
-    { icon: '📦', label: 'Lost & Found', action: () => navigate('/lost-found') },
-    { icon: '🍽️', label: 'Bhandara', path: '/facility/bhandara' },
+    { icon: '📦', label: t('lost_found'), action: () => navigate('/lost-found') },
+    { icon: '🍽️', label: t('bhandaras'), path: '/facility/bhandara' },
   ];
 
   const quickAccessItems = [

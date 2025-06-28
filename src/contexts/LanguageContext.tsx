@@ -118,7 +118,7 @@ const translations = {
 
     // Additional missing keywords
     'lost_found': 'Lost & Found',
-    'bhandaras': 'Bhandaras',
+    'bhandaras': 'Bhandara',
     'paid_hotels': 'Paid Hotels',
     'change_language': 'Change Language',
     'events': 'Events',
@@ -231,9 +231,9 @@ const translations = {
     'register_new_vehicle_desc': 'पार्किंग सिस्टम में एक नया वाहन पंजीकृत करें',
     'search_vehicle_desc': 'वाहन आईडी का उपयोग करके पंजीकृत वाहन खोजें',
 
-    // Additional missing keywords
+    // Additional missing keywords - corrected Hindi translations
     'lost_found': 'खोया पाया',
-    'bhandaras': 'भंडारे',
+    'bhandaras': 'भंडारा',
     'paid_hotels': 'सशुल्क होटल',
     'change_language': 'भाषा बदलें',
     'events': 'कार्यक्रम',
