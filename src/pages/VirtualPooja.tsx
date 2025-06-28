@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Heart } from 'lucide-react';
 
 interface PoojaStep {
   id: string;
@@ -8,6 +9,13 @@ interface PoojaStep {
   english: string;
   icon: string;
   completed: boolean;
+}
+
+interface Jyotirlinga {
+  id: number;
+  name: string;
+  location: string;
+  imageUrl: string;
 }
 
 const VirtualPooja = () => {
@@ -18,6 +26,7 @@ const VirtualPooja = () => {
   const aartiAudioRef = useRef<HTMLAudioElement>(null);
   const bellAudioRef = useRef<HTMLAudioElement>(null);
   
+  const [selectedJyotirlinga, setSelectedJyotirlinga] = useState<Jyotirlinga | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [isActionActive, setIsActionActive] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
@@ -29,6 +38,21 @@ const VirtualPooja = () => {
   const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
   const [showAura, setShowAura] = useState(false);
 
+  const jyotirlingas: Jyotirlinga[] = [
+    { id: 1, name: 'Somnath', location: 'Veraval, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/1-somnath.jpg' },
+    { id: 2, name: 'Mallikarjuna', location: 'Srisailam, Andhra Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/2-mallikarjuna.jpg' },
+    { id: 3, name: 'Mahakaleshwar', location: 'Ujjain, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/3-mahakaleshwar.jpg' },
+    { id: 4, name: 'Omkareshwar', location: 'Khandwa, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/4-omkareshwar.jpg' },
+    { id: 5, name: 'Kedarnath', location: 'Kedarnath, Uttarakhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/5-kedarnath.jpg' },
+    { id: 6, name: 'Bhimashankar', location: 'Pune, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/6-bhimashankar.jpg' },
+    { id: 7, name: 'Kashi Vishwanath', location: 'Varanasi, Uttar Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/7-kashi-vishwanath.jpg' },
+    { id: 8, name: 'Trimbakeshwar', location: 'Nashik, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/8-trimbakeshwar.jpg' },
+    { id: 9, name: 'Vaidyanath', location: 'Deoghar, Jharkhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/9-vaidyanath.jpg' },
+    { id: 10, name: 'Nageshwar', location: 'Dwarka, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/10-nageshwar.jpg' },
+    { id: 11, name: 'Rameshwaram', location: 'Rameswaram, Tamil Nadu', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/11-rameshwaram.jpg' },
+    { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12-grishneshwar.jpg' }
+  ];
+
   const [steps, setSteps] = useState<PoojaStep[]>([
     { id: 'jal', hindi: 'जल चढ़ाएं', english: 'Jal Chadhayen', icon: '🚿', completed: false },
     { id: 'mantra', hindi: 'मंत्र पढ़ें', english: 'Mantra Padhen', icon: '📖', completed: false },
@@ -39,7 +63,7 @@ const VirtualPooja = () => {
   useEffect(() => {
     // Start background music with reduced volume
     if (backgroundMusicRef.current && backgroundMusicEnabled) {
-      backgroundMusicRef.current.volume = 0.48; // Reduced from 0.3 to 0.25
+      backgroundMusicRef.current.volume = 0.48;
       backgroundMusicRef.current.play().catch(console.error);
     }
     
@@ -52,13 +76,13 @@ const VirtualPooja = () => {
 
   const playSound = (type: 'bell' | 'mantra' | 'aarti') => {
     if (type === 'mantra' && mantraAudioRef.current) {
-      mantraAudioRef.current.volume = 1.0; // Full volume for foreground sounds
+      mantraAudioRef.current.volume = 1.0;
       mantraAudioRef.current.play().catch(console.error);
     } else if (type === 'aarti' && aartiAudioRef.current) {
-      aartiAudioRef.current.volume = 1.0; // Full volume for foreground sounds
+      aartiAudioRef.current.volume = 1.0;
       aartiAudioRef.current.play().catch(console.error);
     } else if (type === 'bell' && bellAudioRef.current) {
-      bellAudioRef.current.volume = 1.0; // Full volume for foreground sounds
+      bellAudioRef.current.volume = 1.0;
       bellAudioRef.current.play().catch(console.error);
     }
     console.log(`Playing ${type} sound`);
@@ -150,7 +174,6 @@ const VirtualPooja = () => {
         setPoojaComplete(true);
         setShowAura(true);
         playSound('bell');
-        // Stop bell sound after 3 seconds
         setTimeout(() => {
           if (bellAudioRef.current) {
             bellAudioRef.current.pause();
@@ -184,12 +207,130 @@ const VirtualPooja = () => {
     setShowJalAnimation(false);
   };
 
-  // Get current step to display
   const getCurrentStepToShow = () => {
     if (poojaComplete) return null;
     return steps[currentStep];
   };
 
+  const handleJyotirlingaSelect = (jyotirlinga: Jyotirlinga) => {
+    setSelectedJyotirlinga(jyotirlinga);
+    resetPooja();
+  };
+
+  const goBackToSelection = () => {
+    setSelectedJyotirlinga(null);
+    resetPooja();
+  };
+
+  // If no Jyotirlinga is selected, show selection screen
+  if (!selectedJyotirlinga) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
+        {/* Background Audio */}
+        <audio ref={backgroundMusicRef} loop>
+          <source src="https://mela-muz-app-guide.vercel.app/deep-om-chants-with-reverb-229614.mp3" type="audio/mpeg" />
+        </audio>
+
+        {/* Background Particles */}
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-yellow-400 rounded-full animate-pulse opacity-60"
+              style={{
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animationDelay: `${Math.random() * 3}s`,
+                animationDuration: `${2 + Math.random() * 2}s`
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Header */}
+        <div className="app-gradient text-white px-4 py-3 shadow-lg relative z-10">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <button onClick={() => navigate('/')} className="text-white">
+                ← 
+              </button>
+              <h1 className="text-lg font-semibold">🕉 12 ज्योतिर्लिंग पूजा</h1>
+            </div>
+            <button
+              onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
+              className="text-white p-2 rounded-full hover:bg-white/20"
+            >
+              {backgroundMusicEnabled ? '🔊' : '🔇'}
+            </button>
+          </div>
+        </div>
+
+        <div className="px-4 py-6 relative z-10">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
+              🕉 12 ज्योतिर्लिंग
+            </h1>
+            <p className="text-orange-600 text-sm mb-6">
+              अपना पसंदीदा ज्योतिर्लिंग चुनें और पूजा करें
+            </p>
+          </div>
+
+          {/* Jyotirlinga Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-6xl mx-auto">
+            {jyotirlingas.map((jyotirlinga) => (
+              <div
+                key={jyotirlinga.id}
+                className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-orange-200 hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <div className="aspect-square rounded-xl overflow-hidden mb-3 bg-gradient-to-b from-gray-200 to-gray-300">
+                  <img
+                    src={jyotirlinga.imageUrl}
+                    alt={jyotirlinga.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDAiIGZpbGw9IiM5Q0EzQUYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5WVPC90ZXh0Pgo8L3N2Zz4K';
+                    }}
+                  />
+                </div>
+                
+                <div className="text-center">
+                  <h3 className="text-lg font-bold text-orange-800 mb-1">
+                    {jyotirlinga.name}
+                  </h3>
+                  <p className="text-sm text-orange-600 mb-3">
+                    {jyotirlinga.location}
+                  </p>
+                  
+                  <button
+                    onClick={() => handleJyotirlingaSelect(jyotirlinga)}
+                    className="group relative bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white px-6 py-2 rounded-full font-semibold transition-all duration-300 hover:shadow-lg active:scale-95 flex items-center justify-center space-x-2 mx-auto"
+                  >
+                    <Heart className="w-4 h-4 animate-pulse" />
+                    <span>पूजा करें</span>
+                    <Heart className="w-4 h-4 animate-pulse" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Instructions */}
+          <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-orange-200 max-w-2xl mx-auto">
+            <h3 className="text-lg font-semibold text-orange-800 mb-2 text-center">पूजा विधि:</h3>
+            <ol className="text-sm text-orange-700 space-y-1">
+              <li>1. अपना पसंदीदा ज्योतिर्लिंग चुनें</li>
+              <li>2. जल चढ़ाएं → मंत्र जाप करें → आरती करें → प्रसाद चढ़ाएं</li>
+              <li>3. प्रत्येक चरण में उचित समय लगेगा</li>
+              <li>4. पूर्ण श्रद्धा के साथ पूजा करें</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Main puja interface (existing code with selected Jyotirlinga)
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
       {/* Background Audio with reduced volume */}
@@ -232,10 +373,10 @@ const VirtualPooja = () => {
       <div className="app-gradient text-white px-4 py-3 shadow-lg relative z-10">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <button onClick={() => navigate('/')} className="text-white">
+            <button onClick={goBackToSelection} className="text-white">
               ← 
             </button>
-            <h1 className="text-lg font-semibold">🕉 वर्चुअल शिवलिंग पूजा</h1>
+            <h1 className="text-lg font-semibold">🕉 {selectedJyotirlinga.name} पूजा</h1>
           </div>
           <button
             onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
@@ -251,7 +392,7 @@ const VirtualPooja = () => {
         <div className="mb-6">
           <div className="flex justify-center items-center space-x-2 mb-2">
             <span className="text-sm text-orange-800 font-medium">
-              चरण {currentStep } / 4
+              चरण {currentStep} / 4
             </span>
           </div>
           <div className="w-full bg-orange-200 rounded-full h-2">
@@ -262,13 +403,14 @@ const VirtualPooja = () => {
           </div>
         </div>
 
-        {/* Shivling Section */}
+        {/* Jyotirlinga Section */}
         <div className="text-center mb-8 relative">
-          <h1 className="text-2xl font-bold text-orange-800 mb-6 font-serif">
-            🕉 वर्चुअल शिवलिंग पूजा
+          <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
+            🕉 {selectedJyotirlinga.name}
           </h1>
+          <p className="text-orange-600 text-sm mb-6">{selectedJyotirlinga.location}</p>
           
-          {/* Shivling Container with Aura */}
+          {/* Jyotirlinga Container with Aura */}
           <div className={`relative inline-block ${showAura ? 'animate-pulse' : ''}`}>
             {showAura && (
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-xl opacity-60 scale-110 animate-spin-slow" />
@@ -277,11 +419,10 @@ const VirtualPooja = () => {
             {/* Jyotirlinga Image */}
             <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden shadow-2xl">
               <img 
-                src="https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//jyotirlinga.jpeg" 
-                alt="Jyotirlinga" 
+                src={selectedJyotirlinga.imageUrl}
+                alt={selectedJyotirlinga.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Fallback to gradient background with Om symbol if image fails to load
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
                   const parent = target.parentElement;
@@ -350,7 +491,7 @@ const VirtualPooja = () => {
                     {/* Circular path for diya */}
                     <div className="absolute inset-0 rounded-full border-2 border-yellow-400 opacity-30"></div>
                     
-                    {/* Moving diya with hand-like circular motion */}
+                    {/* Moving diya */}
                     <div 
                       className="absolute w-8 h-8 flex items-center justify-center"
                       style={{ 
@@ -423,15 +564,23 @@ const VirtualPooja = () => {
           {poojaComplete && (
             <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-orange-300 rounded-2xl p-6 mb-6 animate-fade-in">
               <div className="text-3xl mb-2">🙏</div>
-              <h2 className="text-xl font-bold text-orange-800 mb-2">🕉 पूजा संपूर्ण हुई 🕉</h2>
-              <p className="text-orange-700 mb-2">आपकी पूजा सफलतापूर्वक संपन्न हुई।</p>
+              <h2 className="text-xl font-bold text-orange-800 mb-2">🕉 {selectedJyotirlinga.name} पूजा संपूर्ण हुई 🕉</h2>
+              <p className="text-orange-700 mb-2">आपकी {selectedJyotirlinga.name} की पूजा सफलतापूर्वक संपन्न हुई।</p>
               <p className="text-orange-600 text-sm mb-4">🔔 भगवान शिव आपको आशीर्वाद दें।</p>
-              <Button 
-                onClick={resetPooja}
-                className="mt-4 bg-orange-500 hover:bg-orange-600 text-white"
-              >
-                पुनः पूजा करें
-              </Button>
+              <div className="flex space-x-3 justify-center">
+                <Button 
+                  onClick={resetPooja}
+                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                >
+                  पुनः पूजा करें
+                </Button>
+                <Button 
+                  onClick={goBackToSelection}
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                >
+                  अन्य ज्योतिर्लिंग चुनें
+                </Button>
+              </div>
             </div>
           )}
         </div>
