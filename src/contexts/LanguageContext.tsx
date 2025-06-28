@@ -105,7 +105,25 @@ const translations = {
     'rank': 'Rank #',
     'view_leaderboard': 'View Leaderboard',
     'back_to_home': 'Back to Home',
-    'leaderboard': 'Leaderboard'
+    'leaderboard': 'Leaderboard',
+
+    // Vehicle Admin translations
+    'vehicle_admin_panel': 'Vehicle Admin Panel',
+    'manage_vehicle_registrations': 'Manage vehicle registrations and parking status',
+    'register_vehicle': 'Register Vehicle',
+    'search_vehicle': 'Search Vehicle',
+    'register_new_vehicle': 'Register New Vehicle',
+    'register_new_vehicle_desc': 'Register a new vehicle in the parking system',
+    'search_vehicle_desc': 'Search for a registered vehicle using vehicle ID',
+
+    // Additional missing keywords
+    'lost_found': 'Lost & Found',
+    'bhandaras': 'Bhandaras',
+    'paid_hotels': 'Paid Hotels',
+    'change_language': 'Change Language',
+    'events': 'Events',
+    'home': 'Home',
+    'admin': 'Admin'
   },
   hi: {
     // App title
@@ -202,7 +220,25 @@ const translations = {
     'rank': 'रैंक #',
     'view_leaderboard': 'लीडरबोर्ड देखें',
     'back_to_home': 'होम पर वापस',
-    'leaderboard': 'लीडरबोर्ड'
+    'leaderboard': 'लीडरबोर्ड',
+
+    // Vehicle Admin translations
+    'vehicle_admin_panel': 'वाहन प्रशासन पैनल',
+    'manage_vehicle_registrations': 'वाहन पंजीकरण और पार्किंग स्थिति प्रबंधित करें',
+    'register_vehicle': 'वाहन पंजीकृत करें',
+    'search_vehicle': 'वाहन खोजें',
+    'register_new_vehicle': 'नया वाहन पंजीकृत करें',
+    'register_new_vehicle_desc': 'पार्किंग सिस्टम में एक नया वाहन पंजीकृत करें',
+    'search_vehicle_desc': 'वाहन आईडी का उपयोग करके पंजीकृत वाहन खोजें',
+
+    // Additional missing keywords
+    'lost_found': 'खोया पाया',
+    'bhandaras': 'भंडारे',
+    'paid_hotels': 'सशुल्क होटल',
+    'change_language': 'भाषा बदलें',
+    'events': 'कार्यक्रम',
+    'home': 'होम',
+    'admin': 'प्रशासक'
   }
 };
 
