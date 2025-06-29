@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Phone, ExternalLink } from 'lucide-react';
+import { ArrowLeft, MapPin, Phone, ExternalLink, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { calculateDistance, formatDistance, getCurrentLocation } from '@/utils/locationUtils';
 
 interface Facility {
   id: string;
@@ -14,7 +14,10 @@ interface Facility {
   contact_number: string;
   location_name: string;
   google_maps_link: string;
+  latitude: number | null;
+  longitude: number | null;
   is_active: boolean;
+  distance?: number;
 }
 
 const FacilityDetail = () => {
@@ -23,6 +26,9 @@ const FacilityDetail = () => {
   const { t } = useLanguage();
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [loading, setLoading] = useState(true);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   const facilityConfig = {
     'paid-hotels': {
@@ -90,8 +96,23 @@ const FacilityDetail = () => {
   useEffect(() => {
     if (type) {
       fetchFacilities();
+      requestUserLocation();
     }
   }, [type]);
+
+  const requestUserLocation = async () => {
+    setLocationLoading(true);
+    try {
+      const location = await getCurrentLocation();
+      setUserLocation(location);
+      setLocationError(null);
+    } catch (error) {
+      console.error('Error getting user location:', error);
+      setLocationError('Location access denied or unavailable');
+    } finally {
+      setLocationLoading(false);
+    }
+  };
 
   const fetchFacilities = async () => {
     try {
@@ -115,6 +136,38 @@ const FacilityDetail = () => {
       setLoading(false);
     }
   };
+
+  // Calculate distances and sort facilities
+  const facilitiesWithDistance = React.useMemo(() => {
+    if (!userLocation) return facilities;
+
+    const withDistance = facilities.map(facility => {
+      if (facility.latitude && facility.longitude) {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          facility.latitude,
+          facility.longitude
+        );
+        return { ...facility, distance };
+      }
+      return facility;
+    });
+
+    // Sort by distance (ascending), facilities without coordinates go to end
+    return withDistance.sort((a, b) => {
+      if (a.distance && b.distance) {
+        return a.distance - b.distance;
+      }
+      if (a.distance && !b.distance) {
+        return -1;
+      }
+      if (!a.distance && b.distance) {
+        return 1;
+      }
+      return 0;
+    });
+  }, [facilities, userLocation]);
 
   const handleMapClick = (mapsLink: string) => {
     if (mapsLink) {
@@ -162,19 +215,55 @@ const FacilityDetail = () => {
       <div className="px-4 py-6">
         <div className="mb-6">
           <p className="text-gray-600 text-sm">{config.description}</p>
+          
+          {/* Location Status */}
+          <div className="mt-3 flex items-center space-x-2">
+            <Navigation className="w-4 h-4 text-blue-500" />
+            {locationLoading ? (
+              <span className="text-sm text-gray-500">Getting your location...</span>
+            ) : userLocation ? (
+              <span className="text-sm text-green-600">Location-based sorting enabled</span>
+            ) : (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-orange-600">
+                  {locationError || 'Location not available'}
+                </span>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={requestUserLocation}
+                  className="text-xs px-2 py-1 h-6"
+                >
+                  Try Again
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
             <div className="text-gray-500">Loading facilities...</div>
           </div>
-        ) : facilities.length > 0 ? (
+        ) : facilitiesWithDistance.length > 0 ? (
           <div className="space-y-4">
-            {facilities.map((facility) => (
+            {facilitiesWithDistance.map((facility, index) => (
               <Card key={facility.id} className="shadow-sm border border-gray-200">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-gray-800">
-                    {facility.name}
+                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center justify-between">
+                    <span>{facility.name}</span>
+                    <div className="flex items-center space-x-2">
+                      {index === 0 && facility.distance && (
+                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                          Nearest
+                        </span>
+                      )}
+                      {facility.distance && (
+                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                          {formatDistance(facility.distance)}
+                        </span>
+                      )}
+                    </div>
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">

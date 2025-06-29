@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
@@ -36,6 +36,8 @@ interface Facility {
   contact_number: string;
   location_name: string;
   google_maps_link: string;
+  latitude: number | null;
+  longitude: number | null;
   is_active: boolean;
 }
 
@@ -77,6 +79,8 @@ const AdminDashboard: React.FC = () => {
   const [facilityContact, setFacilityContact] = useState('');
   const [facilityLocationName, setFacilityLocationName] = useState('');
   const [facilityMapsLink, setFacilityMapsLink] = useState('');
+  const [facilityLatitude, setFacilityLatitude] = useState('');
+  const [facilityLongitude, setFacilityLongitude] = useState('');
   
   // Form states for contacts
   const [contactType, setContactType] = useState('');
@@ -258,6 +262,20 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
+    // Validate coordinates if provided
+    const lat = facilityLatitude ? parseFloat(facilityLatitude) : null;
+    const lon = facilityLongitude ? parseFloat(facilityLongitude) : null;
+    
+    if ((facilityLatitude && isNaN(lat!)) || (facilityLongitude && isNaN(lon!))) {
+      toast.error('Please enter valid coordinates');
+      return;
+    }
+
+    if ((lat && (lat < -90 || lat > 90)) || (lon && (lon < -180 || lon > 180))) {
+      toast.error('Coordinates out of valid range');
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('facilities')
@@ -267,6 +285,8 @@ const AdminDashboard: React.FC = () => {
           contact_number: facilityContact || null,
           location_name: facilityLocationName || null,
           google_maps_link: facilityMapsLink || null,
+          latitude: lat,
+          longitude: lon,
           is_active: true
         }]);
 
@@ -282,6 +302,8 @@ const AdminDashboard: React.FC = () => {
       setFacilityContact('');
       setFacilityLocationName('');
       setFacilityMapsLink('');
+      setFacilityLatitude('');
+      setFacilityLongitude('');
       await fetchFacilities();
     } catch (error) {
       console.error('Error adding facility:', error);
@@ -509,6 +531,20 @@ const AdminDashboard: React.FC = () => {
       return;
     }
 
+    // Validate coordinates if provided
+    const lat = facilityLatitude ? parseFloat(facilityLatitude) : null;
+    const lon = facilityLongitude ? parseFloat(facilityLongitude) : null;
+    
+    if ((facilityLatitude && isNaN(lat!)) || (facilityLongitude && isNaN(lon!))) {
+      toast.error('Please enter valid coordinates');
+      return;
+    }
+
+    if ((lat && (lat < -90 || lat > 90)) || (lon && (lon < -180 || lon > 180))) {
+      toast.error('Coordinates out of valid range');
+      return;
+    }
+
     try {
       const { error } = await supabase
         .from('facilities')
@@ -518,6 +554,8 @@ const AdminDashboard: React.FC = () => {
           contact_number: facilityContact || null,
           location_name: facilityLocationName || null,
           google_maps_link: facilityMapsLink || null,
+          latitude: lat,
+          longitude: lon,
           is_active: true
         }]);
 
@@ -532,6 +570,8 @@ const AdminDashboard: React.FC = () => {
       setFacilityContact('');
       setFacilityLocationName('');
       setFacilityMapsLink('');
+      setFacilityLatitude('');
+      setFacilityLongitude('');
       await fetchManagedFacilities();
     } catch (error) {
       console.error('Error adding managed facility:', error);
@@ -831,6 +871,26 @@ const AdminDashboard: React.FC = () => {
                       placeholder="Enter location name"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-blue-700">Latitude</label>
+                    <Input
+                      value={facilityLatitude}
+                      onChange={(e) => setFacilityLatitude(e.target.value)}
+                      placeholder="e.g., 26.1234"
+                      type="number"
+                      step="any"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-blue-700">Longitude</label>
+                    <Input
+                      value={facilityLongitude}
+                      onChange={(e) => setFacilityLongitude(e.target.value)}
+                      placeholder="e.g., 85.5678"
+                      type="number"
+                      step="any"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 text-blue-700">Google Maps Link</label>
@@ -860,6 +920,9 @@ const AdminDashboard: React.FC = () => {
                           <p className="text-sm text-blue-600 capitalize">{facility.facility_type.replace('-', ' ')}</p>
                           <p className="text-xs text-blue-500">{facility.location_name}</p>
                           <p className="text-xs text-blue-500">{facility.contact_number}</p>
+                          {(facility.latitude !== null && facility.longitude !== null) && (
+                            <p className="text-xs text-blue-500">Lat: {facility.latitude}, Lon: {facility.longitude}</p>
+                          )}
                         </div>
                         <Button
                           size="sm"
@@ -1054,6 +1117,26 @@ const AdminDashboard: React.FC = () => {
                       placeholder="Enter location name"
                     />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Latitude</label>
+                    <Input
+                      value={facilityLatitude}
+                      onChange={(e) => setFacilityLatitude(e.target.value)}
+                      placeholder="e.g., 26.1234"
+                      type="number"
+                      step="any"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-2 text-indigo-700">Longitude</label>
+                    <Input
+                      value={facilityLongitude}
+                      onChange={(e) => setFacilityLongitude(e.target.value)}
+                      placeholder="e.g., 85.5678"
+                      type="number"
+                      step="any"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 text-indigo-700">Google Maps Link</label>
@@ -1093,6 +1176,9 @@ const AdminDashboard: React.FC = () => {
                                   )}
                                   {facility.location_name && (
                                     <p className="text-xs text-indigo-500">{facility.location_name}</p>
+                                  )}
+                                  {(facility.latitude !== null && facility.longitude !== null) && (
+                                    <p className="text-xs text-indigo-500">Lat: {facility.latitude}, Lon: {facility.longitude}</p>
                                   )}
                                   {facility.google_maps_link && (
                                     <a 

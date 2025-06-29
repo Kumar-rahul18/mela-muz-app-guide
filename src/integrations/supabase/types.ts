@@ -200,7 +200,9 @@ export type Database = {
           google_maps_link: string | null
           id: string
           is_active: boolean
+          latitude: number | null
           location_name: string | null
+          longitude: number | null
           name: string
           updated_at: string
         }
@@ -211,7 +213,9 @@ export type Database = {
           google_maps_link?: string | null
           id?: string
           is_active?: boolean
+          latitude?: number | null
           location_name?: string | null
+          longitude?: number | null
           name: string
           updated_at?: string
         }
@@ -222,7 +226,9 @@ export type Database = {
           google_maps_link?: string | null
           id?: string
           is_active?: boolean
+          latitude?: number | null
           location_name?: string | null
+          longitude?: number | null
           name?: string
           updated_at?: string
         }
@@ -258,30 +264,6 @@ export type Database = {
           is_active?: boolean | null
           title?: string | null
           updated_at?: string
-        }
-        Relationships: []
-      }
-      "import check": {
-        Row: {
-          created_at: string
-          id: number
-          Name: string | null
-          phone_number: number | null
-          serial_number: number | null
-        }
-        Insert: {
-          created_at?: string
-          id?: number
-          Name?: string | null
-          phone_number?: number | null
-          serial_number?: number | null
-        }
-        Update: {
-          created_at?: string
-          id?: number
-          Name?: string | null
-          phone_number?: number | null
-          serial_number?: number | null
         }
         Relationships: []
       }
