@@ -104,14 +104,32 @@ const FacilityDetail = () => {
 
   const requestUserLocation = async () => {
     setLocationLoading(true);
+    setLocationError(null);
+    
     try {
+      console.log('Requesting user location...');
+      
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation is not supported by this browser');
+      }
+
       const location = await getCurrentLocation();
       setUserLocation(location);
-      setLocationError(null);
-      console.log('User location obtained:', location);
-    } catch (error) {
+      console.log('User location obtained successfully:', location);
+    } catch (error: any) {
       console.error('Error getting user location:', error);
-      setLocationError('Location access denied or unavailable');
+      let errorMessage = 'Unable to get your location';
+      
+      if (error.code === 1) {
+        errorMessage = 'Location access denied. Please enable location access in your browser settings.';
+      } else if (error.code === 2) {
+        errorMessage = 'Location information is unavailable.';
+      } else if (error.code === 3) {
+        errorMessage = 'Location request timeout.';
+      }
+      
+      setLocationError(errorMessage);
     } finally {
       setLocationLoading(false);
     }
@@ -120,6 +138,8 @@ const FacilityDetail = () => {
   const fetchFacilities = async () => {
     try {
       setLoading(true);
+      console.log('Fetching facilities for type:', type);
+      
       const { data, error } = await supabase
         .from('facilities')
         .select('*')
@@ -133,6 +153,7 @@ const FacilityDetail = () => {
       }
 
       console.log('Fetched facilities:', data);
+      console.log('Facilities with coordinates:', data?.filter(f => f.latitude && f.longitude));
       setFacilities(data || []);
     } catch (error) {
       console.error('Error fetching facilities:', error);
@@ -145,9 +166,13 @@ const FacilityDetail = () => {
   const facilitiesWithDistance = React.useMemo(() => {
     if (!userLocation || !facilities.length) {
       console.log('No user location or facilities available for distance calculation');
+      console.log('User location:', userLocation);
+      console.log('Facilities count:', facilities.length);
       return facilities;
     }
 
+    console.log('Calculating distances for', facilities.length, 'facilities');
+    
     const withDistance = facilities.map(facility => {
       if (facility.latitude && facility.longitude) {
         const distance = calculateDistance(
@@ -156,10 +181,10 @@ const FacilityDetail = () => {
           Number(facility.latitude),
           Number(facility.longitude)
         );
-        console.log(`Distance to ${facility.name}: ${distance}km`);
+        console.log(`Distance to ${facility.name}: ${distance}km (${facility.latitude}, ${facility.longitude})`);
         return { ...facility, distance };
       }
-      console.log(`No coordinates for facility: ${facility.name}`);
+      console.log(`No coordinates for facility: ${facility.name} (lat: ${facility.latitude}, lng: ${facility.longitude})`);
       return facility;
     });
 
@@ -177,7 +202,7 @@ const FacilityDetail = () => {
       return 0;
     });
 
-    console.log('Sorted facilities by distance:', sorted);
+    console.log('Sorted facilities by distance:', sorted.map(f => ({ name: f.name, distance: f.distance })));
     return sorted;
   }, [facilities, userLocation]);
 
