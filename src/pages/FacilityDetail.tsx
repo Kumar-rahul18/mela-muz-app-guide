@@ -1,8 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, ExternalLink, Navigation } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateDistance, formatDistance, getCurrentLocation } from '@/utils/locationUtils';
@@ -106,6 +108,7 @@ const FacilityDetail = () => {
       const location = await getCurrentLocation();
       setUserLocation(location);
       setLocationError(null);
+      console.log('User location obtained:', location);
     } catch (error) {
       console.error('Error getting user location:', error);
       setLocationError('Location access denied or unavailable');
@@ -129,6 +132,7 @@ const FacilityDetail = () => {
         return;
       }
 
+      console.log('Fetched facilities:', data);
       setFacilities(data || []);
     } catch (error) {
       console.error('Error fetching facilities:', error);
@@ -139,23 +143,28 @@ const FacilityDetail = () => {
 
   // Calculate distances and sort facilities
   const facilitiesWithDistance = React.useMemo(() => {
-    if (!userLocation) return facilities;
+    if (!userLocation || !facilities.length) {
+      console.log('No user location or facilities available for distance calculation');
+      return facilities;
+    }
 
     const withDistance = facilities.map(facility => {
       if (facility.latitude && facility.longitude) {
         const distance = calculateDistance(
           userLocation.latitude,
           userLocation.longitude,
-          facility.latitude,
-          facility.longitude
+          Number(facility.latitude),
+          Number(facility.longitude)
         );
+        console.log(`Distance to ${facility.name}: ${distance}km`);
         return { ...facility, distance };
       }
+      console.log(`No coordinates for facility: ${facility.name}`);
       return facility;
     });
 
     // Sort by distance (ascending), facilities without coordinates go to end
-    return withDistance.sort((a, b) => {
+    const sorted = withDistance.sort((a, b) => {
       if (a.distance && b.distance) {
         return a.distance - b.distance;
       }
@@ -167,6 +176,9 @@ const FacilityDetail = () => {
       }
       return 0;
     });
+
+    console.log('Sorted facilities by distance:', sorted);
+    return sorted;
   }, [facilities, userLocation]);
 
   const handleMapClick = (mapsLink: string) => {
@@ -222,7 +234,9 @@ const FacilityDetail = () => {
             {locationLoading ? (
               <span className="text-sm text-gray-500">Getting your location...</span>
             ) : userLocation ? (
-              <span className="text-sm text-green-600">Location-based sorting enabled</span>
+              <span className="text-sm text-green-600">
+                Location-based sorting enabled • {facilitiesWithDistance.filter(f => f.distance).length} facilities with distance
+              </span>
             ) : (
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-orange-600">
@@ -254,14 +268,18 @@ const FacilityDetail = () => {
                     <span>{facility.name}</span>
                     <div className="flex items-center space-x-2">
                       {index === 0 && facility.distance && (
-                        <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-medium">
+                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">
                           Nearest
-                        </span>
+                        </Badge>
                       )}
-                      {facility.distance && (
-                        <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                      {facility.distance ? (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
                           {formatDistance(facility.distance)}
-                        </span>
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-gray-500">
+                          Distance unavailable
+                        </Badge>
                       )}
                     </div>
                   </CardTitle>
