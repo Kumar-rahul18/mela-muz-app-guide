@@ -102,6 +102,27 @@ const FacilityDetail = () => {
     }
   }, [type]);
 
+  // Recalculate distances when user location or facilities change
+  useEffect(() => {
+    if (userLocation && facilities.length > 0) {
+      console.log('Recalculating distances for all facilities...');
+      const facilitiesWithUpdatedDistance = facilities.map(facility => {
+        if (facility.latitude && facility.longitude) {
+          const distance = calculateDistance(
+            userLocation.latitude,
+            userLocation.longitude,
+            Number(facility.latitude),
+            Number(facility.longitude)
+          );
+          console.log(`Updated distance for ${facility.name}: ${distance}km`);
+          return { ...facility, distance };
+        }
+        return facility;
+      });
+      setFacilities(facilitiesWithUpdatedDistance);
+    }
+  }, [userLocation]);
+
   const requestUserLocation = async () => {
     setLocationLoading(true);
     setLocationError(null);
@@ -162,49 +183,37 @@ const FacilityDetail = () => {
     }
   };
 
-  // Calculate distances and sort facilities
-  const facilitiesWithDistance = React.useMemo(() => {
-    if (!userLocation || !facilities.length) {
-      console.log('No user location or facilities available for distance calculation');
-      console.log('User location:', userLocation);
-      console.log('Facilities count:', facilities.length);
+  // Sort facilities by distance (facilities with distance first, then alphabetically)
+  const sortedFacilities = React.useMemo(() => {
+    if (!facilities.length) {
       return facilities;
     }
 
-    console.log('Calculating distances for', facilities.length, 'facilities');
-    
-    const withDistance = facilities.map(facility => {
-      if (facility.latitude && facility.longitude) {
-        const distance = calculateDistance(
-          userLocation.latitude,
-          userLocation.longitude,
-          Number(facility.latitude),
-          Number(facility.longitude)
-        );
-        console.log(`Distance to ${facility.name}: ${distance}km (${facility.latitude}, ${facility.longitude})`);
-        return { ...facility, distance };
-      }
-      console.log(`No coordinates for facility: ${facility.name} (lat: ${facility.latitude}, lng: ${facility.longitude})`);
-      return facility;
-    });
-
-    // Sort by distance (ascending), facilities without coordinates go to end
-    const sorted = withDistance.sort((a, b) => {
-      if (a.distance && b.distance) {
+    const sorted = [...facilities].sort((a, b) => {
+      // Both have distances - sort by distance
+      if (a.distance !== undefined && b.distance !== undefined) {
         return a.distance - b.distance;
       }
-      if (a.distance && !b.distance) {
+      // Only a has distance - a comes first
+      if (a.distance !== undefined && b.distance === undefined) {
         return -1;
       }
-      if (!a.distance && b.distance) {
+      // Only b has distance - b comes first
+      if (a.distance === undefined && b.distance !== undefined) {
         return 1;
       }
-      return 0;
+      // Neither has distance - sort alphabetically
+      return a.name.localeCompare(b.name);
     });
 
-    console.log('Sorted facilities by distance:', sorted.map(f => ({ name: f.name, distance: f.distance })));
+    console.log('Sorted facilities:', sorted.map(f => ({ 
+      name: f.name, 
+      distance: f.distance ? `${f.distance}km` : 'No distance',
+      hasCoordinates: !!(f.latitude && f.longitude)
+    })));
+    
     return sorted;
-  }, [facilities, userLocation]);
+  }, [facilities]);
 
   const handleMapClick = (mapsLink: string) => {
     if (mapsLink) {
@@ -260,7 +269,7 @@ const FacilityDetail = () => {
               <span className="text-sm text-gray-500">Getting your location...</span>
             ) : userLocation ? (
               <span className="text-sm text-green-600">
-                Location-based sorting enabled • {facilitiesWithDistance.filter(f => f.distance).length} facilities with distance
+                Location found • Showing distances for {sortedFacilities.filter(f => f.distance !== undefined).length} facilities
               </span>
             ) : (
               <div className="flex items-center space-x-2">
@@ -284,20 +293,20 @@ const FacilityDetail = () => {
           <div className="flex items-center justify-center py-8">
             <div className="text-gray-500">Loading facilities...</div>
           </div>
-        ) : facilitiesWithDistance.length > 0 ? (
+        ) : sortedFacilities.length > 0 ? (
           <div className="space-y-4">
-            {facilitiesWithDistance.map((facility, index) => (
+            {sortedFacilities.map((facility, index) => (
               <Card key={facility.id} className="shadow-sm border border-gray-200">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-lg font-semibold text-gray-800 flex items-center justify-between">
                     <span>{facility.name}</span>
                     <div className="flex items-center space-x-2">
-                      {index === 0 && facility.distance && (
+                      {index === 0 && facility.distance !== undefined && (
                         <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">
                           Nearest
                         </Badge>
                       )}
-                      {facility.distance ? (
+                      {facility.distance !== undefined ? (
                         <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
                           {formatDistance(facility.distance)}
                         </Badge>
