@@ -195,7 +195,7 @@ const FacilityRoute = () => {
               className="bg-white/20 hover:bg-white/30 text-white border-white/30"
             >
               <MapPin className="w-4 h-4 mr-2" />
-              {showMap ? 'Hide Map' : 'Show Map'}
+              {showMap ? 'Show All' : 'Show Nearby'}
             </Button>
           )}
         </div>
