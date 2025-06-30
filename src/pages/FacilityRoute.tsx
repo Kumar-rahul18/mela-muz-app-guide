@@ -1,9 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
+import { MapPin } from 'lucide-react';
+import FacilityMap from '@/components/FacilityMap';
 
 interface Facility {
   id: string;
@@ -32,6 +33,7 @@ const FacilityRoute = () => {
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -173,20 +175,40 @@ const FacilityRoute = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
-        <div className="flex items-center space-x-3">
-          <button 
-            onClick={() => navigate('/')} 
-            className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
-          >
-            ← 
-          </button>
-          <h1 className="text-lg font-semibold">
-            {type ? getFacilityName(type) : t('facilities')}
-          </h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={() => navigate('/')} 
+              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+            >
+              ← 
+            </button>
+            <h1 className="text-lg font-semibold">
+              {type ? getFacilityName(type) : t('facilities')}
+            </h1>
+          </div>
+          {type && type !== 'centralised-contact' && type !== 'gallery' && (
+            <Button
+              onClick={() => setShowMap(!showMap)}
+              variant="secondary"
+              size="sm"
+              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            >
+              <MapPin className="w-4 h-4 mr-2" />
+              {showMap ? 'Hide Map' : 'Show Map'}
+            </Button>
+          )}
         </div>
       </div>
 
       <div className="px-4 py-6">
+        {/* Map Component */}
+        {showMap && type && type !== 'centralised-contact' && type !== 'gallery' && (
+          <div className="mb-6">
+            <FacilityMap facilityType={type} />
+          </div>
+        )}
+
         {type === 'centralised-contact' ? (
           contacts.length === 0 ? (
             <div className="text-center py-12">

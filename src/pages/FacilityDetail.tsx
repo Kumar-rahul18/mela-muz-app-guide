@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MapPin, Phone, ExternalLink, Navigation } from 'lucide-react';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { calculateDistance, formatDistance, getCurrentLocation } from '@/utils/locationUtils';
+import FacilityMap from '@/components/FacilityMap';
 
 interface Facility {
   id: string;
@@ -31,6 +31,7 @@ const FacilityDetail = () => {
   const [locationLoading, setLocationLoading] = useState(false);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
 
   const facilityConfig = {
     'paid-hotels': {
@@ -271,14 +272,25 @@ const FacilityDetail = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
-        <div className="flex items-center space-x-3">
-          <button onClick={() => navigate('/')} className="text-white">
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl">{config.icon}</span>
-            <h1 className="text-lg font-semibold">{config.title}</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <button onClick={() => navigate('/')} className="text-white">
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl">{config.icon}</span>
+              <h1 className="text-lg font-semibold">{config.title}</h1>
+            </div>
           </div>
+          <Button
+            onClick={() => setShowMap(!showMap)}
+            variant="secondary"
+            size="sm"
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+          >
+            <MapPin className="w-4 h-4 mr-2" />
+            {showMap ? 'Hide Map' : 'Show Map'}
+          </Button>
         </div>
       </div>
 
@@ -312,6 +324,13 @@ const FacilityDetail = () => {
             )}
           </div>
         </div>
+
+        {/* Map Component */}
+        {showMap && (
+          <div className="mb-6">
+            <FacilityMap facilityType={type} />
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
