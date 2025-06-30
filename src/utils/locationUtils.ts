@@ -6,7 +6,7 @@ export const calculateDistance = (
   lat2: number,
   lon2: number
 ): number => {
-  console.log(`Calculating distance between (${lat1}, ${lon1}) and (${lat2}, ${lon2})`);
+  console.log(`🧮 Calculating distance between (${lat1}, ${lon1}) and (${lat2}, ${lon2})`);
   
   const R = 6371; // Earth's radius in kilometers
   const dLat = toRadians(lat2 - lat1);
@@ -21,7 +21,7 @@ export const calculateDistance = (
   const distance = R * c;
   
   const roundedDistance = Math.round(distance * 100) / 100; // Round to 2 decimal places
-  console.log(`Calculated distance: ${roundedDistance}km`);
+  console.log(`✅ Calculated distance: ${roundedDistance}km`);
   return roundedDistance;
 };
 
@@ -38,31 +38,34 @@ export const formatDistance = (distance: number): string => {
 
 export const getCurrentLocation = (): Promise<{ latitude: number; longitude: number }> => {
   return new Promise((resolve, reject) => {
-    console.log('getCurrentLocation called');
+    console.log('🎯 getCurrentLocation called');
     
     if (!navigator.geolocation) {
-      console.error('Geolocation is not supported by this browser.');
+      console.error('❌ Geolocation is not supported by this browser.');
       reject(new Error('Geolocation is not supported by this browser.'));
       return;
     }
 
-    console.log('Requesting geolocation...');
+    console.log('📍 Requesting geolocation with high accuracy...');
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        console.log('Geolocation success:', position.coords);
-        resolve({
+        const location = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-        });
+        };
+        console.log('✅ Geolocation success:', location);
+        console.log(`📍 User is at: ${location.latitude}, ${location.longitude}`);
+        resolve(location);
       },
       (error) => {
-        console.error('Geolocation error:', error);
+        console.error('❌ Geolocation error:', error);
+        console.error(`Error code: ${error.code}, message: ${error.message}`);
         reject(error);
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000, // Increased timeout
-        maximumAge: 60000, // 1 minute cache
+        timeout: 15000,
+        maximumAge: 60000,
       }
     );
   });

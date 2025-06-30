@@ -105,8 +105,13 @@ const FacilityDetail = () => {
   // Calculate distances for all facilities when user location is obtained
   useEffect(() => {
     if (userLocation && facilities.length > 0) {
-      console.log('Calculating distances for all facilities...');
+      console.log('User location available:', userLocation);
+      console.log('Processing facilities for distance calculation:', facilities.length);
+      
       const facilitiesWithDistance = facilities.map(facility => {
+        console.log(`Processing facility: ${facility.name}`);
+        console.log(`Facility coordinates: lat=${facility.latitude}, lng=${facility.longitude}`);
+        
         if (facility.latitude && facility.longitude) {
           const distance = calculateDistance(
             userLocation.latitude,
@@ -114,31 +119,40 @@ const FacilityDetail = () => {
             Number(facility.latitude),
             Number(facility.longitude)
           );
-          console.log(`Distance for ${facility.name}: ${distance}km`);
+          console.log(`✅ Distance calculated for ${facility.name}: ${distance}km`);
           return { ...facility, distance };
+        } else {
+          console.log(`❌ No coordinates for ${facility.name}`);
+          return facility;
         }
-        return facility;
       });
+      
+      console.log('Setting facilities with distances:', facilitiesWithDistance);
       setFacilities(facilitiesWithDistance);
+    } else {
+      console.log('Cannot calculate distances:', { 
+        hasUserLocation: !!userLocation, 
+        facilitiesCount: facilities.length 
+      });
     }
-  }, [userLocation]);
+  }, [userLocation, facilities.length]);
 
   const requestUserLocation = async () => {
+    console.log('🎯 Starting location request...');
     setLocationLoading(true);
     setLocationError(null);
     
     try {
-      console.log('Requesting user location...');
-      
       if (!navigator.geolocation) {
         throw new Error('Geolocation is not supported by this browser');
       }
 
+      console.log('📍 Requesting geolocation permission...');
       const location = await getCurrentLocation();
+      console.log('✅ Location obtained successfully:', location);
       setUserLocation(location);
-      console.log('User location obtained successfully:', location);
     } catch (error: any) {
-      console.error('Error getting user location:', error);
+      console.error('❌ Error getting user location:', error);
       let errorMessage = 'Unable to get your location';
       
       if (error.code === 1) {
@@ -158,7 +172,7 @@ const FacilityDetail = () => {
   const fetchFacilities = async () => {
     try {
       setLoading(true);
-      console.log('Fetching facilities for type:', type);
+      console.log('🔍 Fetching facilities for type:', type);
       
       const { data, error } = await supabase
         .from('facilities')
@@ -168,15 +182,21 @@ const FacilityDetail = () => {
         .order('name');
 
       if (error) {
-        console.error('Error fetching facilities:', error);
+        console.error('❌ Error fetching facilities:', error);
         return;
       }
 
-      console.log('Fetched facilities:', data);
-      console.log('Facilities with coordinates:', data?.filter(f => f.latitude && f.longitude));
+      console.log('✅ Fetched facilities:', data?.length);
+      console.log('Facilities with coordinates:', data?.filter(f => f.latitude && f.longitude).length);
+      
+      // Log each facility's coordinates for debugging
+      data?.forEach(facility => {
+        console.log(`📍 ${facility.name}: lat=${facility.latitude}, lng=${facility.longitude}`);
+      });
+      
       setFacilities(data || []);
     } catch (error) {
-      console.error('Error fetching facilities:', error);
+      console.error('❌ Error fetching facilities:', error);
     } finally {
       setLoading(false);
     }
@@ -205,10 +225,12 @@ const FacilityDetail = () => {
       return a.name.localeCompare(b.name);
     });
 
-    console.log('Sorted facilities by distance:', sorted.map(f => ({ 
+    console.log('🎯 Final sorted facilities by distance:', sorted.map(f => ({ 
       name: f.name, 
       distance: f.distance ? `${f.distance}km` : 'No distance',
-      hasCoordinates: !!(f.latitude && f.longitude)
+      hasCoordinates: !!(f.latitude && f.longitude),
+      lat: f.latitude,
+      lng: f.longitude
     })));
     
     return sorted;
@@ -242,6 +264,9 @@ const FacilityDetail = () => {
     );
   }
 
+  const facilitiesWithDistance = sortedFacilities.filter(f => f.distance !== undefined);
+  const facilitiesWithoutDistance = sortedFacilities.filter(f => f.distance === undefined);
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -268,7 +293,7 @@ const FacilityDetail = () => {
               <span className="text-sm text-gray-500">Getting your location...</span>
             ) : userLocation ? (
               <span className="text-sm text-green-600">
-                Location found • Showing distances for {sortedFacilities.filter(f => f.distance !== undefined).length} facilities
+                📍 Location found • Showing distances for {facilitiesWithDistance.length} of {sortedFacilities.length} facilities
               </span>
             ) : (
               <div className="flex items-center space-x-2">
@@ -294,64 +319,122 @@ const FacilityDetail = () => {
           </div>
         ) : sortedFacilities.length > 0 ? (
           <div className="space-y-4">
-            {sortedFacilities.map((facility, index) => (
-              <Card key={facility.id} className="shadow-sm border border-gray-200">
-                <CardHeader className="pb-3">
-                  <CardTitle className="text-lg font-semibold text-gray-800 flex items-center justify-between">
-                    <span>{facility.name}</span>
-                    <div className="flex items-center space-x-2">
-                      {index === 0 && facility.distance !== undefined && (
-                        <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">
-                          Nearest
-                        </Badge>
+            {/* Show facilities with distance first */}
+            {facilitiesWithDistance.length > 0 && (
+              <>
+                <div className="text-sm font-medium text-green-600 mb-2">
+                  📍 Nearby Facilities ({facilitiesWithDistance.length})
+                </div>
+                {facilitiesWithDistance.map((facility, index) => (
+                  <Card key={facility.id} className="shadow-sm border border-gray-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-gray-800 flex items-center justify-between">
+                        <span>{facility.name}</span>
+                        <div className="flex items-center space-x-2">
+                          {index === 0 && (
+                            <Badge variant="default" className="bg-green-100 text-green-800 hover:bg-green-200">
+                              🎯 Nearest
+                            </Badge>
+                          )}
+                          <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
+                            📏 {formatDistance(facility.distance!)}
+                          </Badge>
+                        </div>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {facility.location_name && (
+                        <div className="flex items-center text-gray-600">
+                          <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                          <span className="text-sm">{facility.location_name}</span>
+                        </div>
                       )}
-                      {facility.distance !== undefined ? (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800 hover:bg-blue-200">
-                          {formatDistance(facility.distance)}
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-gray-500">
-                          Distance unavailable
-                        </Badge>
-                      )}
-                    </div>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {facility.location_name && (
-                    <div className="flex items-center text-gray-600">
-                      <MapPin className="w-4 h-4 mr-2 text-gray-500" />
-                      <span className="text-sm">{facility.location_name}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {facility.contact_number && (
-                      <Button 
-                        onClick={() => handleCallClick(facility.contact_number)}
-                        size="sm"
-                        className="bg-green-600 hover:bg-green-700 text-white"
-                      >
-                        <Phone className="w-4 h-4 mr-2" />
-                        Call
-                      </Button>
-                    )}
-                    
-                    {facility.google_maps_link && (
-                      <Button 
-                        onClick={() => handleMapClick(facility.google_maps_link)}
-                        size="sm"
-                        variant="outline"
-                        className="border-blue-300 text-blue-600 hover:bg-blue-50"
-                      >
-                        <ExternalLink className="w-4 h-4 mr-2" />
-                        Navigate
-                      </Button>
-                    )}
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {facility.contact_number && (
+                          <Button 
+                            onClick={() => handleCallClick(facility.contact_number)}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <Phone className="w-4 h-4 mr-2" />
+                            Call
+                          </Button>
+                        )}
+                        
+                        {facility.google_maps_link && (
+                          <Button 
+                            onClick={() => handleMapClick(facility.google_maps_link)}
+                            size="sm"
+                            variant="outline"
+                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Navigate
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </>
+            )}
+
+            {/* Show facilities without distance */}
+            {facilitiesWithoutDistance.length > 0 && (
+              <>
+                {facilitiesWithDistance.length > 0 && (
+                  <div className="text-sm font-medium text-gray-500 mb-2 mt-6">
+                    📍 Other Facilities ({facilitiesWithoutDistance.length})
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                )}
+                {facilitiesWithoutDistance.map((facility) => (
+                  <Card key={facility.id} className="shadow-sm border border-gray-200">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg font-semibold text-gray-800 flex items-center justify-between">
+                        <span>{facility.name}</span>
+                        <Badge variant="outline" className="text-gray-500">
+                          📍 Location unavailable
+                        </Badge>
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                      {facility.location_name && (
+                        <div className="flex items-center text-gray-600">
+                          <MapPin className="w-4 h-4 mr-2 text-gray-500" />
+                          <span className="text-sm">{facility.location_name}</span>
+                        </div>
+                      )}
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {facility.contact_number && (
+                          <Button 
+                            onClick={() => handleCallClick(facility.contact_number)}
+                            size="sm"
+                            className="bg-green-600 hover:bg-green-700 text-white"
+                          >
+                            <Phone className="w-4 h-4 mr-2" />
+                            Call
+                          </Button>
+                        )}
+                        
+                        {facility.google_maps_link && (
+                          <Button 
+                            onClick={() => handleMapClick(facility.google_maps_link)}
+                            size="sm"
+                            variant="outline"
+                            className="border-blue-300 text-blue-600 hover:bg-blue-50"
+                          >
+                            <ExternalLink className="w-4 h-4 mr-2" />
+                            Navigate
+                          </Button>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </>
+            )}
           </div>
         ) : (
           <div className="text-center py-8">
