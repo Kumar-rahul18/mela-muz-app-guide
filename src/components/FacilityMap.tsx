@@ -301,13 +301,21 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
                       </Button>
                     )}
                     {facility.google_maps_link && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => window.open(facility.google_maps_link, '_blank')}
-                      >
-                        Go
-                      </Button>
+                      // <Button 
+                      //   size="sm" 
+                      //   variant="outline"
+                      //   onClick={() => window.open(facility.google_maps_link, '_blank')}
+                      // >
+                      //   Go
+                      // </Button>
+                <Button 
+                  size="sm"
+                  className="bg-green-800 text-white hover:bg-green-900"
+                  onClick={() => window.open(facility.google_maps_link, '_blank')}
+                >
+                  Go
+                </Button>
+
                     )}
                   </div>
                 </div>
