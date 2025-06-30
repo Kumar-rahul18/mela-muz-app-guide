@@ -102,11 +102,11 @@ const FacilityDetail = () => {
     }
   }, [type]);
 
-  // Recalculate distances when user location or facilities change
+  // Calculate distances for all facilities when user location is obtained
   useEffect(() => {
     if (userLocation && facilities.length > 0) {
-      console.log('Recalculating distances for all facilities...');
-      const facilitiesWithUpdatedDistance = facilities.map(facility => {
+      console.log('Calculating distances for all facilities...');
+      const facilitiesWithDistance = facilities.map(facility => {
         if (facility.latitude && facility.longitude) {
           const distance = calculateDistance(
             userLocation.latitude,
@@ -114,12 +114,12 @@ const FacilityDetail = () => {
             Number(facility.latitude),
             Number(facility.longitude)
           );
-          console.log(`Updated distance for ${facility.name}: ${distance}km`);
+          console.log(`Distance for ${facility.name}: ${distance}km`);
           return { ...facility, distance };
         }
         return facility;
       });
-      setFacilities(facilitiesWithUpdatedDistance);
+      setFacilities(facilitiesWithDistance);
     }
   }, [userLocation]);
 
@@ -130,7 +130,6 @@ const FacilityDetail = () => {
     try {
       console.log('Requesting user location...');
       
-      // Check if geolocation is supported
       if (!navigator.geolocation) {
         throw new Error('Geolocation is not supported by this browser');
       }
@@ -190,7 +189,7 @@ const FacilityDetail = () => {
     }
 
     const sorted = [...facilities].sort((a, b) => {
-      // Both have distances - sort by distance
+      // Both have distances - sort by distance (nearest first)
       if (a.distance !== undefined && b.distance !== undefined) {
         return a.distance - b.distance;
       }
@@ -206,7 +205,7 @@ const FacilityDetail = () => {
       return a.name.localeCompare(b.name);
     });
 
-    console.log('Sorted facilities:', sorted.map(f => ({ 
+    console.log('Sorted facilities by distance:', sorted.map(f => ({ 
       name: f.name, 
       distance: f.distance ? `${f.distance}km` : 'No distance',
       hasCoordinates: !!(f.latitude && f.longitude)
