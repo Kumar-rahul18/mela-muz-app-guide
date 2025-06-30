@@ -272,7 +272,7 @@ export type Database = {
           created_at: string
           helpdesk_contact: string | null
           id: string
-          images: string[]
+          images: string
           name: string
           phone: string
           submitted_at: string | null
@@ -283,7 +283,7 @@ export type Database = {
           created_at?: string
           helpdesk_contact?: string | null
           id?: string
-          images?: string[]
+          images?: string
           name: string
           phone: string
           submitted_at?: string | null
@@ -294,7 +294,7 @@ export type Database = {
           created_at?: string
           helpdesk_contact?: string | null
           id?: string
-          images?: string[]
+          images?: string
           name?: string
           phone?: string
           submitted_at?: string | null

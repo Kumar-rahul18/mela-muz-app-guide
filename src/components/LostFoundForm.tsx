@@ -92,7 +92,7 @@ const LostFoundForm: React.FC<LostFoundFormProps> = ({ onSuccess }) => {
         name: data.name,
         phone: data.phone,
         type: data.type,
-        images: [imageUrl], // Database expects array of URLs
+        images: imageUrl, // Changed from array to single string
         submitted_at: data.type === 'Found' ? data.submitted_at : null,
         helpdesk_contact: data.type === 'Found' ? data.helpdesk_contact : null
       };
