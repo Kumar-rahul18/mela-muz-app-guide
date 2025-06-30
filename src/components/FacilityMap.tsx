@@ -1,8 +1,7 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Loader } from '@googlemaps/js-api-loader';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { calculateDistance, formatDistance, getCurrentLocation } from '@/utils/locationUtils';
+import { calculateDistance, formatDistance } from '@/utils/locationUtils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,20 +24,11 @@ interface FacilityMapProps {
   className?: string;
 }
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyD_mb8buvy9T3u4xpzF1caN1U4VFPQqNEY';
-
 const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' }) => {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const googleMapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const linesRef = useRef<google.maps.Polyline[]>([]);
-  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
-
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [locationLoading, setLocationLoading] = useState(false);
-  const [mapLoading, setMapLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -52,15 +42,9 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     }
   }, [userLocation, facilities.length]);
 
-  useEffect(() => {
-    if (userLocation && facilities.length > 0) {
-      initializeMap();
-    }
-  }, [userLocation, facilities]);
-
   const fetchFacilities = async () => {
     try {
-      console.log('🔍 Fetching facilities for map, type:', facilityType);
+      console.log('🔍 Fetching facilities for list, type:', facilityType);
       
       let query = supabase
         .from('facilities')
@@ -92,7 +76,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
   };
 
   const requestUserLocation = async () => {
-    console.log('🎯 Requesting user location for map...');
+    console.log('🎯 Requesting user location...');
     setLocationLoading(true);
     setError(null);
     
@@ -102,16 +86,17 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         throw new Error('Geolocation is not supported by this browser');
       }
 
-      // Request location with better options for mobile
+      // Request location with Android WebView compatible options
       const location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
         const options = {
-          enableHighAccuracy: true,
-          timeout: 30000, // Increased timeout
-          maximumAge: 300000 // 5 minutes cache
+          enableHighAccuracy: false, // Set to false for better WebView compatibility
+          timeout: 60000, // Increased timeout for WebView
+          maximumAge: 600000 // 10 minutes cache for WebView
         };
 
-        console.log('📍 Requesting geolocation with options:', options);
+        console.log('📍 Requesting geolocation with WebView-compatible options:', options);
         
+        // Try with high accuracy first, then fallback
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const coords = {
@@ -122,35 +107,59 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
             resolve(coords);
           },
           (error) => {
-            console.error('❌ Geolocation error:', error);
-            let errorMessage = 'Unable to get your location';
+            console.error('❌ First geolocation attempt failed:', error);
             
-            switch (error.code) {
-              case error.PERMISSION_DENIED:
-                errorMessage = 'Location access denied. Please enable location access in your browser settings.';
-                break;
-              case error.POSITION_UNAVAILABLE:
-                errorMessage = 'Location information is unavailable. Please try again.';
-                break;
-              case error.TIMEOUT:
-                errorMessage = 'Location request timeout. Please try again.';
-                break;
-              default:
-                errorMessage = 'An unknown error occurred while retrieving location.';
-                break;
-            }
+            // Fallback with less accurate but more compatible options
+            const fallbackOptions = {
+              enableHighAccuracy: false,
+              timeout: 30000,
+              maximumAge: 900000 // 15 minutes cache
+            };
             
-            reject(new Error(errorMessage));
+            console.log('📍 Trying fallback geolocation options:', fallbackOptions);
+            
+            navigator.geolocation.getCurrentPosition(
+              (position) => {
+                const coords = {
+                  latitude: position.coords.latitude,
+                  longitude: position.coords.longitude,
+                };
+                console.log('✅ Fallback location obtained:', coords);
+                resolve(coords);
+              },
+              (fallbackError) => {
+                console.error('❌ Fallback geolocation error:', fallbackError);
+                let errorMessage = 'Unable to get your location';
+                
+                switch (fallbackError.code) {
+                  case fallbackError.PERMISSION_DENIED:
+                    errorMessage = 'Location access denied. Please check app permissions in device settings.';
+                    break;
+                  case fallbackError.POSITION_UNAVAILABLE:
+                    errorMessage = 'Location service unavailable. Please enable GPS and try again.';
+                    break;
+                  case fallbackError.TIMEOUT:
+                    errorMessage = 'Location request timeout. Please check your connection and try again.';
+                    break;
+                  default:
+                    errorMessage = 'Location access failed. Please ensure location services are enabled.';
+                    break;
+                }
+                
+                reject(new Error(errorMessage));
+              },
+              fallbackOptions
+            );
           },
           options
         );
       });
 
-      console.log('✅ User location obtained for map:', location);
+      console.log('✅ User location obtained:', location);
       setUserLocation(location);
     } catch (error: any) {
-      console.error('❌ Error getting user location for map:', error);
-      setError(error.message || 'Unable to get your location. Please enable location access.');
+      console.error('❌ Error getting user location:', error);
+      setError(error.message || 'Unable to get your location. Please enable location services.');
     } finally {
       setLocationLoading(false);
     }
@@ -159,7 +168,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
   const calculateDistancesAndSort = () => {
     if (!userLocation) return;
 
-    console.log('🧮 Calculating distances for map display...');
+    console.log('🧮 Calculating distances for sorting...');
     const facilitiesWithDistance = facilities.map(facility => {
       const distance = calculateDistance(
         userLocation.latitude,
@@ -171,157 +180,8 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     });
 
     const sorted = facilitiesWithDistance.sort((a, b) => a.distance! - b.distance!);
-    console.log('✅ Facilities sorted by distance for map:', sorted.length);
+    console.log('✅ Facilities sorted by distance:', sorted.length);
     setFacilities(sorted);
-  };
-
-  const initializeMap = async () => {
-    if (!mapRef.current || !userLocation || facilities.length === 0) return;
-
-    setMapLoading(true);
-    try {
-      console.log('🗺️ Initializing Google Maps...');
-      
-      const loader = new Loader({
-        apiKey: GOOGLE_MAPS_API_KEY,
-        version: 'weekly',
-        libraries: ['geometry']
-      });
-
-      await loader.load();
-
-      // Clear existing markers and lines
-      clearMapElements();
-
-      // Initialize map centered on user location
-      const map = new google.maps.Map(mapRef.current, {
-        center: { lat: userLocation.latitude, lng: userLocation.longitude },
-        zoom: 12,
-        mapTypeControl: true,
-        streetViewControl: true,
-        fullscreenControl: true,
-      });
-
-      googleMapRef.current = map;
-
-      // Create info window
-      infoWindowRef.current = new google.maps.InfoWindow();
-
-      // Add user location marker
-      const userMarker = new google.maps.Marker({
-        position: { lat: userLocation.latitude, lng: userLocation.longitude },
-        map: map,
-        title: 'Your Location',
-        icon: {
-          url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-            <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="16" cy="16" r="12" fill="#4285F4" stroke="#FFFFFF" stroke-width="3"/>
-              <circle cx="16" cy="16" r="4" fill="#FFFFFF"/>
-            </svg>
-          `),
-          scaledSize: new google.maps.Size(32, 32),
-          anchor: new google.maps.Point(16, 16)
-        }
-      });
-
-      markersRef.current.push(userMarker);
-
-      // Add facility markers and lines
-      facilities.forEach((facility, index) => {
-        const facilityMarker = new google.maps.Marker({
-          position: { lat: facility.latitude, lng: facility.longitude },
-          map: map,
-          title: facility.name,
-          icon: {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-              <svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="14" cy="14" r="10" fill="${index === 0 ? '#10B981' : '#EF4444'}" stroke="#FFFFFF" stroke-width="2"/>
-                <text x="14" y="18" text-anchor="middle" fill="#FFFFFF" font-size="12" font-weight="bold">${index + 1}</text>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(28, 28),
-            anchor: new google.maps.Point(14, 14)
-          }
-        });
-
-        // Add click listener for facility markers
-        facilityMarker.addListener('click', () => {
-          const content = `
-            <div style="max-width: 250px;">
-              <h3 style="margin: 0 0 8px 0; color: #1f2937;">${facility.name}</h3>
-              <p style="margin: 4px 0; color: #6b7280; font-size: 14px;">
-                <strong>📍 Location:</strong> ${facility.location_name || 'Not specified'}
-              </p>
-              <p style="margin: 4px 0; color: #10b981; font-size: 14px; font-weight: 600;">
-                <strong>📏 Distance:</strong> ${formatDistance(facility.distance!)}
-              </p>
-              ${facility.contact_number ? `
-                <p style="margin: 4px 0; color: #6b7280; font-size: 14px;">
-                  <strong>📞 Contact:</strong> ${facility.contact_number}
-                </p>
-              ` : ''}
-              <div style="margin-top: 12px;">
-                ${facility.contact_number ? `
-                  <button onclick="window.open('tel:${facility.contact_number}', '_self')" 
-                          style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; margin-right: 8px; cursor: pointer;">
-                    📞 Call
-                  </button>
-                ` : ''}
-                ${facility.google_maps_link ? `
-                  <button onclick="window.open('${facility.google_maps_link}', '_blank')" 
-                          style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
-                    🧭 Navigate
-                  </button>
-                ` : ''}
-              </div>
-            </div>
-          `;
-          
-          infoWindowRef.current?.setContent(content);
-          infoWindowRef.current?.open(map, facilityMarker);
-        });
-
-        markersRef.current.push(facilityMarker);
-
-        // Draw line from user to facility
-        const line = new google.maps.Polyline({
-          path: [
-            { lat: userLocation.latitude, lng: userLocation.longitude },
-            { lat: facility.latitude, lng: facility.longitude }
-          ],
-          geodesic: true,
-          strokeColor: index === 0 ? '#10B981' : '#EF4444',
-          strokeOpacity: 0.6,
-          strokeWeight: index === 0 ? 3 : 2,
-        });
-
-        line.setMap(map);
-        linesRef.current.push(line);
-      });
-
-      // Adjust map bounds to show all markers
-      const bounds = new google.maps.LatLngBounds();
-      bounds.extend({ lat: userLocation.latitude, lng: userLocation.longitude });
-      facilities.forEach(facility => {
-        bounds.extend({ lat: facility.latitude, lng: facility.longitude });
-      });
-      map.fitBounds(bounds);
-
-      console.log('✅ Google Maps initialized successfully');
-    } catch (error) {
-      console.error('❌ Error initializing map:', error);
-      setError('Failed to load map. Please try refreshing the page.');
-    } finally {
-      setMapLoading(false);
-    }
-  };
-
-  const clearMapElements = () => {
-    markersRef.current.forEach(marker => marker.setMap(null));
-    linesRef.current.forEach(line => line.setMap(null));
-    markersRef.current = [];
-    linesRef.current = [];
-    infoWindowRef.current?.close();
   };
 
   const handleRefresh = () => {
@@ -369,7 +229,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
               <MapPin className="w-12 h-12 mx-auto mb-4 text-gray-400" />
               <p className="text-gray-600 mb-4">
                 {!userLocation 
-                  ? 'Location access required to show distances and map'
+                  ? 'Location access required to show distances'
                   : 'No facilities found with location data'
                 }
               </p>
@@ -399,27 +259,6 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
             <Button onClick={handleRefresh} variant="outline" size="sm">
               <RefreshCw className="w-4 h-4" />
             </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Map - Removed the CardHeader with "Facility Locations Map" title */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="relative">
-            <div 
-              ref={mapRef} 
-              className="w-full h-96 rounded-lg bg-gray-100"
-              style={{ minHeight: '400px' }}
-            />
-            {mapLoading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
-                <div className="text-center">
-                  <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2 text-blue-500" />
-                  <p className="text-gray-600">Loading map...</p>
-                </div>
-              </div>
-            )}
           </div>
         </CardContent>
       </Card>
@@ -467,7 +306,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
                         variant="outline"
                         onClick={() => window.open(facility.google_maps_link, '_blank')}
                       >
-                        🧭
+                        Go
                       </Button>
                     )}
                   </div>
