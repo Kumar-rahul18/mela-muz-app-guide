@@ -188,15 +188,24 @@ const FacilityRoute = () => {
             </h1>
           </div>
           {type && type !== 'centralised-contact' && type !== 'gallery' && (
-            <Button
-              onClick={() => setShowMap(!showMap)}
-              variant="secondary"
-              size="sm"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30"
-            >
-              <MapPin className="w-4 h-4 mr-2" />
-              {showMap ? 'Show All' : 'Show Nearby'}
-            </Button>
+            // <Button
+            //   onClick={() => setShowMap(!showMap)}
+            //   variant="secondary"
+            //   size="sm"
+            //   className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            // >
+            //   <MapPin className="w-4 h-4 mr-2" />
+            //   {showMap ? 'Show All' : 'Show Nearby'}
+            // </Button>
+                <Button
+            onClick={() => setShowMap(!showMap)}
+            size="sm"
+            className="bg-blue-800 hover:bg-blue-900 text-white-900 border-blue-500"
+          >
+            <MapPin className="w-4 h-4 mr-2 text-white-900" />
+            {showMap ? 'Show All' : 'Show Nearby'}
+          </Button>
+
           )}
         </div>
       </div>
