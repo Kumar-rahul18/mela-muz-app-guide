@@ -97,12 +97,60 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     setError(null);
     
     try {
-      const location = await getCurrentLocation();
+      // Check if geolocation is supported
+      if (!navigator.geolocation) {
+        throw new Error('Geolocation is not supported by this browser');
+      }
+
+      // Request location with better options for mobile
+      const location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
+        const options = {
+          enableHighAccuracy: true,
+          timeout: 30000, // Increased timeout
+          maximumAge: 300000 // 5 minutes cache
+        };
+
+        console.log('📍 Requesting geolocation with options:', options);
+        
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const coords = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            };
+            console.log('✅ Location obtained:', coords);
+            resolve(coords);
+          },
+          (error) => {
+            console.error('❌ Geolocation error:', error);
+            let errorMessage = 'Unable to get your location';
+            
+            switch (error.code) {
+              case error.PERMISSION_DENIED:
+                errorMessage = 'Location access denied. Please enable location access in your browser settings.';
+                break;
+              case error.POSITION_UNAVAILABLE:
+                errorMessage = 'Location information is unavailable. Please try again.';
+                break;
+              case error.TIMEOUT:
+                errorMessage = 'Location request timeout. Please try again.';
+                break;
+              default:
+                errorMessage = 'An unknown error occurred while retrieving location.';
+                break;
+            }
+            
+            reject(new Error(errorMessage));
+          },
+          options
+        );
+      });
+
       console.log('✅ User location obtained for map:', location);
       setUserLocation(location);
     } catch (error: any) {
       console.error('❌ Error getting user location for map:', error);
-      setError('Unable to get your location. Please enable location access.');
+      setError(error.message || 'Unable to get your location. Please enable location access.');
     } finally {
       setLocationLoading(false);
     }
@@ -262,7 +310,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
       console.log('✅ Google Maps initialized successfully');
     } catch (error) {
       console.error('❌ Error initializing map:', error);
-      setError('Failed to load map');
+      setError('Failed to load map. Please try refreshing the page.');
     } finally {
       setMapLoading(false);
     }
@@ -355,15 +403,9 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         </CardContent>
       </Card>
 
-      {/* Map */}
+      {/* Map - Removed the CardHeader with "Facility Locations Map" title */}
       <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
-            <span>Facility Locations Map</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <div className="relative">
             <div 
               ref={mapRef} 
