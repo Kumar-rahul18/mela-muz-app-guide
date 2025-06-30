@@ -9,7 +9,7 @@ interface LostFoundItem {
   name: string;
   phone: string;
   type: 'Lost' | 'Found';
-  images: string[];
+  images: string; // Changed from string[] to string
   submitted_at?: string;
   helpdesk_contact?: string;
   created_at: string;
@@ -19,7 +19,7 @@ const LostFoundDisplay: React.FC = () => {
   const [items, setItems] = useState<LostFoundItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'Lost' | 'Found'>('Lost');
-  const [selectedImages, setSelectedImages] = useState<{ images: string[], currentIndex: number } | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchItems();
@@ -51,30 +51,12 @@ const LostFoundDisplay: React.FC = () => {
 
   const filteredItems = items.filter(item => item.type === activeTab);
 
-  const openImageModal = (images: string[], startIndex: number = 0) => {
-    setSelectedImages({ images, currentIndex: startIndex });
+  const openImageModal = (imageUrl: string) => {
+    setSelectedImage(imageUrl);
   };
 
   const closeImageModal = () => {
-    setSelectedImages(null);
-  };
-
-  const nextImage = () => {
-    if (selectedImages && selectedImages.currentIndex < selectedImages.images.length - 1) {
-      setSelectedImages({
-        ...selectedImages,
-        currentIndex: selectedImages.currentIndex + 1
-      });
-    }
-  };
-
-  const prevImage = () => {
-    if (selectedImages && selectedImages.currentIndex > 0) {
-      setSelectedImages({
-        ...selectedImages,
-        currentIndex: selectedImages.currentIndex - 1
-      });
-    }
+    setSelectedImage(null);
   };
 
   if (loading) {
@@ -126,19 +108,14 @@ const LostFoundDisplay: React.FC = () => {
             <Card key={item.id} className="overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-200 group">
               {/* Image Section */}
               <div className="relative aspect-square bg-gray-100">
-                {item.images.length > 0 ? (
+                {item.images ? (
                   <div className="relative w-full h-full">
                     <img
-                      src={item.images[0]}
+                      src={item.images}
                       alt={`${item.type} item`}
                       className="w-full h-full object-cover cursor-pointer transition-transform group-hover:scale-105"
-                      onClick={() => openImageModal(item.images, 0)}
+                      onClick={() => openImageModal(item.images)}
                     />
-                    {item.images.length > 1 && (
-                      <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-full">
-                        +{item.images.length - 1} more
-                      </div>
-                    )}
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -199,8 +176,8 @@ const LostFoundDisplay: React.FC = () => {
         </div>
       )}
 
-      {/* Enhanced Image Modal */}
-      {selectedImages && (
+      {/* Simple Image Modal */}
+      {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <div className="relative max-w-4xl max-h-full w-full">
             {/* Close Button */}
@@ -211,41 +188,14 @@ const LostFoundDisplay: React.FC = () => {
               <X className="w-6 h-6" />
             </button>
 
-            {/* Navigation Buttons */}
-            {selectedImages.images.length > 1 && (
-              <>
-                <button
-                  onClick={prevImage}
-                  disabled={selectedImages.currentIndex === 0}
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-75 transition-colors disabled:opacity-30"
-                >
-                  ←
-                </button>
-                <button
-                  onClick={nextImage}
-                  disabled={selectedImages.currentIndex === selectedImages.images.length - 1}
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 rounded-full w-12 h-12 flex items-center justify-center hover:bg-opacity-75 transition-colors disabled:opacity-30"
-                >
-                  →
-                </button>
-              </>
-            )}
-
             {/* Main Image */}
             <div className="flex items-center justify-center h-full">
               <img
-                src={selectedImages.images[selectedImages.currentIndex]}
+                src={selectedImage}
                 alt="Full view"
                 className="max-w-full max-h-full object-contain rounded-lg"
               />
             </div>
-
-            {/* Image Counter */}
-            {selectedImages.images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-3 py-1 rounded-full text-sm">
-                {selectedImages.currentIndex + 1} of {selectedImages.images.length}
-              </div>
-            )}
           </div>
         </div>
       )}
