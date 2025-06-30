@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Camera, Upload, X, Smartphone } from "lucide-react";
@@ -22,27 +22,6 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
-  const directCameraRef = useRef<HTMLInputElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isAPK, setIsAPK] = useState(false);
-
-  useEffect(() => {
-    // Detect mobile and APK environment
-    const userAgent = navigator.userAgent.toLowerCase();
-    const isMobileDevice = /android|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-    const isWebView = /wv|webview/i.test(userAgent);
-    const isAPKEnvironment = isWebView || window.location.protocol === 'file:' || 
-                            (window as any).Android || (window as any).webkit;
-    
-    setIsMobile(isMobileDevice);
-    setIsAPK(isAPKEnvironment);
-    
-    console.log('Environment detection:', {
-      isMobile: isMobileDevice,
-      isAPK: isAPKEnvironment,
-      userAgent: userAgent
-    });
-  }, []);
 
   const validateFile = (file: File): boolean => {
     // Check file size (15MB limit)
@@ -73,13 +52,8 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
   };
 
   const handleCameraCapture = () => {
-    console.log('Opening camera for APK/Mobile...');
-    if (isAPK || isMobile) {
-      // For APK environments, try multiple approaches
-      directCameraRef.current?.click();
-    } else {
-      cameraInputRef.current?.click();
-    }
+    console.log('Opening camera...');
+    cameraInputRef.current?.click();
   };
 
   const handleFileUpload = () => {
@@ -91,9 +65,7 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
     <div className="space-y-3">
       <Label className="text-sm font-medium">{label} {required && <span className="text-red-500">*</span>}</Label>
       
-      {/* Multiple hidden file inputs for maximum compatibility */}
-      
-      {/* Standard file input */}
+      {/* Standard file input for gallery */}
       <input
         ref={fileInputRef}
         type="file"
@@ -106,26 +78,10 @@ const CameraUpload: React.FC<CameraUploadProps> = ({
       <input
         ref={cameraInputRef}
         type="file"
-        accept={accept}
+        accept="image/*"
         capture="environment"
         onChange={handleFileChange}
         className="hidden"
-      />
-      
-      {/* Direct camera input for APK - with environment capture */}
-      <input
-        ref={directCameraRef}
-        type="file"
-        accept="image/*,image/jpeg,image/jpg,image/png"
-        capture="environment"
-        onChange={handleFileChange}
-        className="hidden"
-        // Additional attributes for APK compatibility
-        {...(isAPK && {
-          'data-capture': 'environment',
-          'data-camera': 'environment',
-          'webkitdirectory': false
-        })}
       />
 
       {/* Upload options */}
