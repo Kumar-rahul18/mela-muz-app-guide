@@ -17,7 +17,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Enhanced keywords mapping for all services (English and Hindi)
+  // Enhanced keywords mapping with your comprehensive list
   const serviceKeywords = {
     // Facilities
     'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
@@ -33,7 +33,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन' , 'जन सेवा भोजन', 'प्रसाद वितरण' ,'Free Meal' , 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना','भोजन', 'प्रसाद'],
     
     // Pages and Services
-    'virtual-pooja': ['गरीबनाथ', 'virtual pooja', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
+    'virtual-pooja': ['गरीबनाथ', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
     'live-darshan': ['live darshan', 'लाइव दर्शन', 'darshan', 'दर्शन', 'live', 'लाइव'],
     'crowd-status': ['crowd status', 'crowd', 'भीड़', 'भीड़ की स्थिति', 'rush', 'रश'],
     'gallery': ['gallery', 'गैलरी', 'photos', 'फोटो', 'pictures', 'तस्वीरें'],
@@ -41,7 +41,6 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     'lost-found': ['lost found', 'lost and found', 'खोया पाया', 'lost', 'खोया', 'found', 'पाया'],
     'photo-contest': ['photo contest', 'फोटो कॉन्टेस्ट', 'contest', 'कॉन्टेस्ट', 'competition', 'प्रतियोगिता'],
     'events': ['events', 'इवेंट्स', 'event', 'इवेंट', 'program', 'प्रोग्राम', 'कार्यक्रम'],
-    'camera-filters': ['camera filters', 'कैमरा फिल्टर', 'filter', 'फिल्टर', 'camera', 'कैमरा'],
     'history': ['history', 'इतिहास', 'mela history', 'मेला इतिहास']
   };
 
@@ -52,7 +51,8 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = true;
-      recognitionInstance.lang = 'hi-IN'; // Hindi language
+      // Set both Hindi and English for better recognition
+      recognitionInstance.lang = 'hi-IN';
       
       recognitionInstance.onstart = () => {
         console.log('🎤 Voice recognition started');
@@ -107,69 +107,87 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   }, []);
 
   const handleVoiceSearch = (transcript: string) => {
-    const lowerTranscript = transcript.toLowerCase();
-    console.log('🔍 Searching for services in:', lowerTranscript);
+    const lowerTranscript = transcript.toLowerCase().trim();
+    console.log('🔍 Searching for services in transcript:', lowerTranscript);
     
-    // Find matching service
+    // Improved matching logic - check for exact matches first, then substring matches
     for (const [serviceType, keywords] of Object.entries(serviceKeywords)) {
       for (const keyword of keywords) {
-        if (lowerTranscript.includes(keyword.toLowerCase())) {
-          console.log('✅ Found service match:', serviceType, 'for keyword:', keyword);
-          
-          // Handle different navigation patterns
-          if (serviceType.startsWith('paid-hotels') || serviceType.startsWith('atm') || 
-              serviceType.startsWith('drinking-water') || serviceType.startsWith('toilet') ||
-              serviceType.startsWith('bathroom') || serviceType.startsWith('dharamshala') ||
-              serviceType.startsWith('shivir') || serviceType.startsWith('health-centre') ||
-              serviceType.startsWith('parking') || serviceType.startsWith('centralised-contact') ||
-              serviceType.startsWith('bhandara')) {
-            // Navigate to facility with map view enabled
-            navigate(`/facility/${serviceType}?showMap=true`);
-            toast({
-              title: "Facility Found!",
-              description: `Taking you to ${serviceType.replace('-', ' ')} facilities`,
-              duration: 1000,
-            });
-          } else {
-            // Navigate to specific pages
-            const routeMap: { [key: string]: string } = {
-              'virtual-pooja': '/virtual-pooja',
-              'live-darshan': '/live-darshan',
-              'crowd-status': '/crowd-status',
-              'gallery': '/gallery',
-              'quiz': '/mela-quiz',
-              'lost-found': '/lost-found',
-              'photo-contest': '/photo-contest',
-              'events': '/events',
-              'camera-filters': '/camera-filters',
-              'history': '/history'
-            };
-            
-            const route = routeMap[serviceType];
-            if (route) {
-              navigate(route);
-              toast({
-                title: "Service Found!",
-                description: `Taking you to ${serviceType.replace('-', ' ')}`,
-              });
-            }
-          }
-          
-          if (onFacilityFound) {
-            onFacilityFound(serviceType);
-          }
+        const lowerKeyword = keyword.toLowerCase().trim();
+        
+        // Check for exact match first (more precise)
+        if (lowerTranscript === lowerKeyword) {
+          console.log('✅ Found EXACT service match:', serviceType, 'for keyword:', keyword);
+          navigateToService(serviceType, keyword);
+          return;
+        }
+        
+        // Then check for substring match
+        if (lowerTranscript.includes(lowerKeyword)) {
+          console.log('✅ Found SUBSTRING service match:', serviceType, 'for keyword:', keyword);
+          navigateToService(serviceType, keyword);
+          return;
+        }
+        
+        // Also check if keyword contains the transcript (for partial matches)
+        if (lowerKeyword.includes(lowerTranscript) && lowerTranscript.length > 2) {
+          console.log('✅ Found PARTIAL service match:', serviceType, 'for keyword:', keyword);
+          navigateToService(serviceType, keyword);
           return;
         }
       }
     }
     
     // No service found
+    console.log('❌ No service found for transcript:', lowerTranscript);
     toast({
       title: "Service Not Found",
-      description: "Please try saying a service name like 'darshan', 'पूजा', 'gallery', or 'quiz'",
-      duration: 3500,
+      description: "Please try saying a service name like 'water', 'पानी', 'toilet', 'शौचालय', 'parking', or 'पार्किंग'",
+      duration: 4000,
       variant: "destructive",
     });
+  };
+
+  const navigateToService = (serviceType: string, keyword: string) => {
+    // Handle different navigation patterns
+    const facilityTypes = ['paid-hotels', 'atm', 'drinking-water', 'toilet', 'bathroom', 'dharamshala', 'shivir', 'health-centre', 'parking', 'centralised-contact', 'bhandara'];
+    
+    if (facilityTypes.includes(serviceType)) {
+      // Navigate to facility with map view enabled
+      navigate(`/facility/${serviceType}?showMap=true`);
+      toast({
+        title: "Facility Found!",
+        description: `Taking you to ${serviceType.replace('-', ' ')} facilities`,
+        duration: 2000,
+      });
+    } else {
+      // Navigate to specific pages
+      const routeMap: { [key: string]: string } = {
+        'virtual-pooja': '/virtual-pooja',
+        'live-darshan': '/live-darshan',
+        'crowd-status': '/crowd-status',
+        'gallery': '/gallery',
+        'quiz': '/mela-quiz',
+        'lost-found': '/lost-found',
+        'photo-contest': '/photo-contest',
+        'events': '/events',
+        'history': '/history'
+      };
+      
+      const route = routeMap[serviceType];
+      if (route) {
+        navigate(route);
+        toast({
+          title: "Service Found!",
+          description: `Taking you to ${serviceType.replace('-', ' ')}`,
+          duration: 2000,
+        });
+      }
+    }
+    
+    if (onFacilityFound) {
+      onFacilityFound(serviceType);
+    }
   };
 
   const startListening = () => {
@@ -179,6 +197,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       toast({
         title: "Listening...",
         description: "Say any service name in Hindi or English",
+        duration: 2000,
       });
     }
   };
@@ -255,7 +274,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       )}
       
       <p className="text-xs text-gray-500 text-center max-w-xs">
-        Say service names like "toilet", "shivir", "parking", "quiz", etc.
+        Say service names like "water", "पानी", "toilet", "शौचालय", "parking", "पार्किंग"
       </p>
     </div>
   );
