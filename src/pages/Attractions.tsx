@@ -14,7 +14,7 @@ const Attractions = () => {
     
       title: t('litchi_gardens'),
       description: t('litchi_gardens_desc'),
-      image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//litchi.webp',
       location: 'Mushahari, Jhapaha, and Bochaha, Muzaffarpur',
       coordinates: { lat: 26.1209, lng: 85.3647 }
     },
