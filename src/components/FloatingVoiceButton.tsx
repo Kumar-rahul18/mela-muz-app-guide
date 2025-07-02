@@ -183,7 +183,7 @@ const FloatingVoiceButton: React.FC = () => {
             <Mic className="w-5 h-5" />
           )}
           <span className="text-xs font-medium leading-tight">
-            {isListening ? 'Stop' : 'Voice'}
+            {isListening ? 'Stop' : 'पूछें'}
           </span>
         </div>
       </Button>
