@@ -5,6 +5,7 @@ import WeatherWidget from '@/components/WeatherWidget';
 import LanguageSelector from '@/components/LanguageSelector';
 import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import FacilityIcon from '@/components/FacilityIcon';
+import FloatingVoiceButton from '@/components/FloatingVoiceButton';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
@@ -199,7 +200,7 @@ const Index = () => {
       <Header />
       <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       
-      <div className="px-4 py-6 space-y-6">
+      <div className="px-4 py-6 space-y-6 pb-32">
 
         {/* Photo Contest Banner */}
         <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
@@ -311,6 +312,9 @@ const Index = () => {
         </div>
 
       </div>
+      
+      {/* Floating Voice Search Button */}
+      <FloatingVoiceButton />
     </div>
   );
 };
