@@ -127,6 +127,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
             toast({
               title: "Facility Found!",
               description: `Taking you to ${serviceType.replace('-', ' ')} facilities`,
+              duration:1000,
             });
           } else {
             // Navigate to specific pages
@@ -165,6 +166,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     toast({
       title: "Service Not Found",
       description: "Please try saying a service name like 'darshan', 'पूजा', 'gallery', or 'quiz'",
+      duration:3500
       variant: "destructive",
     });
   };
@@ -252,7 +254,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       )}
       
       <p className="text-xs text-gray-500 text-center max-w-xs">
-        Say service names like "darshan", "पूजा", "gallery", "quiz", etc.
+        Say service names like "toilet", "shivir", "parking", "quiz", etc.
       </p>
     </div>
   );
