@@ -173,14 +173,14 @@ const FloatingVoiceButton: React.FC = () => {
           isListening 
             ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-lg shadow-red-500/25' 
             : 'bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 shadow-lg shadow-blue-500/25'
-        } text-white w-16 h-16 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 p-0 flex flex-col items-center justify-center`}
+        } text-white w-20 h-20 rounded-full transition-all duration-300 transform hover:scale-105 active:scale-95 p-0 flex flex-col items-center justify-center`}
         size="lg"
       >
         <div className="flex flex-col items-center space-y-1">
           {isListening ? (
-            <MicOff className="w-5 h-5" />
+            <MicOff className="w-6 h-6" />
           ) : (
-            <Mic className="w-5 h-5" />
+            <Mic className="w-6 h-6" />
           )}
           <span className="text-xs font-medium leading-tight">
             {isListening ? 'Stop' : 'पूछें'}
