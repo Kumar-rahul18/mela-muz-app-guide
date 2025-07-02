@@ -154,7 +154,7 @@ const FloatingVoiceButton: React.FC = () => {
       recognition.start();
       toast({
         title: "Listening...",
-        description: "Say any service name in Hindi or English",
+        description: "कृपया कोई भी सेवा का नाम हिंदी या English में बोलें",
       });
     }
   };
