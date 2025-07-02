@@ -398,9 +398,9 @@ const MelaQuiz = () => {
         {error && (
           <div className="text-red-500 text-sm">{error}</div>
         )}
-        <div className="bg-yellow-50 p-3 rounded-md text-sm text-yellow-800">
-          <strong>{t('quiz_rules')}</strong>
-          <ul className="mt-1 space-y-1">
+        <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+          <h4 className="font-semibold text-yellow-800 mb-2">{t('quiz_rules')}</h4>
+          <ul className="text-sm text-yellow-700 space-y-1">
             <li>{t('quiz_rule_1')}</li>
             <li>{t('quiz_rule_2')}</li>
             <li>{t('quiz_rule_3')}</li>

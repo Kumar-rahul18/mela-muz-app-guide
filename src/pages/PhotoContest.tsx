@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/contexts/LanguageContext';
 import CameraUpload from '@/components/CameraUpload';
 
 const PhotoContest = () => {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -110,7 +112,7 @@ const PhotoContest = () => {
           <button onClick={() => navigate('/')} className="text-white">
             ← 
           </button>
-          <h1 className="text-lg font-semibold">Photo Contest</h1>
+          <h1 className="text-lg font-semibold">{t('photo_contest')}</h1>
         </div>
       </div>
 
@@ -120,20 +122,20 @@ const PhotoContest = () => {
             <div className="w-20 h-20 mx-auto mb-3 app-gradient rounded-2xl flex items-center justify-center">
               <span className="text-2xl text-white">📸</span>
             </div>
-            <h2 className="text-xl font-bold text-gray-800 mb-2">Submit Your Entry</h2>
-            <p className="text-gray-600 text-sm">Share your best Shravani Mela moments and win cash prizes</p>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">{t('submit_your_entry')}</h2>
+            <p className="text-gray-600 text-sm">{t('share_best_moments')}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Full Name *
+                {t('full_name')} *
               </label>
               <Input
                 type="text"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="Enter your full name"
+                placeholder={t('enter_name')}
                 className="w-full"
                 disabled={isSubmitting}
               />
@@ -141,13 +143,13 @@ const PhotoContest = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number *
+                {t('phone_number')} *
               </label>
               <Input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="Enter your phone number"
+                placeholder={t('enter_phone')}
                 className="w-full"
                 disabled={isSubmitting}
               />
@@ -155,19 +157,19 @@ const PhotoContest = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Photo Description (Tell us about the ambience)
+                {t('photo_description')}
               </label>
               <Textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder="Describe your photo (optional)"
+                placeholder={language === 'hi' ? 'अपनी फोटो का वर्णन करें (वैकल्पिक)' : 'Describe your photo (optional)'}
                 className="w-full h-20"
                 disabled={isSubmitting}
               />
             </div>
 
             <CameraUpload
-              label="Upload Your Contest Photo"
+              label={t('upload_contest_photo')}
               onPhotoSelected={handlePhotoSelected}
               preview={photoPreview}
               required
@@ -178,7 +180,7 @@ const PhotoContest = () => {
               className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-full text-lg font-medium"
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Entry'}
+              {isSubmitting ? t('submitting') : t('submit_entry_button')}
             </Button>
           </form>
         </div>

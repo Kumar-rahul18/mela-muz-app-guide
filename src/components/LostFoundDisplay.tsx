@@ -3,19 +3,21 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { X, Phone, User, Calendar, MapPin } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface LostFoundItem {
   id: string;
   name: string;
   phone: string;
   type: 'Lost' | 'Found';
-  images: string; // Changed from string[] to string
+  images: string;
   submitted_at?: string;
   helpdesk_contact?: string;
   created_at: string;
 }
 
 const LostFoundDisplay: React.FC = () => {
+  const { t, language } = useLanguage();
   const [items, setItems] = useState<LostFoundItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'Lost' | 'Found'>('Lost');
@@ -79,7 +81,7 @@ const LostFoundDisplay: React.FC = () => {
               : 'text-gray-500 hover:text-gray-900'
           }`}
         >
-          🔍 Lost Items ({items.filter(i => i.type === 'Lost').length})
+          🔍 {t('lost_items')} ({items.filter(i => i.type === 'Lost').length})
         </button>
         <button
           onClick={() => setActiveTab('Found')}
@@ -89,7 +91,7 @@ const LostFoundDisplay: React.FC = () => {
               : 'text-gray-500 hover:text-gray-900'
           }`}
         >
-          📦 Found Items ({items.filter(i => i.type === 'Found').length})
+          📦 {t('found_items')} ({items.filter(i => i.type === 'Found').length})
         </button>
       </div>
 
@@ -99,8 +101,12 @@ const LostFoundDisplay: React.FC = () => {
           <div className="text-6xl mb-4">
             {activeTab === 'Lost' ? '🔍' : '📦'}
           </div>
-          <p className="text-lg">No {activeTab.toLowerCase()} items found.</p>
-          <p className="text-sm mt-2">Be the first to submit a {activeTab.toLowerCase()} item!</p>
+          <p className="text-lg">
+            {activeTab === 'Lost' ? t('no_lost_items') : t('no_found_items')}
+          </p>
+          <p className="text-sm mt-2">
+            {t('be_first_to_submit').replace('{type}', activeTab.toLowerCase())}
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -176,7 +182,7 @@ const LostFoundDisplay: React.FC = () => {
         </div>
       )}
 
-      {/* Simple Image Modal */}
+      {/* Image Modal */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-50 p-4">
           <div className="relative max-w-4xl max-h-full w-full">

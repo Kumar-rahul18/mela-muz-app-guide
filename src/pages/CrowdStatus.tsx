@@ -14,7 +14,7 @@ interface CrowdLocation {
 
 const CrowdStatus = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [locations, setLocations] = useState<CrowdLocation[]>([]);
 
   useEffect(() => {
@@ -76,14 +76,14 @@ const CrowdStatus = () => {
           >
             ← 
           </button>
-          <h1 className="text-lg font-semibold">{t('Crowd status')}</h1>
+          <h1 className="text-lg font-semibold">{t('crowd_status')}</h1>
         </div>
       </div>
        <div className="px-4 py-6">
         {/* Overall Status */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 mb-6">
           <div className="text-center">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Current Crowd Level</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-4">{t('current_crowd_level')}</h2>
             <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
               <span className="text-3xl">{overallStatus.emoji}</span>
             </div>
@@ -94,33 +94,35 @@ const CrowdStatus = () => {
             }`}>
               {overallStatus.level}
             </p>
-            <p className="text-gray-600 text-sm">Last updated: 2 minutes ago</p>
+            <p className="text-gray-600 text-sm">
+              {language === 'hi' ? 'अंतिम अपडेट: 2 मिनट पहले' : 'Last updated: 2 minutes ago'}
+            </p>
           </div>
         </div>
     
 
         {/* Legend */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
-          <h3 className="font-semibold text-gray-800 mb-3">Crowd Levels</h3>
+          <h3 className="font-semibold text-gray-800 mb-3">{t('crowd_levels')}</h3>
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="flex flex-col items-center">
               <div className="w-4 h-4 bg-green-500 rounded-full mb-1"></div>
-              <span className="text-xs text-gray-600">{t('admin.low')}</span>
+              <span className="text-xs text-gray-600">{t('low')}</span>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-4 h-4 bg-yellow-500 rounded-full mb-1"></div>
-              <span className="text-xs text-gray-600">{t('admin.medium')}</span>
+              <span className="text-xs text-gray-600">{t('medium')}</span>
             </div>
             <div className="flex flex-col items-center">
               <div className="w-4 h-4 bg-red-500 rounded-full mb-1"></div>
-              <span className="text-xs text-gray-600">{t('admin.high')}</span>
+              <span className="text-xs text-gray-600">{t('high')}</span>
             </div>
           </div>
         </div>
 
         {/* Location Status */}
         <div className="space-y-3">
-          <h3 className="text-lg font-semibold text-gray-800">Live Status by Location</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{t('live_status_by_location')}</h3>
           {locations.map((location) => (
             <div key={location.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
               <div className="flex items-center justify-between">
@@ -140,7 +142,9 @@ const CrowdStatus = () => {
                   location.status_color === 'yellow' ? 'bg-yellow-100 text-yellow-700' :
                   'bg-red-100 text-red-700'
                 }`}>
-                  {location.status.toUpperCase()}
+                  {location.status === 'low' ? t('low') : 
+                   location.status === 'medium' ? t('medium') : 
+                   t('high')}
                 </span>
               </div>
             </div>
@@ -149,11 +153,23 @@ const CrowdStatus = () => {
 
         {/* Tips */}
         <div className="bg-blue-50 rounded-2xl p-4 mt-6">
-          <h3 className="font-semibold text-blue-800 mb-2">💡 Tips for Better Experience</h3>
+          <h3 className="font-semibold text-blue-800 mb-2">
+            💡 {t('tips_for_better_experience')}
+          </h3>
           <ul className="text-sm text-blue-700 space-y-1">
-            <li>• Visit during off-peak hours (early morning or late evening)</li>
-            <li>• Use alternative entrances during high crowd times</li>
-            <li>• Keep hydrated and follow safety guidelines</li>
+            {language === 'hi' ? (
+              <>
+                <li>• सुबह जल्दी या देर शाम के समय जाएं</li>
+                <li>• भीड़ के समय वैकल्पिक प्रवेश द्वार का उपयोग करें</li>
+                <li>• हाइड्रेटेड रहें और सुरक्षा दिशानिर्देशों का पालन करें</li>
+              </>
+            ) : (
+              <>
+                <li>• Visit during off-peak hours (early morning or late evening)</li>
+                <li>• Use alternative entrances during high crowd times</li>
+                <li>• Keep hydrated and follow safety guidelines</li>
+              </>
+            )}
           </ul>
         </div>
       </div>
