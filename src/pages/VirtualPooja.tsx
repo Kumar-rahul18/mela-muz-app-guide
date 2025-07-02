@@ -50,8 +50,8 @@ const VirtualPooja = () => {
 
   const garibNathBaba: GaribNathBaba = {
     id: 1,
-    name: 'GaribNath BABA',
-    location: 'Divine Blessing',
+    name: 'गरीब नाथ बाबा ',
+    location: 'मुज़फ्फरपुर',
     imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/photo-contest//1750851055108.jpeg'
   };
 
@@ -281,7 +281,7 @@ const VirtualPooja = () => {
               <button onClick={() => navigate('/')} className="text-white">
                 ← 
               </button>
-              <h1 className="text-lg font-semibold">🕉 आध्यात्मिक पूजा</h1>
+              <h1 className="text-lg font-bold">🕉 शिव के स्वरूपों की पूजा</h1>
             </div>
             <button
               onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
@@ -296,7 +296,7 @@ const VirtualPooja = () => {
           {/* GaribNath BABA Section */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
-              🙏 GaribNath BABA की पूजा करें
+              🙏 गरीब नाथ बाबा  की पूजा करें
             </h1>
             <p className="text-orange-600 text-sm mb-6">
               दिव्य आशीर्वाद प्राप्त करें
@@ -338,12 +338,7 @@ const VirtualPooja = () => {
             </div>
           </div>
 
-          {/* Divider */}
-          <div className="flex items-center justify-center my-8">
-            <div className="flex-1 h-px bg-orange-300"></div>
-            <div className="px-4 text-orange-600 font-semibold">या</div>
-            <div className="flex-1 h-px bg-orange-300"></div>
-          </div>
+         
 
           {/* 12 Jyotirlinga Section */}
           <div className="text-center mb-8">
