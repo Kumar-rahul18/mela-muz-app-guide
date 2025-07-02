@@ -255,7 +255,7 @@ const VirtualPooja = () => {
               <button onClick={() => navigate('/')} className="text-white">
                 ← 
               </button>
-              <h1 className="text-lg font-semibold">🕉 12 ज्योतिर्लिंग पूजा</h1>
+              <h1 className="text-lg font-semibold">🕉 शिव के स्वरूपों की पूजा</h1>
             </div>
             <button
               onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
