@@ -11,7 +11,7 @@ const Attractions = () => {
   const attractions = [
     {
       id: 'litchi-gardens',
-      icon: '🌳',
+    
       title: t('litchi_gardens'),
       description: t('litchi_gardens_desc'),
       image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
@@ -23,7 +23,7 @@ const Attractions = () => {
       icon: '🛕',
       title: t('garibnath_temple'),
       description: t('garibnath_temple_desc'),
-      image: 'https://images.unsplash.com/photo-1544913161-649431ccf735?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//Garibnath.jpg',
       location: 'City Center, Muzaffarpur',
       coordinates: { lat: 26.1197, lng: 85.3910 }
     },
@@ -32,7 +32,7 @@ const Attractions = () => {
       icon: '🌳',
       title: t('jubba_sahni_park'),
       description: t('jubba_sahni_park_desc'),
-      image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//jubba.jpg',
       location: 'Near Railway Station, Muzaffarpur',
       coordinates: { lat: 26.1197, lng: 85.3910 }
     },
@@ -41,7 +41,7 @@ const Attractions = () => {
       icon: '🏛️',
       title: t('ramchandra_museum'),
       description: t('ramchandra_museum_desc'),
-      image: 'https://images.unsplash.com/photo-1487058792275-0ad4aaf24ca7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//museum.jpg',
       location: 'Near Jubba Sahni Park, Muzaffarpur',
       coordinates: { lat: 26.1197, lng: 85.3910 }
     },
@@ -50,16 +50,16 @@ const Attractions = () => {
       icon: '⚔️',
       title: t('khudiram_memorial'),
       description: t('khudiram_memorial_desc'),
-      image: 'https://images.unsplash.com/photo-1527576539890-dfa815648363?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//khudiram%20bose.jpg',
       location: 'Muzaffarpur City, Bihar',
       coordinates: { lat: 26.1197, lng: 85.3910 }
     },
     {
       id: 'motijheel',
-      icon: '🏞️',
+      
       title: t('motijheel'),
       description: t('motijheel_desc'),
-      image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//motijheel.avif',
       location: 'Muzaffarpur, Bihar',
       coordinates: { lat: 26.1197, lng: 85.3910 }
     }
