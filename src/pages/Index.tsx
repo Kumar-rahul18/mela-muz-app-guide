@@ -8,6 +8,7 @@ import FacilityIcon from '@/components/FacilityIcon';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
+import VoiceSearch from '@/components/VoiceSearch';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -200,6 +201,17 @@ const Index = () => {
       <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
       
       <div className="px-4 py-6 space-y-6">
+
+        {/* Voice Search Section */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">🎤 Voice Search</h2>
+            <p className="text-sm text-gray-600">Say facility name in Hindi or English</p>
+          </div>
+          <div className="flex justify-center">
+            <VoiceSearch />
+          </div>
+        </div>
 
         {/* Photo Contest Banner */}
         <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
