@@ -18,13 +18,13 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound }) => {
 
   // Facility keywords mapping (English and Hindi)
   const facilityKeywords = {
-    'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल', 'ठहरने', 'रुकने'],
+    'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
     'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
     'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst'],
     'toilet': ['toilet', 'टॉयलेट', 'washroom', 'बाथरूम', 'शौचालय', 'bathroom'],
     'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower'],
-    'dharamshala': ['dharamshala', 'धर्मशाला', 'धर्मशाला', 'shelter', 'आश्रय'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप'],
+    'dharamshala': ['dharamshala', 'धर्मशाला', 'धर्मशाला', 'shelter', 'आश्रय','ठहरने', 'रुकने'],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','ठहरने', 'रुकने'],
     'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'डॉक्टर', 'इलाज', 'दवा', 'medicine'],
     'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन'],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call']
