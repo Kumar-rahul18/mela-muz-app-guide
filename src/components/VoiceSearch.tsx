@@ -274,7 +274,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       )}
       
       <p className="text-xs text-gray-500 text-center max-w-xs">
-        Say service names like "water", "पानी", "toilet", "शौचालय", "parking", "पार्किंग"
+        Say service names like  "पानी", "toilet", "शौचालय", "parking", "पार्किंग"
       </p>
     </div>
   );
