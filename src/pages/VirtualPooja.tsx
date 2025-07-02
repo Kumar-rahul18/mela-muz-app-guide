@@ -58,7 +58,7 @@ const VirtualPooja = () => {
     { id: 'jal', hindi: 'जल चढ़ाएं', english: 'Jal Chadhayen', icon: '🚿', completed: false },
     { id: 'mantra', hindi: 'मंत्र पढ़ें', english: 'Mantra Padhen', icon: '📖', completed: false },
     { id: 'aarti', hindi: 'आरती करें', english: 'Aarti Karen', icon: '🪔', completed: false },
-    { id: 'prasad', hindi: 'प्रसाद चढ़ाएं', english: 'Prasad Chadhayen', icon: '🍮', completed: false }
+    { id: 'prasad', hindi: 'प्रसाद चढ़ाएं', english: 'Prasad Chadhayen', icon: '🥮🥮🥮🥮', completed: false }
   ]);
 
   useEffect(() => {
