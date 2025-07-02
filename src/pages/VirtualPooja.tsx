@@ -82,7 +82,7 @@ const VirtualPooja = () => {
     } else if (type === 'aarti' && aartiAudioRef.current) {
       aartiAudioRef.current.volume = 1.0;
       aartiAudioRef.current.play().catch(console.error);
-    } else if (type === 'bell' && bellAudioRef.current) {
+    } else if (type === 'prasad' && bellAudioRef.current) {
       bellAudioRef.current.volume = 1.0;
       bellAudioRef.current.play().catch(console.error);
     }
