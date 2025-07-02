@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -127,7 +128,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
             toast({
               title: "Facility Found!",
               description: `Taking you to ${serviceType.replace('-', ' ')} facilities`,
-              duration:1000,
+              duration: 1000,
             });
           } else {
             // Navigate to specific pages
@@ -166,7 +167,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     toast({
       title: "Service Not Found",
       description: "Please try saying a service name like 'darshan', 'पूजा', 'gallery', or 'quiz'",
-      duration:3500
+      duration: 3500,
       variant: "destructive",
     });
   };
