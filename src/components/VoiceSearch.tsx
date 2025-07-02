@@ -172,7 +172,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     console.log('❌ No service found for transcript:', lowerTranscript);
     toast({
       title: "Service Not Found",
-      description: "Please try saying a service name like 'water', 'पानी', 'toilet', 'शौचालय', 'parking', 'गरीबनाथ धाम', or 'पार्किंग'",
+      description: "Please try saying a service name like  'पानी', 'toilet', 'शौचालय', 'parking', 'गरीबनाथ धाम', or 'पार्किंग'",
       duration: 4000,
       variant: "destructive",
     });
