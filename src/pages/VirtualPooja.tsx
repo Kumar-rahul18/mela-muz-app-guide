@@ -50,7 +50,7 @@ const VirtualPooja = () => {
     { id: 9, name: 'Vaidyanath', location: 'Deoghar, Jharkhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/9.png' },
     { id: 10, name: 'Nageshwar', location: 'Dwarka, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/10.png' },
     { id: 11, name: 'Rameshwaram', location: 'Rameswaram, Tamil Nadu', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/11.png' },
-    { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12.png' }
+    // { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12.png' }
   ];
 
   const [steps, setSteps] = useState<PoojaStep[]>([
