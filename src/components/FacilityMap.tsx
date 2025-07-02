@@ -94,7 +94,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         description: "Please turn on your location/internet and try again",
         variant: "destructive",
       });
-    }, 10000); // 10 seconds timeout
+    }, 15000); // 10 seconds timeout
     
     try {
       // Check if geolocation is supported
@@ -107,7 +107,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
       const location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
         const options = {
           enableHighAccuracy: false, // Set to false for better WebView compatibility
-          timeout: 9000, // Slightly less than our custom timeout
+          timeout: 10000, // Slightly less than our custom timeout
           maximumAge: 600000 // 10 minutes cache for WebView
         };
 
