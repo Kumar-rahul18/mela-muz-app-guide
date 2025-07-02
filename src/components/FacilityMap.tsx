@@ -1,11 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateDistance, formatDistance } from '@/utils/locationUtils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { MapPin, Navigation, RefreshCw } from 'lucide-react';
+import { MapPin, Navigation, RefreshCw, Wifi } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 
 interface Facility {
   id: string;
@@ -30,6 +30,8 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
   const [loading, setLoading] = useState(true);
   const [locationLoading, setLocationLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [locationTimeout, setLocationTimeout] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchFacilities();
@@ -79,10 +81,25 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     console.log('🎯 Requesting user location...');
     setLocationLoading(true);
     setError(null);
+    setLocationTimeout(false);
+    
+    // Set up timeout for location request
+    const timeoutId = setTimeout(() => {
+      console.log('⏰ Location request timed out after 10 seconds');
+      setLocationTimeout(true);
+      setLocationLoading(false);
+      setError('Turn on your location/internet and try again');
+      toast({
+        title: "Location Timeout",
+        description: "Please turn on your location/internet and try again",
+        variant: "destructive",
+      });
+    }, 10000); // 10 seconds timeout
     
     try {
       // Check if geolocation is supported
       if (!navigator.geolocation) {
+        clearTimeout(timeoutId);
         throw new Error('Geolocation is not supported by this browser');
       }
 
@@ -90,7 +107,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
       const location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
         const options = {
           enableHighAccuracy: false, // Set to false for better WebView compatibility
-          timeout: 60000, // Increased timeout for WebView
+          timeout: 9000, // Slightly less than our custom timeout
           maximumAge: 600000 // 10 minutes cache for WebView
         };
 
@@ -99,6 +116,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         // Try with high accuracy first, then fallback
         navigator.geolocation.getCurrentPosition(
           (position) => {
+            clearTimeout(timeoutId);
             const coords = {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
@@ -112,7 +130,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
             // Fallback with less accurate but more compatible options
             const fallbackOptions = {
               enableHighAccuracy: false,
-              timeout: 30000,
+              timeout: 5000,
               maximumAge: 900000 // 15 minutes cache
             };
             
@@ -120,6 +138,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
             
             navigator.geolocation.getCurrentPosition(
               (position) => {
+                clearTimeout(timeoutId);
                 const coords = {
                   latitude: position.coords.latitude,
                   longitude: position.coords.longitude,
@@ -128,21 +147,22 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
                 resolve(coords);
               },
               (fallbackError) => {
+                clearTimeout(timeoutId);
                 console.error('❌ Fallback geolocation error:', fallbackError);
-                let errorMessage = 'Unable to get your location';
+                let errorMessage = 'Turn on your location/internet and try again';
                 
                 switch (fallbackError.code) {
                   case fallbackError.PERMISSION_DENIED:
                     errorMessage = 'Location access denied. Please check app permissions in device settings.';
                     break;
                   case fallbackError.POSITION_UNAVAILABLE:
-                    errorMessage = 'Location service unavailable. Please enable GPS and try again.';
+                    errorMessage = 'Turn on your location/internet and try again';
                     break;
                   case fallbackError.TIMEOUT:
-                    errorMessage = 'Location request timeout. Please check your connection and try again.';
+                    errorMessage = 'Turn on your location/internet and try again';
                     break;
                   default:
-                    errorMessage = 'Location access failed. Please ensure location services are enabled.';
+                    errorMessage = 'Turn on your location/internet and try again';
                     break;
                 }
                 
@@ -157,11 +177,16 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
 
       console.log('✅ User location obtained:', location);
       setUserLocation(location);
+      setLocationTimeout(false);
     } catch (error: any) {
       console.error('❌ Error getting user location:', error);
-      setError(error.message || 'Unable to get your location. Please enable location services.');
+      if (!locationTimeout) {
+        setError(error.message || 'Turn on your location/internet and try again');
+      }
     } finally {
-      setLocationLoading(false);
+      if (!locationTimeout) {
+        setLocationLoading(false);
+      }
     }
   };
 
@@ -185,6 +210,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
   };
 
   const handleRefresh = () => {
+    setLocationTimeout(false);
     fetchFacilities();
     requestUserLocation();
   };
@@ -197,18 +223,32 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
           <p className="text-gray-600">
             {locationLoading ? 'Getting your location...' : 'Loading facilities...'}
           </p>
+          {locationLoading && (
+            <p className="text-sm text-gray-500 mt-2">
+              This may take up to 10 seconds
+            </p>
+          )}
         </div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || locationTimeout) {
     return (
       <div className={`p-4 ${className}`}>
         <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-6">
             <div className="text-center">
-              <p className="text-red-600 mb-4">{error}</p>
+              <Wifi className="w-12 h-12 mx-auto mb-4 text-red-500" />
+              <p className="text-red-600 mb-4 font-medium">
+                {locationTimeout || error?.includes('location/internet') 
+                  ? 'Turn on your location/internet' 
+                  : error
+                }
+              </p>
+              <p className="text-sm text-red-500 mb-4">
+                Make sure location services and internet connection are enabled
+              </p>
               <Button onClick={handleRefresh} variant="outline" size="sm">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Try Again
