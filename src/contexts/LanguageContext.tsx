@@ -121,7 +121,8 @@ const translations = {
     khudiram_memorial: 'Khudiram Bose Memorial',
     khudiram_memorial_desc: 'A tribute to the 18-year-old Bengali revolutionary executed in 1908; the memorial stands near the site of his trial and death, significant to India\'s freedom struggle.',
     motijheel: 'Motijheel',
-    motijheel_desc: 'A serene colonial-era lake turned public park, complete with boating facilities—a peaceful city retreat.'
+    motijheel_desc: 'A serene colonial-era lake turned public park, complete with boating facilities—a peaceful city retreat.',
+    feedback: 'Feedback',
   },
   hi: {
     app_title: 'श्रावणी मेला मुजफ्फरपुर',
@@ -231,7 +232,8 @@ const translations = {
     khudiram_memorial: 'खुदीराम बोस मेमोरियल',
     khudiram_memorial_desc: '1908 में फांसी दिए गए 18 वर्षीय बंगाली क्रांतिकारी को श्रद्धांजलि; स्मारक उनके मुकदमे और मृत्यु के स्थान के पास खड़ा है, जो भारत के स्वतंत्रता संग्राम के लिए महत्वपूर्ण है।',
     motijheel: 'मोतीझील',
-    motijheel_desc: 'एक शांत औपनिवेशिक काल की झील जो सार्वजनिक पार्क में बदल गई है, नौका विहार सुविधाओं के साथ पूर्ण—एक शांतिपूर्ण शहरी विश्राम स्थल।'
+    motijheel_desc: 'एक शांत औपनिवेशिक काल की झील जो सार्वजनिक पार्क में बदल गई है, नौका विहार सुविधाओं के साथ पूर्ण—एक शांतिपूर्ण शहरी विश्राम स्थल।',
+    feedback: 'प्रतिक्रिया',
   }
 };
 
