@@ -532,7 +532,7 @@ const VirtualPooja = () => {
               {/* Prasad */}
               {showPrasad && (
                 <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                  <div className="text-3xl animate-bounce">🍮</div>
+                  <div className="text-3xl animate-bounce">🥮🥮🥮🥮</div>
                 </div>
               )}
             </div>
