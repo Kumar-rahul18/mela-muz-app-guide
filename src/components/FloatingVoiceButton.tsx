@@ -142,7 +142,7 @@ const FloatingVoiceButton: React.FC = () => {
     
     toast({
       title: "Service Not Found",
-      description: "Please try saying a service name like 'darshan', 'पूजा', 'gallery', or 'quiz'",
+      description: "Please try saying a service name like 'toilet', 'धर्मशाला', 'भंडारा', or 'पार्किंग'",
       variant: "destructive",
     });
   };
