@@ -15,7 +15,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const translations = {
   en: {
-    app_title: 'Shravani Mela 2024',
+    app_title: 'Shravani Mela Muzaffarpur',
     home: 'Home',
     facilities: 'Facilities',
     gallery: 'Gallery',
@@ -109,7 +109,7 @@ const translations = {
     submitting: 'Submitting...'
   },
   hi: {
-    app_title: 'श्रावणी मेला 2024',
+    app_title: 'श्रावणी मेला मुजफ्फरपुर',
     home: 'होम',
     facilities: 'सुविधाएं',
     gallery: 'गैलरी',
