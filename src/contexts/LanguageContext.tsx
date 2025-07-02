@@ -106,7 +106,22 @@ const translations = {
     photo_description: 'Photo Description (Tell us about the ambience)',
     upload_contest_photo: 'Upload Your Contest Photo',
     submit_entry_button: 'Submit Entry',
-    submitting: 'Submitting...'
+    submitting: 'Submitting...',
+    // Attractions
+    attractions: 'Attractions',
+    get_directions: 'Get Directions',
+    litchi_gardens: 'Litchi Gardens',
+    litchi_gardens_desc: 'Muzaffarpur is famously known as the "Lychee Kingdom." Vast orchards—especially in Mushahari, Jhapaha, and Bochaha—produce over 300,000 tonnes of lychees annually. Visiting in May–June during harvest season is a feast for the senses.',
+    garibnath_temple: 'Baba Garibnath Temple (Garib Sthan)',
+    garibnath_temple_desc: 'A sacred Lord Shiva temple in the city center, also referred to as Bihar\'s "Devghar." Built around a Shivling discovered in a bleeding Peepal tree, it\'s especially lively during Shravan (July–August).',
+    jubba_sahni_park: 'Jubba Sahni Park',
+    jubba_sahni_park_desc: 'This tranquil public park, named after a freedom fighter, offers shaded walkways, open spaces, a lake, and boating—perfect for families and leisurely evenings.',
+    ramchandra_museum: 'Ramchandra Shahi Museum',
+    ramchandra_museum_desc: 'Located near the park, this museum features regional artifacts: sculptures (like Ashtadik Pal, Manasa Nag), coins, manuscripts, utensils—giving a glimpse into local history.',
+    khudiram_memorial: 'Khudiram Bose Memorial',
+    khudiram_memorial_desc: 'A tribute to the 18-year-old Bengali revolutionary executed in 1908; the memorial stands near the site of his trial and death, significant to India\'s freedom struggle.',
+    motijheel: 'Motijheel',
+    motijheel_desc: 'A serene colonial-era lake turned public park, complete with boating facilities—a peaceful city retreat.'
   },
   hi: {
     app_title: 'श्रावणी मेला मुजफ्फरपुर',
@@ -201,26 +216,38 @@ const translations = {
     photo_description: 'फोटो विवरण (माहौल के बारे में बताएं)',
     upload_contest_photo: 'अपनी प्रतियोगिता फोटो अपलोड करें',
     submit_entry_button: 'प्रविष्टि जमा करें',
-    submitting: 'जमा कर रहे हैं...'
+    submitting: 'जमा कर रहे हैं...',
+    // Attractions
+    attractions: 'आकर्षण',
+    get_directions: 'दिशा निर्देश',
+    litchi_gardens: 'लीची बगान',
+    litchi_gardens_desc: 'मुजफ्फरपुर को "लीची राज्य" के नाम से जाना जाता है। विशाल बगान—विशेष रूप से मुशहरी, झपाहा और बोचाहा में—सालाना 300,000 टन से अधिक लीची का उत्पादन करते हैं। मई-जून में फसल के मौसम में जाना इंद्रियों के लिए एक दावत है।',
+    garibnath_temple: 'बाबा गरीबनाथ मंदिर (गरीब स्थान)',
+    garibnath_temple_desc: 'शहर के केंद्र में एक पवित्र भगवान शिव मंदिर, जिसे बिहार के "देवघर" के रूप में भी जाना जाता है। एक खून बहने वाले पीपल के पेड़ में खोजे गए शिवलिंग के चारों ओर बना, यह श्रावण (जुलाई-अगस्त) के दौरान विशेष रूप से जीवंत रहता है।',
+    jubba_sahni_park: 'जुब्बा साहनी पार्क',
+    jubba_sahni_park_desc: 'एक स्वतंत्रता सेनानी के नाम पर रखा गया यह शांत सार्वजनिक पार्क, छायादार पैदल रास्ते, खुले स्थान, एक झील और नौका विहार प्रदान करता है—परिवारों और आरामदायक शामों के लिए बिल्कुल सही।',
+    ramchandra_museum: 'रामचंद्र शाही संग्रहालय',
+    ramchandra_museum_desc: 'पार्क के पास स्थित, इस संग्रहालय में क्षेत्रीय कलाकृतियां हैं: मूर्तियां (जैसे अष्टदिक पाल, मनसा नाग), सिक्के, पांडुलिपियां, बर्तन—स्थानीय इतिहास की एक झलक देते हुए।',
+    khudiram_memorial: 'खुदीराम बोस मेमोरियल',
+    khudiram_memorial_desc: '1908 में फांसी दिए गए 18 वर्षीय बंगाली क्रांतिकारी को श्रद्धांजलि; स्मारक उनके मुकदमे और मृत्यु के स्थान के पास खड़ा है, जो भारत के स्वतंत्रता संग्राम के लिए महत्वपूर्ण है।',
+    motijheel: 'मोतीझील',
+    motijheel_desc: 'एक शांत औपनिवेशिक काल की झील जो सार्वजनिक पार्क में बदल गई है, नौका विहार सुविधाओं के साथ पूर्ण—एक शांतिपूर्ण शहरी विश्राम स्थल।'
   }
 };
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Check if language has been set before, if not show selector
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('app-language');
     return (saved as Language) || 'en';
   });
 
   const [showLanguageSelector, setShowLanguageSelector] = useState(() => {
-    // Only show language selector if no language has been selected before
     return !localStorage.getItem('app-language');
   });
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('app-language', lang);
-    // Once language is set, don't show selector automatically anymore
     setShowLanguageSelector(false);
   };
 

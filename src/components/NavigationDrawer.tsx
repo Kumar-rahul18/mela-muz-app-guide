@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -22,6 +21,7 @@ import {
   LogIn,
   BookOpen,
   Car,
+  TreePine,
 } from 'lucide-react';
 
 interface NavigationDrawerProps {
@@ -87,7 +87,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
     { icon: Calendar, label: t('events'), path: '/events' },
     { icon: Users, label: t('crowd_status'), path: '/crowd-status' },
     { icon: Camera, label: t('photo_contest'), path: '/photo-contest' },
-    { icon: MapPin, label: t('facilities'), path: '/facility/route' },
+    { icon: TreePine, label: t('attractions'), path: '/attractions' },
   ];
 
   const handleNavigation = (path: string) => {
