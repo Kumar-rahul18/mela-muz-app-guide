@@ -4,6 +4,7 @@ import { Menu } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import NavigationDrawer from './NavigationDrawer';
 import LanguageSelector from './LanguageSelector';
+import VoiceSearch from './VoiceSearch';
 
 const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -31,6 +32,11 @@ const Header = () => {
               </svg>
             </div>
             <h1 className="text-lg font-semibold">{t('app_title')}</h1>
+          </div>
+          
+          {/* Voice Search Button */}
+          <div className="flex items-center">
+            <VoiceSearch compact={true} />
           </div>
         </div>
       </header>

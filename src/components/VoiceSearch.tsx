@@ -7,9 +7,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface VoiceSearchProps {
   onFacilityFound?: (facilityType: string) => void;
+  compact?: boolean;
 }
 
-const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound }) => {
+const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = false }) => {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
@@ -142,6 +143,37 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound }) => {
       recognition.stop();
     }
   };
+
+  if (compact) {
+    return (
+      <Button
+        onClick={isListening ? stopListening : startListening}
+        className={`${
+          isListening 
+            ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
+            : 'bg-blue-500 hover:bg-blue-600'
+        } text-white px-3 py-2 rounded-lg shadow-md text-sm`}
+        size="sm"
+      >
+        {isListening ? (
+          <>
+            <MicOff className="w-4 h-4 mr-1" />
+            <div className="flex flex-col items-start">
+              <span className="text-xs leading-tight">Voice</span>
+            </div>
+          </>
+        ) : (
+          <>
+            <Mic className="w-4 h-4 mr-1" />
+            <div className="flex flex-col items-start">
+              <span className="text-xs leading-tight">Voice</span>
+              <span className="text-xs leading-tight opacity-90">Search nearby facility</span>
+            </div>
+          </>
+        )}
+      </Button>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center space-y-3">

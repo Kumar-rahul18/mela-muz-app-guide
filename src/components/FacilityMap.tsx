@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { calculateDistance, formatDistance } from '@/utils/locationUtils';
@@ -83,9 +84,9 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     setError(null);
     setLocationTimeout(false);
     
-    // Set up timeout for location request
+    // Set up timeout for location request - increased to 15 seconds
     const timeoutId = setTimeout(() => {
-      console.log('⏰ Location request timed out after 10 seconds');
+      console.log('⏰ Location request timed out after 15 seconds');
       setLocationTimeout(true);
       setLocationLoading(false);
       setError('Turn on your location/internet and try again');
@@ -94,7 +95,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         description: "Please turn on your location/internet and try again",
         variant: "destructive",
       });
-    }, 15000); // 10 seconds timeout
+    }, 15000); // 15 seconds timeout
     
     try {
       // Check if geolocation is supported
@@ -107,7 +108,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
       const location = await new Promise<{ latitude: number; longitude: number }>((resolve, reject) => {
         const options = {
           enableHighAccuracy: false, // Set to false for better WebView compatibility
-          timeout: 10000, // Slightly less than our custom timeout
+          timeout: 12000, // Slightly less than our custom timeout
           maximumAge: 600000 // 10 minutes cache for WebView
         };
 
@@ -130,7 +131,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
             // Fallback with less accurate but more compatible options
             const fallbackOptions = {
               enableHighAccuracy: false,
-              timeout: 5000,
+              timeout: 8000,
               maximumAge: 900000 // 15 minutes cache
             };
             
@@ -225,7 +226,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
           </p>
           {locationLoading && (
             <p className="text-sm text-gray-500 mt-2">
-              This may take up to 10 seconds
+              This may take up to 15 seconds
             </p>
           )}
         </div>
