@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'en' | 'hi';
@@ -49,6 +48,7 @@ const translations = {
     virtual_pooja: 'Virtual Pooja',
     live_darshan: 'Live Darshan',
     live_aarti: 'Live Aarti',
+    shiv_bhajan: 'Shiv Bhajan',
     history: 'History',
     contacts: 'Emergency Contacts',
     admin: 'Admin Panel',
@@ -143,6 +143,7 @@ const translations = {
     virtual_pooja: 'वर्चुअल पूजा',
     live_darshan: 'लाइव दर्शन',
     live_aarti: 'लाइव आरती',
+    shiv_bhajan: 'शिव भजन',
     history: 'इतिहास',
     contacts: 'आपातकालीन संपर्क',
     admin: 'एडमिन पैनल',

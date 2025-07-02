@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -17,23 +16,23 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Enhanced keywords mapping with your comprehensive list
+  // Enhanced keywords mapping with comprehensive list
   const serviceKeywords = {
     // Facilities
     'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
     'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
-    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst','पीने','जल','पेय जल','drink', 'पेजल'],
-    'toilet': ['toilet', 'टॉयलेट', 'wash room','washroom', 'शौचालय','संडास','प्रसाधन','लेट्रिन','पखाना','पैखाना', 'हगने','हगना', 'मूत्र', 'पेशाब' ],
-    'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower','नहाने की जगह', 'स्नान घर'],
-    'dharamshala': ['dharamshala', 'धर्मशाला', 'धर्मशाला', 'shelter', 'आश्रय','ठहरने', 'रुकने','निवास'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','अस्थायी निवास', 'temporary niwas', 'niwas sthal','निवास स्थल','रुकने','आराम','जगह' ],
+    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'drink', 'पेजल'],
+    'toilet': ['toilet', 'टॉयलेट', 'wash room', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना', 'हगने', 'हगना', 'मूत्र', 'पेशाब'],
+    'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर'],
+    'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter', 'आश्रय', 'ठहरने', 'रुकने', 'निवास'],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'अस्थायी निवास', 'temporary niwas', 'niwas sthal', 'निवास स्थल', 'रुकने', 'आराम', 'जगह'],
     'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
-    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus','कार', 'बोलेरो', 'स्कॉर्पियो', 'बस', 'यात्री वाहन','मोटरसाइकिल', 'बाइक', ' टेंपो', 'ऑटो' , 'ट्रैक्टर '],
+    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus', 'कार', 'बोलेरो', 'स्कॉर्पियो', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक', 'टेंपो', 'ऑटो', 'ट्रैक्टर'],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
-    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन' , 'जन सेवा भोजन', 'प्रसाद वितरण' ,'Free Meal' , 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना','भोजन', 'प्रसाद'],
+    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'Free Meal', 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
     
     // Pages and Services
-    'virtual-pooja': ['गरीबनाथ', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
+    'virtual-pooja': ['गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
     'live-darshan': ['live darshan', 'लाइव दर्शन', 'darshan', 'दर्शन', 'live', 'लाइव'],
     'crowd-status': ['crowd status', 'crowd', 'भीड़', 'भीड़ की स्थिति', 'rush', 'रश'],
     'gallery': ['gallery', 'गैलरी', 'photos', 'फोटो', 'pictures', 'तस्वीरें'],
@@ -51,7 +50,6 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = true;
-      // Set both Hindi and English for better recognition
       recognitionInstance.lang = 'hi-IN';
       
       recognitionInstance.onstart = () => {
@@ -110,30 +108,62 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     const lowerTranscript = transcript.toLowerCase().trim();
     console.log('🔍 Searching for services in transcript:', lowerTranscript);
     
-    // Improved matching logic - check for exact matches first, then substring matches
+    // Enhanced matching logic with multiple strategies
     for (const [serviceType, keywords] of Object.entries(serviceKeywords)) {
       for (const keyword of keywords) {
         const lowerKeyword = keyword.toLowerCase().trim();
         
-        // Check for exact match first (more precise)
+        // Strategy 1: Exact word match
+        const transcriptWords = lowerTranscript.split(/\s+/);
+        const keywordWords = lowerKeyword.split(/\s+/);
+        
+        // Check if all keyword words exist in transcript
+        const allWordsMatch = keywordWords.every(keywordWord => 
+          transcriptWords.some(transcriptWord => 
+            transcriptWord === keywordWord || 
+            transcriptWord.includes(keywordWord) || 
+            keywordWord.includes(transcriptWord)
+          )
+        );
+        
+        if (allWordsMatch) {
+          console.log('✅ Found WORD MATCH for service:', serviceType, 'keyword:', keyword);
+          navigateToService(serviceType, keyword);
+          return;
+        }
+        
+        // Strategy 2: Exact match
         if (lowerTranscript === lowerKeyword) {
           console.log('✅ Found EXACT service match:', serviceType, 'for keyword:', keyword);
           navigateToService(serviceType, keyword);
           return;
         }
         
-        // Then check for substring match
+        // Strategy 3: Substring match (transcript contains keyword)
         if (lowerTranscript.includes(lowerKeyword)) {
           console.log('✅ Found SUBSTRING service match:', serviceType, 'for keyword:', keyword);
           navigateToService(serviceType, keyword);
           return;
         }
         
-        // Also check if keyword contains the transcript (for partial matches)
+        // Strategy 4: Reverse substring (keyword contains transcript, for partial matches)
         if (lowerKeyword.includes(lowerTranscript) && lowerTranscript.length > 2) {
           console.log('✅ Found PARTIAL service match:', serviceType, 'for keyword:', keyword);
           navigateToService(serviceType, keyword);
           return;
+        }
+        
+        // Strategy 5: Fuzzy match for single words
+        if (!lowerTranscript.includes(' ') && !lowerKeyword.includes(' ') && lowerTranscript.length > 2) {
+          const editDistance = calculateEditDistance(lowerTranscript, lowerKeyword);
+          const maxLength = Math.max(lowerTranscript.length, lowerKeyword.length);
+          const similarity = 1 - (editDistance / maxLength);
+          
+          if (similarity > 0.7) { // 70% similarity threshold
+            console.log('✅ Found FUZZY service match:', serviceType, 'for keyword:', keyword, 'similarity:', similarity);
+            navigateToService(serviceType, keyword);
+            return;
+          }
         }
       }
     }
@@ -142,10 +172,31 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     console.log('❌ No service found for transcript:', lowerTranscript);
     toast({
       title: "Service Not Found",
-      description: "Please try saying a service name like 'water', 'पानी', 'toilet', 'शौचालय', 'parking', or 'पार्किंग'",
+      description: "Please try saying a service name like 'water', 'पानी', 'toilet', 'शौचालय', 'parking', 'गरीबनाथ धाम', or 'पार्किंग'",
       duration: 4000,
       variant: "destructive",
     });
+  };
+
+  // Simple edit distance calculation for fuzzy matching
+  const calculateEditDistance = (str1: string, str2: string): number => {
+    const matrix = Array(str2.length + 1).fill(null).map(() => Array(str1.length + 1).fill(null));
+    
+    for (let i = 0; i <= str1.length; i++) matrix[0][i] = i;
+    for (let j = 0; j <= str2.length; j++) matrix[j][0] = j;
+    
+    for (let j = 1; j <= str2.length; j++) {
+      for (let i = 1; i <= str1.length; i++) {
+        const substitutionCost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+        matrix[j][i] = Math.min(
+          matrix[j][i - 1] + 1, // deletion
+          matrix[j - 1][i] + 1, // insertion
+          matrix[j - 1][i - 1] + substitutionCost // substitution
+        );
+      }
+    }
+    
+    return matrix[str2.length][str1.length];
   };
 
   const navigateToService = (serviceType: string, keyword: string) => {
@@ -274,7 +325,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       )}
       
       <p className="text-xs text-gray-500 text-center max-w-xs">
-        Say service names like  "पानी", "toilet", "शौचालय", "parking", "पार्किंग"
+        Say service names like "water", "पानी", "toilet", "शौचालय", "parking", "गरीबनाथ धाम", "पार्किंग"
       </p>
     </div>
   );
