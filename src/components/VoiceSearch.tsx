@@ -25,7 +25,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     'toilet': ['toilet', 'टॉयलेट', 'wash room','washroom', 'बाथरूम', 'शौचालय','संडास','प्रसाधन','लेट्रिन','पखाना','पैखाना', 'हगने','हगना', 'मूत्र', 'पेशाब' ],
     'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower','नहाने की जगह', 'स्नान घर'],
     'dharamshala': ['dharamshala', 'धर्मशाला', 'धर्मशाला', 'shelter', 'आश्रय','ठहरने', 'रुकने','निवास'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','अस्थायी निवास', 'temporary niwas', 'niwas sthal','निवास स्थल' ],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','अस्थायी निवास', 'temporary niwas', 'niwas sthal','निवास स्थल','रुकने','आराम','जगह' ],
     'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
     'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus','कार', 'बोलेरो', 'स्कॉर्पियो', 'बस', 'यात्री वाहन','मोटरसाइकिल', 'बाइक', ' टेंपो', 'ऑटो' , 'ट्रैक्टर '],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
