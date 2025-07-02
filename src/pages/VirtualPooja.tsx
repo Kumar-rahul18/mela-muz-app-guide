@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,13 @@ interface Jyotirlinga {
   imageUrl: string;
 }
 
+interface GaribNathBaba {
+  id: number;
+  name: string;
+  location: string;
+  imageUrl: string;
+}
+
 const VirtualPooja = () => {
   const navigate = useNavigate();
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -27,6 +35,7 @@ const VirtualPooja = () => {
   const bellAudioRef = useRef<HTMLAudioElement>(null);
   
   const [selectedJyotirlinga, setSelectedJyotirlinga] = useState<Jyotirlinga | null>(null);
+  const [selectedGaribNath, setSelectedGaribNath] = useState<GaribNathBaba | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [isActionActive, setIsActionActive] = useState(false);
   const [actionMessage, setActionMessage] = useState('');
@@ -37,10 +46,17 @@ const VirtualPooja = () => {
   const [poojaComplete, setPoojaComplete] = useState(false);
   const [backgroundMusicEnabled, setBackgroundMusicEnabled] = useState(true);
   const [showAura, setShowAura] = useState(false);
+  const [showGaribNathSection, setShowGaribNathSection] = useState(true);
+
+  const garibNathBaba: GaribNathBaba = {
+    id: 1,
+    name: 'GaribNath BABA',
+    location: 'Divine Blessing',
+    imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/photo-contest//1750851055108.jpeg'
+  };
 
   const jyotirlingas: Jyotirlinga[] = [
     { id: 1, name: 'Vaidyanath', location: 'Deoghar, Jharkhand', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/9.png' },
-   
     { id: 2, name: 'Mallikarjuna', location: 'Srisailam, Andhra Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//2.png' },
     { id: 3, name: 'Mahakaleshwar', location: 'Ujjain, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//3.png' },
     { id: 4, name: 'Omkareshwar', location: 'Khandwa, Madhya Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//4.png' },
@@ -48,10 +64,10 @@ const VirtualPooja = () => {
     { id: 6, name: 'Bhimashankar', location: 'Pune, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//6.png' },
     { id: 7, name: 'Kashi Vishwanath', location: 'Varanasi, Uttar Pradesh', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//7.png' },
     { id: 8, name: 'Trimbakeshwar', location: 'Nashik, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/8.png' },
-     { id: 9, name: 'Somnath', location: 'Veraval, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//1.png' },
+    { id: 9, name: 'Somnath', location: 'Veraval, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja//1.png' },
     { id: 10, name: 'Nageshwar', location: 'Dwarka, Gujarat', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/10.png' },
     { id: 11, name: 'Rameshwaram', location: 'Rameswaram, Tamil Nadu', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/11.png' },
-   { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12.png' }
+    { id: 12, name: 'Grishneshwar', location: 'Aurangabad, Maharashtra', imageUrl: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/virtual-puja/12.png' }
   ];
 
   const [steps, setSteps] = useState<PoojaStep[]>([
@@ -82,7 +98,7 @@ const VirtualPooja = () => {
     } else if (type === 'aarti' && aartiAudioRef.current) {
       aartiAudioRef.current.volume = 1.0;
       aartiAudioRef.current.play().catch(console.error);
-    } else if (type === 'prasad' && bellAudioRef.current) {
+    } else if (type === 'bell' && bellAudioRef.current) {
       bellAudioRef.current.volume = 1.0;
       bellAudioRef.current.play().catch(console.error);
     }
@@ -171,10 +187,11 @@ const VirtualPooja = () => {
   const checkPoojaCompletion = () => {
     const allCompleted = steps.every(step => step.completed || step.id === 'prasad');
     if (allCompleted) {
+      // Ring bell first
+      playSound('bell');
       setTimeout(() => {
         setPoojaComplete(true);
         setShowAura(true);
-        playSound('bell');
         setTimeout(() => {
           if (bellAudioRef.current) {
             bellAudioRef.current.pause();
@@ -213,18 +230,27 @@ const VirtualPooja = () => {
     return steps[currentStep];
   };
 
+  const handleGaribNathSelect = () => {
+    setSelectedGaribNath(garibNathBaba);
+    setShowGaribNathSection(false);
+    resetPooja();
+  };
+
   const handleJyotirlingaSelect = (jyotirlinga: Jyotirlinga) => {
     setSelectedJyotirlinga(jyotirlinga);
+    setShowGaribNathSection(false);
     resetPooja();
   };
 
   const goBackToSelection = () => {
     setSelectedJyotirlinga(null);
+    setSelectedGaribNath(null);
+    setShowGaribNathSection(true);
     resetPooja();
   };
 
-  // If no Jyotirlinga is selected, show selection screen
-  if (!selectedJyotirlinga) {
+  // If showing selection screen
+  if (showGaribNathSection && !selectedJyotirlinga && !selectedGaribNath) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
         {/* Background Audio */}
@@ -255,7 +281,7 @@ const VirtualPooja = () => {
               <button onClick={() => navigate('/')} className="text-white">
                 ← 
               </button>
-              <h1 className="text-lg font-semibold">🕉 शिव के स्वरूपों की पूजा</h1>
+              <h1 className="text-lg font-semibold">🕉 आध्यात्मिक पूजा</h1>
             </div>
             <button
               onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
@@ -267,6 +293,59 @@ const VirtualPooja = () => {
         </div>
 
         <div className="px-4 py-6 relative z-10">
+          {/* GaribNath BABA Section */}
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
+              🙏 GaribNath BABA की पूजा करें
+            </h1>
+            <p className="text-orange-600 text-sm mb-6">
+              दिव्य आशीर्वाद प्राप्त करें
+            </p>
+          </div>
+
+          {/* GaribNath Card */}
+          <div className="max-w-md mx-auto mb-12">
+            <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-orange-200 hover:shadow-xl transition-all duration-300 hover:scale-105">
+              <div className="aspect-square rounded-xl overflow-hidden mb-4 bg-gradient-to-b from-gray-200 to-gray-300">
+                <img
+                  src={garibNathBaba.imageUrl}
+                  alt={garibNathBaba.name}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSIjRjNGNEY2Ii8+Cjx0ZXh0IHg9IjEwMCIgeT0iMTAwIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNDAiIGZpbGw9IiM5Q0EzQUYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj7wn5WVPC90ZXh0Pgo8L3N2Zz4K';
+                  }}
+                />
+              </div>
+              
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-orange-800 mb-2">
+                  {garibNathBaba.name}
+                </h3>
+                <p className="text-sm text-orange-600 mb-4">
+                  {garibNathBaba.location}
+                </p>
+                
+                <button
+                  onClick={handleGaribNathSelect}
+                  className="group relative bg-gradient-to-r from-orange-400 to-red-500 hover:from-orange-500 hover:to-red-600 text-white px-8 py-3 rounded-full font-semibold transition-all duration-300 hover:shadow-lg active:scale-95 flex items-center justify-center space-x-2 mx-auto"
+                >
+                  <Heart className="w-5 h-5 animate-pulse" />
+                  <span>पूजा करें</span>
+                  <Heart className="w-5 h-5 animate-pulse" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center justify-center my-8">
+            <div className="flex-1 h-px bg-orange-300"></div>
+            <div className="px-4 text-orange-600 font-semibold">या</div>
+            <div className="flex-1 h-px bg-orange-300"></div>
+          </div>
+
+          {/* 12 Jyotirlinga Section */}
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
               🕉 12 ज्योतिर्लिंग
@@ -320,7 +399,7 @@ const VirtualPooja = () => {
           <div className="mt-8 bg-white/80 backdrop-blur-sm rounded-2xl p-4 shadow-lg border border-orange-200 max-w-2xl mx-auto">
             <h3 className="text-lg font-semibold text-orange-800 mb-2 text-center">पूजा विधि:</h3>
             <ol className="text-sm text-orange-700 space-y-1">
-              <li>1. अपना पसंदीदा ज्योतिर्लिंग चुनें</li>
+              <li>1. GaribNath BABA या अपना पसंदीदा ज्योतिर्लिंग चुनें</li>
               <li>2. जल चढ़ाएं → मंत्र जाप करें → आरती करें → प्रसाद चढ़ाएं</li>
               <li>3. प्रत्येक चरण में उचित समय लगेगा</li>
               <li>4. पूर्ण श्रद्धा के साथ पूजा करें</li>
@@ -331,7 +410,11 @@ const VirtualPooja = () => {
     );
   }
 
-  // Main puja interface (existing code with selected Jyotirlinga)
+  // Get current selected deity
+  const selectedDeity = selectedGaribNath || selectedJyotirlinga;
+  if (!selectedDeity) return null;
+
+  // Main puja interface
   return (
     <div className="min-h-screen bg-gradient-to-b from-orange-50 via-yellow-50 to-orange-100 relative overflow-hidden">
       {/* Background Audio with reduced volume */}
@@ -377,7 +460,7 @@ const VirtualPooja = () => {
             <button onClick={goBackToSelection} className="text-white">
               ← 
             </button>
-            <h1 className="text-lg font-semibold">🕉 {selectedJyotirlinga.name} पूजा</h1>
+            <h1 className="text-lg font-semibold">🕉 {selectedDeity.name} पूजा</h1>
           </div>
           <button
             onClick={() => setBackgroundMusicEnabled(!backgroundMusicEnabled)}
@@ -404,24 +487,24 @@ const VirtualPooja = () => {
           </div>
         </div>
 
-        {/* Jyotirlinga Section */}
+        {/* Deity Section */}
         <div className="text-center mb-8 relative">
           <h1 className="text-2xl font-bold text-orange-800 mb-2 font-serif">
-            🕉 {selectedJyotirlinga.name}
+            🕉 {selectedDeity.name}
           </h1>
-          <p className="text-orange-600 text-sm mb-6">{selectedJyotirlinga.location}</p>
+          <p className="text-orange-600 text-sm mb-6">{selectedDeity.location}</p>
           
-          {/* Jyotirlinga Container with Aura */}
+          {/* Deity Container with Aura */}
           <div className={`relative inline-block ${showAura ? 'animate-pulse' : ''}`}>
             {showAura && (
               <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 rounded-full blur-xl opacity-60 scale-110 animate-spin-slow" />
             )}
             
-            {/* Jyotirlinga Image */}
+            {/* Deity Image */}
             <div className="relative w-48 h-48 mx-auto mb-4 rounded-full overflow-hidden shadow-2xl">
               <img 
-                src={selectedJyotirlinga.imageUrl}
-                alt={selectedJyotirlinga.name}
+                src={selectedDeity.imageUrl}
+                alt={selectedDeity.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
@@ -485,37 +568,37 @@ const VirtualPooja = () => {
                 </div>
               )}
               
-              {/* Enhanced Aarti Animation with Circular Moving Diya */}
+              {/* Enhanced Aarti Animation with Smooth Circular Movement */}
               {showAarti && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="relative w-32 h-32">
-                    {/* Circular path for diya */}
-                    <div className="absolute inset-0 rounded-full border-2 border-yellow-400 opacity-30"></div>
+                  <div className="relative w-40 h-40">
+                    {/* Circular path for diya - smaller radius to stay within bounds */}
+                    <div className="absolute inset-8 rounded-full border-2 border-yellow-400 opacity-30"></div>
                     
-                    {/* Moving diya */}
+                    {/* Moving diya with smooth circular motion */}
                     <div 
                       className="absolute w-8 h-8 flex items-center justify-center"
                       style={{ 
-                        top: '0px', 
+                        top: '32px', 
                         left: '50%', 
                         transform: 'translateX(-50%)',
-                        transformOrigin: '50% 64px',
-                        animation: 'aarti-circular 3s ease-in-out infinite'
+                        transformOrigin: '50% 48px',
+                        animation: 'aarti-smooth-circular 4s ease-in-out infinite'
                       }}
                     >
-                      <div className="text-3xl animate-pulse">🪔</div>
+                      <div className="text-2xl animate-pulse">🪔</div>
                     </div>
                     
                     {/* Light rays emanating from center */}
                     <div className="absolute inset-0 animate-pulse">
-                      {[...Array(8)].map((_, i) => (
+                      {[...Array(12)].map((_, i) => (
                         <div
                           key={`ray-${i}`}
-                          className="absolute w-1 h-8 bg-yellow-400 opacity-60"
+                          className="absolute w-0.5 h-6 bg-yellow-400 opacity-60"
                           style={{
                             top: '50%',
                             left: '50%',
-                            transform: `translate(-50%, -50%) rotate(${i * 45}deg) translateY(-20px)`,
+                            transform: `translate(-50%, -50%) rotate(${i * 30}deg) translateY(-16px)`,
                             transformOrigin: 'center',
                             animationDelay: `${i * 0.1}s`
                           }}
@@ -524,7 +607,7 @@ const VirtualPooja = () => {
                     </div>
                     
                     {/* Central glow */}
-                    <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-20 animate-pulse scale-75"></div>
+                    <div className="absolute inset-0 bg-yellow-300 rounded-full opacity-20 animate-pulse scale-50"></div>
                   </div>
                 </div>
               )}
@@ -565,9 +648,9 @@ const VirtualPooja = () => {
           {poojaComplete && (
             <div className="bg-gradient-to-r from-yellow-100 to-orange-100 border-2 border-orange-300 rounded-2xl p-6 mb-6 animate-fade-in">
               <div className="text-3xl mb-2">🙏</div>
-              <h2 className="text-xl font-bold text-orange-800 mb-2">🕉 {selectedJyotirlinga.name} पूजा संपूर्ण हुई 🕉</h2>
-              <p className="text-orange-700 mb-2">आपकी {selectedJyotirlinga.name} की पूजा सफलतापूर्वक संपन्न हुई।</p>
-              <p className="text-orange-600 text-sm mb-4">🔔 भगवान शिव आपको आशीर्वाद दें।</p>
+              <h2 className="text-xl font-bold text-orange-800 mb-2">🕉 {selectedDeity.name} पूजा संपूर्ण हुई 🕉</h2>
+              <p className="text-orange-700 mb-2">आपकी {selectedDeity.name} की पूजा सफलतापूर्वक संपन्न हुई।</p>
+              <p className="text-orange-600 text-sm mb-4">🔔 भगवान आपको आशीर्वाद दें।</p>
               <div className="flex space-x-3 justify-center">
                 <Button 
                   onClick={resetPooja}
@@ -579,7 +662,7 @@ const VirtualPooja = () => {
                   onClick={goBackToSelection}
                   className="bg-blue-500 hover:bg-blue-600 text-white"
                 >
-                  अन्य ज्योतिर्लिंग चुनें
+                  अन्य विकल्प चुनें
                 </Button>
               </div>
             </div>
@@ -641,12 +724,22 @@ const VirtualPooja = () => {
         .animate-spin-slow {
           animation: spin-slow 3s linear infinite;
         }
-        @keyframes aarti-circular {
-          0% { transform: translateX(-50%) rotate(0deg) translateX(64px) rotate(0deg); }
-          25% { transform: translateX(-50%) rotate(90deg) translateX(64px) rotate(-90deg); }
-          50% { transform: translateX(-50%) rotate(180deg) translateX(64px) rotate(-180deg); }
-          75% { transform: translateX(-50%) rotate(270deg) translateX(64px) rotate(-270deg); }
-          100% { transform: translateX(-50%) rotate(360deg) translateX(64px) rotate(-360deg); }
+        @keyframes aarti-smooth-circular {
+          0% { 
+            transform: translateX(-50%) rotate(0deg) translateX(48px) rotate(0deg); 
+          }
+          25% { 
+            transform: translateX(-50%) rotate(90deg) translateX(48px) rotate(-90deg); 
+          }
+          50% { 
+            transform: translateX(-50%) rotate(180deg) translateX(48px) rotate(-180deg); 
+          }
+          75% { 
+            transform: translateX(-50%) rotate(270deg) translateX(48px) rotate(-270deg); 
+          }
+          100% { 
+            transform: translateX(-50%) rotate(360deg) translateX(48px) rotate(-360deg); 
+          }
         }
         `}
       </style>
