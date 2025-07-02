@@ -35,7 +35,7 @@ const FloatingVoiceButton: React.FC = () => {
     'lost-found': ['lost found', 'lost and found', 'खोया पाया', 'lost', 'खोया', 'found', 'पाया'],
     'photo-contest': ['photo contest', 'फोटो कॉन्टेस्ट', 'contest', 'कॉन्टेस्ट', 'competition', 'प्रतियोगिता'],
     'events': ['events', 'इवेंट्स', 'event', 'इवेंट', 'program', 'प्रोग्राम', 'कार्यक्रम'],
-    'camera-filters': ['camera filters', 'कैमरा फिल्टर', 'filter', 'फिल्टर', 'camera', 'कैमरा'],
+   // 'camera-filters': ['camera filters', 'कैमरा फिल्टर', 'filter', 'फिल्टर', 'camera', 'कैमरा'],
     'history': ['history', 'इतिहास', 'mela history', 'मेला इतिहास']
   };
 
@@ -122,7 +122,7 @@ const FloatingVoiceButton: React.FC = () => {
               'lost-found': '/lost-found',
               'photo-contest': '/photo-contest',
               'events': '/events',
-              'camera-filters': '/camera-filters',
+             // 'camera-filters': '/camera-filters',
               'history': '/history'
             };
             
