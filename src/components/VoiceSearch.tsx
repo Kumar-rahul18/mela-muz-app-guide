@@ -19,17 +19,17 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
 
   // Facility keywords mapping (English and Hindi)
   const facilityKeywords = {
-    'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
+    'paid-hotels': ['hotel', 'होटल'],
     'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
-    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst','पीने','जल','पेय जल'],
+    'drinking-water': ['water', 'पानी', 'drinking', 'पीने का पानी', 'प्यास', 'thirst','पीने','जल','पेय जल','drink', 'पेजल'],
     'toilet': ['toilet', 'टॉयलेट', 'wash room','washroom', 'बाथरूम', 'शौचालय','संडास','प्रसाधन','लेट्रिन','पखाना','पैखाना', 'हगने','हगना', 'मूत्र', 'पेशाब' ],
-    'bathroom': ['bathroom', 'नहाने', 'bath', 'shower','नहाने की जगह', 'स्नान घर'],
+    'bathroom': ['bathroom', 'नहाने', 'bath', 'shower', 'स्नान घर'],
     'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter', 'आश्रय','ठहरने', 'रुकने','निवास'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','अस्थायी निवास', 'temporary niwas', 'niwas sthal','निवास स्थल' ],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','निवास', 'niwas', 'स्थल' ],
     'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'डॉक्टर', 'इलाज', 'दवा', 'medicine'],
-    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus','कार', 'बोलेरो', 'स्कॉर्पियो', 'बस', 'यात्री वाहन','मोटरसाइकिल', 'बाइक', ' टेंपो', 'ऑटो' , 'ट्रैक्टर'],
+    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus','कार', 'बोलेरो', 'स्कॉर्पियो', 'बस','मोटरसाइकिल', 'बाइक', ' टेंपो', 'ऑटो' , 'ट्रैक्टर'],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call'],
-    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन' , 'जन सेवा भोजन', 'प्रसाद वितरण' ,'free meal' , 'फ्री भोजन', 'फ्री खाना','भोजन']
+    'bhandara': ['bhandara', 'भंडारा', 'लंगर' , 'प्रसाद' ,'meal' , 'खाना','भोजन']
   };
 
   useEffect(() => {
