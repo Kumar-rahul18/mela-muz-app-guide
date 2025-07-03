@@ -64,7 +64,7 @@ export const getCurrentLocation = (): Promise<{ latitude: number; longitude: num
       },
       {
         enableHighAccuracy: true,
-        timeout: 15000,
+        timeout: 12000,
         maximumAge: 60000,
       }
     );
