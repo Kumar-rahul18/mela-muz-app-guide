@@ -148,7 +148,7 @@ const translations = {
     khudiram_memorial: 'Khudiram Bose Memorial',
     khudiram_memorial_desc: 'A tribute to the 18-year-old Bengali revolutionary executed in 1908; the memorial stands near the site of his trial and death, significant to India\'s freedom struggle.',
     motijheel: 'Motijheel',
-    motijheel_desc: 'From getting it/'s name from the local netizens to becoming a perfect cinematic location and towers all around makes it look perfect during dusk.',
+    motijheel_desc: 'From getting it/'s name by the local netizens to becoming a perfect cinematic location and towers all around makes it look perfect during dusk.',
     feedback: 'Feedback',
   },
   hi: {
