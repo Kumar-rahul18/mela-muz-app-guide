@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import LiveSection from '@/components/LiveSection';
@@ -196,125 +197,143 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
-      
-      <div className="px-4 py-6 space-y-6 pb-32">
+    <div className="min-h-screen relative">
+      {/* Background Video */}
+      <div className="fixed inset-0 z-0">
+        <video
+          className="w-full h-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="https://mela-muz-app-guide.vercel.app/background%20(1).mp4" type="video/mp4" />
+        </video>
+        {/* Dark overlay for better content visibility */}
+        <div className="absolute inset-0 bg-black/40"></div>
+      </div>
 
-        {/* Photo Contest Banner */}
-        <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-6 text-white shadow-lg animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <span className="text-2xl">📸</span>
-                <h2 className="text-lg font-bold">{t('photo_contest')}</h2>
-              </div>
-              <p className="text-sm text-white/90 mb-3">{t('submit_entry')}</p>
-              <button 
-                onClick={() => navigate('/photo-contest')}
-                className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/30 transition-colors border border-white/30"
-              >
-                {t('participate')}
-              </button>
-            </div>
-            <div className="text-6xl opacity-20">🏆</div>
-          </div>
-        </div>
+      {/* Content Container */}
+      <div className="relative z-10">
+        <Header />
+        <LanguageSelector isOpen={showLanguageSelector} onClose={() => setShowLanguageSelector(false)} />
+        
+        <div className="px-4 py-6 space-y-6 pb-32">
 
-        {/* Pic of the Day - Single Sliding Image */}
-        <div className="animate-fade-in">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('pic_of_day')}</h2>
-          <div className="relative rounded-2xl overflow-hidden shadow-lg border">
-            {contestPhotos.length > 0 && (
-              <>
-                <div className="relative h-48 w-full">
-                  <img 
-                    src={contestPhotos[currentPhotoIndex]?.image_url} 
-                    alt={contestPhotos[currentPhotoIndex]?.title}
-                    className="w-full h-full object-cover transition-opacity duration-500"
-                    onError={(e) => {
-                      console.error('Image failed to load:', contestPhotos[currentPhotoIndex]?.image_url);
-                      const target = e.target as HTMLImageElement;
-                      target.src = "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <p className="text-white text-sm font-medium">{contestPhotos[currentPhotoIndex]?.title}</p>
-                  </div>
+          {/* Photo Contest Banner */}
+          <div className="bg-gradient-to-r from-pink-500/90 via-purple-500/90 to-indigo-500/90 backdrop-blur-sm rounded-2xl p-6 text-white shadow-lg animate-fade-in border border-white/20">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-2xl">📸</span>
+                  <h2 className="text-lg font-bold">{t('photo_contest')}</h2>
                 </div>
-                
-                {/* Dots Indicator */}
-                <div className="absolute bottom-2 right-4 flex space-x-1">
-                  {contestPhotos.map((_, index) => (
-                    <button
+                <p className="text-sm text-white/90 mb-3">{t('submit_entry')}</p>
+                <button 
+                  onClick={() => navigate('/photo-contest')}
+                  className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/30 transition-colors border border-white/30"
+                >
+                  {t('participate')}
+                </button>
+              </div>
+              <div className="text-6xl opacity-20">🏆</div>
+            </div>
+          </div>
+
+          {/* Pic of the Day - Single Sliding Image */}
+          <div className="animate-fade-in">
+            <h2 className="text-lg font-semibold text-white mb-4 drop-shadow-lg">{t('pic_of_day')}</h2>
+            <div className="relative rounded-2xl overflow-hidden shadow-lg border border-white/20 backdrop-blur-sm">
+              {contestPhotos.length > 0 && (
+                <>
+                  <div className="relative h-48 w-full">
+                    <img 
+                      src={contestPhotos[currentPhotoIndex]?.image_url} 
+                      alt={contestPhotos[currentPhotoIndex]?.title}
+                      className="w-full h-full object-cover transition-opacity duration-500"
+                      onError={(e) => {
+                        console.error('Image failed to load:', contestPhotos[currentPhotoIndex]?.image_url);
+                        const target = e.target as HTMLImageElement;
+                        target.src = "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80";
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <p className="text-white text-sm font-medium">{contestPhotos[currentPhotoIndex]?.title}</p>
+                    </div>
+                  </div>
+                  
+                  {/* Dots Indicator */}
+                  <div className="absolute bottom-2 right-4 flex space-x-1">
+                    {contestPhotos.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentPhotoIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-colors ${
+                          index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Live Section */}
+          <div className="bg-black/20 backdrop-blur-sm rounded-2xl border border-white/20">
+            <LiveSection />
+          </div>
+
+          {/* Facilities Section */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-white mb-4 px-4 drop-shadow-lg">🏛️ Facilities</h2>
+            <div className="px-4">
+              <div className="bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                <div className="grid grid-cols-4 gap-4">
+                  {facilityItems.map((item, index) => (
+                    <FacilityIcon
                       key={index}
-                      onClick={() => setCurrentPhotoIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-colors ${
-                        index === currentPhotoIndex ? 'bg-white' : 'bg-white/50'
-                      }`}
+                      icon={item.icon}
+                      label={item.label}
+                      type={item.path ? item.path.split('/').pop() : undefined}
+                      onClick={item.action}
                     />
                   ))}
                 </div>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Live Section */}
-        <div className="bg-white border rounded-2xl shadow-sm">
-          <LiveSection />
-        </div>
-
-        {/* Facilities Section */}
-        <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">🏛️ Facilities</h2>
-          <div className="px-4">
-            <div className="bg-white border rounded-2xl p-4 shadow-sm">
-              <div className="grid grid-cols-4 gap-4">
-                {facilityItems.map((item, index) => (
-                  <FacilityIcon
-                    key={index}
-                    icon={item.icon}
-                    label={item.label}
-                    type={item.path ? item.path.split('/').pop() : undefined}
-                    onClick={item.action}
-                  />
-                ))}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Quick Access */}
-        <div className="animate-fade-in">
-          <h2 className="text-lg font-semibold text-gray-800 mb-4">{t('contacts')}</h2>
-          <div className="grid grid-cols-2 gap-3">
-            {quickAccessItems.map((item, index) => (
-              <div 
-                key={index}
-                onClick={item.action}
-                className="bg-white rounded-2xl p-4 shadow-sm border cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
-              >
-                {item.component ? (
-                  item.component
-                ) : (
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
-                      <span className="text-lg">{item.icon}</span>
+          {/* Quick Access */}
+          <div className="animate-fade-in">
+            <h2 className="text-lg font-semibold text-white mb-4 drop-shadow-lg">{t('contacts')}</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {quickAccessItems.map((item, index) => (
+                <div 
+                  key={index}
+                  onClick={item.action}
+                  className="bg-white/90 backdrop-blur-sm rounded-2xl p-4 shadow-sm border border-white/30 cursor-pointer transform transition-all duration-200 hover:scale-105 active:scale-95"
+                >
+                  {item.component ? (
+                    item.component
+                  ) : (
+                    <div className="flex items-center space-x-3">
+                      <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                        <span className="text-lg">{item.icon}</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-800 text-sm">{item.label}</p>
+                        <p className="text-xs text-gray-500">{t('tap_to_call')}</p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-gray-800 text-sm">{item.label}</p>
-                      <p className="text-xs text-gray-500">{t('tap_to_call')}</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
+        </div>
       </div>
       
       {/* Floating Voice Search Button */}
