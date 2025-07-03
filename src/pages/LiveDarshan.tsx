@@ -32,38 +32,7 @@ const LiveDarshan = () => {
         {/* Status Cards */}
        
         {/* Aarti Schedule */}
-        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Today's Aarti Schedule</h3>
-          <div className="space-y-3">
-            {[
-              { time: '5:00 AM', name: 'Mangla Aarti', status: 'completed' },
-              { time: '12:00 PM', name: 'Bhog Aarti', status: 'live' },
-              { time: '7:00 PM', name: 'Sandhya Aarti', status: 'upcoming' },
-              { time: '10:00 PM', name: 'Shayan Aarti', status: 'upcoming' }
-            ].map((aarti, index) => (
-              <div key={index} className="flex items-center justify-between py-2">
-                <div className="flex items-center space-x-3">
-                  <div className={`w-3 h-3 rounded-full ${
-                    aarti.status === 'completed' ? 'bg-gray-400' :
-                    aarti.status === 'live' ? 'bg-red-500 animate-pulse' :
-                    'bg-yellow-500'
-                  }`}></div>
-                  <div>
-                    <p className="font-medium text-gray-800">{aarti.name}</p>
-                    <p className="text-xs text-gray-500">{aarti.time}</p>
-                  </div>
-                </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  aarti.status === 'completed' ? 'bg-gray-100 text-gray-600' :
-                  aarti.status === 'live' ? 'bg-red-100 text-red-600' :
-                  'bg-yellow-100 text-yellow-600'
-                }`}>
-                  {aarti.status}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+  
       </div>
     </div>
   );
