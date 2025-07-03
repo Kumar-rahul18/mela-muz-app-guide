@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { MapPin, Navigation, RefreshCw, Wifi } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface Facility {
   id: string;
@@ -33,6 +34,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
   const [error, setError] = useState<string | null>(null);
   const [locationTimeout, setLocationTimeout] = useState(false);
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   useEffect(() => {
     fetchFacilities();
@@ -89,10 +91,10 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
       console.log('⏰ Location request timed out after 15 seconds');
       setLocationTimeout(true);
       setLocationLoading(false);
-      setError('Turn on your location/internet and try again');
+      setError(t('location_timeout_error'));
       toast({
         title: "Location Timeout",
-        description: "Please turn on your location/internet and try again",
+        description: t('location_timeout_error'),
         variant: "destructive",
       });
     }, 15000); // 15 seconds timeout
@@ -150,20 +152,20 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
               (fallbackError) => {
                 clearTimeout(timeoutId);
                 console.error('❌ Fallback geolocation error:', fallbackError);
-                let errorMessage = 'Turn on your location/internet and try again';
+                let errorMessage = t('location_timeout_error');
                 
                 switch (fallbackError.code) {
                   case fallbackError.PERMISSION_DENIED:
-                    errorMessage = 'Location access denied. Please check app permissions in device settings.';
+                    errorMessage = t('location_denied_error');
                     break;
                   case fallbackError.POSITION_UNAVAILABLE:
-                    errorMessage = 'Turn on your location/internet and try again';
+                    errorMessage = t('location_unavailable_error');
                     break;
                   case fallbackError.TIMEOUT:
-                    errorMessage = 'Turn on your location/internet and try again';
+                    errorMessage = t('location_timeout_error');
                     break;
                   default:
-                    errorMessage = 'Turn on your location/internet and try again';
+                    errorMessage = t('location_timeout_error');
                     break;
                 }
                 
@@ -182,7 +184,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
     } catch (error: any) {
       console.error('❌ Error getting user location:', error);
       if (!locationTimeout) {
-        setError(error.message || 'Turn on your location/internet and try again');
+        setError(error.message || t('location_timeout_error'));
       }
     } finally {
       if (!locationTimeout) {
@@ -222,7 +224,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
         <div className="text-center">
           <RefreshCw className="w-8 h-8 animate-spin mx-auto mb-2 text-blue-500" />
           <p className="text-gray-600">
-            {locationLoading ? 'Getting your location...' : 'Loading facilities...'}
+            {locationLoading ? t('getting_location') : 'Loading facilities...'}
           </p>
           {locationLoading && (
             <p className="text-sm text-gray-500 mt-2">
@@ -243,7 +245,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
               <Wifi className="w-12 h-12 mx-auto mb-4 text-red-500" />
               <p className="text-red-600 mb-4 font-medium">
                 {locationTimeout || error?.includes('location/internet') 
-                  ? 'Turn on your location/internet' 
+                  ? t('location_timeout_error')
                   : error
                 }
               </p>
@@ -270,7 +272,7 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
               <MapPin className="w-12 h-12 mx-auto mb-4 text-gray-400" />
               <p className="text-gray-600 mb-4">
                 {!userLocation 
-                  ? 'Location access required to show distances'
+                  ? t('location_required')
                   : 'No facilities found with location data'
                 }
               </p>
@@ -342,21 +344,13 @@ const FacilityMap: React.FC<FacilityMapProps> = ({ facilityType, className = '' 
                       </Button>
                     )}
                     {facility.google_maps_link && (
-                      // <Button 
-                      //   size="sm" 
-                      //   variant="outline"
-                      //   onClick={() => window.open(facility.google_maps_link, '_blank')}
-                      // >
-                      //   Go
-                      // </Button>
-                <Button 
-                  size="sm"
-                  className="bg-green-800 text-white hover:bg-green-900"
-                  onClick={() => window.open(facility.google_maps_link, '_blank')}
-                >
-                  Go
-                </Button>
-
+                      <Button 
+                        size="sm"
+                        className="bg-green-800 text-white hover:bg-green-900"
+                        onClick={() => window.open(facility.google_maps_link, '_blank')}
+                      >
+                        Go
+                      </Button>
                     )}
                   </div>
                 </div>

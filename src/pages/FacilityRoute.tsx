@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -81,6 +82,7 @@ const FacilityRoute = () => {
 
   const getFacilityIcon = (facilityType: string) => {
     const icons: { [key: string]: string } = {
+      'paid-hotels': '🏨',
       'drinking-water': '🚰',
       'toilet': '🚻',
       'bathroom': '🛁',
@@ -92,27 +94,48 @@ const FacilityRoute = () => {
       'centralised-contact': '📞',
       'mela-route': '🗺️',
       'gallery': '🖼️',
-      'atm': '🏧'
+      'atm': '🏧',
+      'bhandara': '🍽️'
     };
     return icons[facilityType] || '🏢';
   };
 
   const getFacilityName = (facilityType: string) => {
-    const names: { [key: string]: string } = {
-      'drinking-water': t('drinking_water'),
-      'toilet': t('toilet'),
-      'bathroom': t('bathroom'),
-      'rest-room': t('rest_room'),
-      'dharamshala': t('dharamshala'),
-      'shivir': t('shivir'),
-      'health-centre': t('health_centre'),
-      'parking': t('parking'),
-      'centralised-contact': t('centralised_contact'),
-      'mela-route': t('mela_route'),
-      'gallery': t('gallery'),
-      'atm': t('atm')
+    const nameKeys: { [key: string]: string } = {
+      'paid-hotels': 'paid_hotels',
+      'drinking-water': 'drinking_water',
+      'toilet': 'toilet',
+      'bathroom': 'bathroom',
+      'rest-room': 'rest_room',
+      'dharamshala': 'dharamshala',
+      'shivir': 'shivir',
+      'health-centre': 'health_centre',
+      'parking': 'parking',
+      'centralised-contact': 'centralised_contact',
+      'mela-route': 'mela_route',
+      'gallery': 'gallery',
+      'atm': 'atm',
+      'bhandara': 'bhandaras'
     };
-    return names[facilityType] || facilityType;
+    return t(nameKeys[facilityType] || facilityType);
+  };
+
+  const getFacilityDescription = (facilityType: string) => {
+    const descKeys: { [key: string]: string } = {
+      'paid-hotels': 'paid_hotels_desc',
+      'drinking-water': 'drinking_water_desc',
+      'toilet': 'toilet_desc',
+      'bathroom': 'bathroom_desc',
+      'rest-room': 'rest_room_desc',
+      'dharamshala': 'dharamshala_desc',
+      'shivir': 'shivir_desc',
+      'health-centre': 'health_centre_desc',
+      'parking': 'parking_desc',
+      'mela-route': 'mela_route_desc',
+      'atm': 'atm_desc',
+      'bhandara': 'bhandara_desc'
+    };
+    return t(descKeys[facilityType] || '');
   };
 
   const handleNavigation = (googleMapsLink: string) => {
@@ -133,7 +156,7 @@ const FacilityRoute = () => {
             <span className="text-2xl">🗺️</span>
           </div>
           <h3 className="text-lg font-semibold mb-2">{t('mela_route')}</h3>
-          <p className="text-gray-600">Coming soon - Interactive mela route map</p>
+          <p className="text-gray-600">{getFacilityDescription('mela-route')}</p>
         </div>
       );
     }
@@ -157,7 +180,7 @@ const FacilityRoute = () => {
             <span className="text-2xl">🏧</span>
           </div>
           <h3 className="text-lg font-semibold mb-2">{t('atm')}</h3>
-          <p className="text-gray-600">ATM locations will be available soon</p>
+          <p className="text-gray-600">{getFacilityDescription('atm')}</p>
         </div>
       );
     }
@@ -195,10 +218,16 @@ const FacilityRoute = () => {
               className="bg-blue-800 hover:bg-blue-900 text-white-900 border-blue-500"
             >
               <MapPin className="w-4 h-4 mr-2 text-white-900" />
-              {showMap ? 'Show All' : 'Show Nearby'}
+              {showMap ? t('show_all') : t('show_nearby')}
             </Button>
           )}
         </div>
+        {/* Add description below header */}
+        {type && getFacilityDescription(type) && (
+          <div className="mt-2 px-2">
+            <p className="text-white/90 text-sm">{getFacilityDescription(type)}</p>
+          </div>
+        )}
       </div>
 
       <div className="px-4 py-6">
@@ -272,7 +301,7 @@ const FacilityRoute = () => {
                         onClick={() => handleNavigation(facility.google_maps_link)}
                         className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full"
                       >
-                        🧭 {t('navigate')}
+                        🧭 Navigate
                       </Button>
                     )}
                   </div>
