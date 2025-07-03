@@ -103,6 +103,11 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
     onClose();
   };
 
+  const handleFeedbackOpen = () => {
+    setIsFeedbackOpen(true);
+    onClose(); // Close navigation drawer when feedback form opens
+  };
+
   const handleAdminLogin = () => {
     navigate('/admin');
     onClose();
@@ -182,7 +187,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
             <Button
               variant="ghost"
               className="w-full justify-start text-left h-12 hover:bg-blue-50 text-blue-700"
-              onClick={() => setIsFeedbackOpen(true)}
+              onClick={handleFeedbackOpen}
             >
               <MessageSquare className="mr-3 h-5 w-5" />
               {t('feedback')}
