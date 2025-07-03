@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -10,20 +11,20 @@ const FloatingVoiceButton: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Enhanced keywords mapping with comprehensive list
+  // Enhanced keywords mapping with more precise matching
   const serviceKeywords = {
     // Facilities
     'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
     'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
-    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'drink', 'पेजल'],
-    'toilet': ['toilet', 'टॉयलेट', 'wash room', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना', 'हगने', 'हगना', 'मूत्र', 'पेशाब'],
+    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल'],
+    'toilet': ['toilet', 'टॉयलेट', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना', 'हगने', 'हगना', 'मूत्र', 'पेशाब'],
     'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर'],
     'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter', 'आश्रय', 'ठहरने', 'रुकने', 'निवास'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'अस्थायी निवास', 'temporary niwas', 'niwas sthal', 'निवास स्थल', 'रुकने', 'आराम', 'जगह'],
-    'health-centre': ['health', 'हेल्थ', 'medical', 'doctor','first aid', 'दर्द','बुखार', 'कटना', 'छिलना', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
-    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'bolero', 'scorpio', 'bus', 'कार', 'बोलेरो', 'स्कॉर्पियो', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक', 'टेंपो', 'ऑटो', 'ट्रैक्टर'],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'अस्थायी निवास'],
+    'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार', 'कटना', 'छिलना', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
+    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक'],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
-    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'Free Meal', 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
+    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal', 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
     
     // Pages and Services
     'virtual-pooja': ['गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
@@ -90,74 +91,79 @@ const FloatingVoiceButton: React.FC = () => {
     const lowerTranscript = transcript.toLowerCase().trim();
     console.log('🔍 Searching for services in transcript:', lowerTranscript);
     
-    // Enhanced matching logic with multiple strategies
+    // Find best match with improved precision
+    let bestMatch = null;
+    let bestScore = 0;
+    
     for (const [serviceType, keywords] of Object.entries(serviceKeywords)) {
       for (const keyword of keywords) {
         const lowerKeyword = keyword.toLowerCase().trim();
+        let score = 0;
         
-        // Strategy 1: Exact word match
-        const transcriptWords = lowerTranscript.split(/\s+/);
-        const keywordWords = lowerKeyword.split(/\s+/);
-        
-        // Check if all keyword words exist in transcript
-        const allWordsMatch = keywordWords.every(keywordWord => 
-          transcriptWords.some(transcriptWord => 
-            transcriptWord === keywordWord || 
-            transcriptWord.includes(keywordWord) || 
-            keywordWord.includes(transcriptWord)
-          )
-        );
-        
-        if (allWordsMatch) {
-          console.log('✅ Found WORD MATCH for service:', serviceType, 'keyword:', keyword);
-          navigateToService(serviceType, keyword);
-          return;
-        }
-        
-        // Strategy 2: Exact match
+        // Strategy 1: Exact match (highest priority)
         if (lowerTranscript === lowerKeyword) {
-          console.log('✅ Found EXACT service match:', serviceType, 'for keyword:', keyword);
-          navigateToService(serviceType, keyword);
-          return;
+          score = 100;
         }
-        
-        // Strategy 3: Substring match (transcript contains keyword)
-        if (lowerTranscript.includes(lowerKeyword)) {
-          console.log('✅ Found SUBSTRING service match:', serviceType, 'for keyword:', keyword);
-          navigateToService(serviceType, keyword);
-          return;
+        // Strategy 2: Transcript contains the complete keyword
+        else if (lowerTranscript.includes(lowerKeyword)) {
+          // Give higher score for longer matches
+          score = 80 + (lowerKeyword.length / lowerTranscript.length) * 20;
         }
-        
-        // Strategy 4: Reverse substring (keyword contains transcript, for partial matches)
-        if (lowerKeyword.includes(lowerTranscript) && lowerTranscript.length > 2) {
-          console.log('✅ Found PARTIAL service match:', serviceType, 'for keyword:', keyword);
-          navigateToService(serviceType, keyword);
-          return;
-        }
-        
-        // Strategy 5: Fuzzy match for single words
-        if (!lowerTranscript.includes(' ') && !lowerKeyword.includes(' ') && lowerTranscript.length > 2) {
-          const editDistance = calculateEditDistance(lowerTranscript, lowerKeyword);
-          const maxLength = Math.max(lowerTranscript.length, lowerKeyword.length);
-          const similarity = 1 - (editDistance / maxLength);
+        // Strategy 3: Word-by-word match for multi-word keywords
+        else if (lowerKeyword.includes(' ')) {
+          const transcriptWords = lowerTranscript.split(/\s+/);
+          const keywordWords = lowerKeyword.split(/\s+/);
           
-          if (similarity > 0.7) { // 70% similarity threshold
-            console.log('✅ Found FUZZY service match:', serviceType, 'for keyword:', keyword, 'similarity:', similarity);
-            navigateToService(serviceType, keyword);
-            return;
+          const matchedWords = keywordWords.filter(keywordWord => 
+            transcriptWords.some(transcriptWord => 
+              transcriptWord === keywordWord || 
+              (transcriptWord.length > 2 && keywordWord.includes(transcriptWord)) ||
+              (keywordWord.length > 2 && transcriptWord.includes(keywordWord))
+            )
+          );
+          
+          if (matchedWords.length === keywordWords.length) {
+            score = 70;
+          } else if (matchedWords.length > 0) {
+            score = 40 * (matchedWords.length / keywordWords.length);
           }
+        }
+        // Strategy 4: Single word fuzzy match (only for words > 3 chars)
+        else if (!lowerTranscript.includes(' ') && !lowerKeyword.includes(' ') && 
+                 lowerTranscript.length > 3 && lowerKeyword.length > 3) {
+          const similarity = calculateSimilarity(lowerTranscript, lowerKeyword);
+          if (similarity > 0.75) { // Higher threshold for fuzzy matching
+            score = 50 * similarity;
+          }
+        }
+        
+        // Update best match if this score is higher
+        if (score > bestScore && score > 40) { // Minimum threshold
+          bestScore = score;
+          bestMatch = { serviceType, keyword, score };
         }
       }
     }
     
-    // No service found
-    console.log('❌ No service found for transcript:', lowerTranscript);
-    toast({
-      title: "Service Not Found",
-      description: "Please try saying a service name like  'पानी', 'toilet', 'शौचालय', 'parking', 'गरीबनाथ धाम', or 'पार्किंग'",
-      duration: 5000,
-      variant: "destructive",
-    });
+    if (bestMatch) {
+      console.log('✅ Best match found:', bestMatch);
+      navigateToService(bestMatch.serviceType, bestMatch.keyword);
+    } else {
+      console.log('❌ No clear service match found for transcript:', lowerTranscript);
+      toast({
+        title: "Service Not Found",
+        description: "Please try saying a clear service name like 'पानी', 'toilet', 'शौचालय', 'parking', 'गरीबनाथ धाम'",
+        duration: 5000,
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Improved similarity calculation
+  const calculateSimilarity = (str1: string, str2: string): number => {
+    const editDistance = calculateEditDistance(str1, str2);
+    const maxLength = Math.max(str1.length, str2.length);
+    return 1 - (editDistance / maxLength);
   };
 
   // Simple edit distance calculation for fuzzy matching
