@@ -513,17 +513,18 @@ const FacilityRoute = () => {
             </div>
 
             <div className="relative w-full h-96 rounded-xl overflow-hidden border border-gray-200">
-              <iframe
-                src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
-                width="100%"
-                height="100%"
-                style={{ border: 0 }}
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Mela Route Map"
-                className="rounded-xl"
-              />
+             <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden border border-gray-200">
+  <iframe
+    src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
+    className="absolute top-0 left-0 w-full h-full rounded-xl"
+    allowFullScreen
+    loading="lazy"
+    referrerPolicy="no-referrer-when-downgrade"
+    title="Mela Route Map"
+    style={{ border: 0 }}
+  />
+</div>
+
             </div>
 
             <div className="mt-4 flex justify-center">
