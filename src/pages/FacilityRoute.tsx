@@ -349,7 +349,7 @@
 
 // export default FacilityRoute;
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -366,66 +366,39 @@ interface Facility {
   is_active: boolean;
 }
 
-interface Contact {
-  id: string;
-  contact_type: string;
-  name: string;
-  phone: string;
-  email: string;
-  designation: string;
-  is_active: boolean;
-}
-
 const FacilityRoute = () => {
   const navigate = useNavigate();
   const { type } = useParams();
-  const [searchParams] = useSearchParams();
   const { t } = useLanguage();
+
   const [facilities, setFacilities] = useState<Facility[]>([]);
-  const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showMap, setShowMap] = useState(searchParams.get('showMap') === 'true');
+  const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    if (type === 'mela-route') {
+      // Skip fetching for mela-route
+      setLoading(false);
+    } else {
+      fetchData();
+    }
   }, [type]);
 
   const fetchData = async () => {
     try {
-      if (type === 'centralised-contact') {
-        const { data, error } = await supabase
-          .from('contacts')
-          .select('*')
-          .eq('is_active', true)
-          .order('contact_type');
+      const { data, error } = await supabase
+        .from('facilities')
+        .select('*')
+        .eq('facility_type', type)
+        .eq('is_active', true)
+        .order('name');
 
-        if (error) {
-          console.error('Error fetching contacts:', error);
-          return;
-        }
-
-        setContacts(data || []);
-      } else if (
-        type &&
-        type !== 'route' &&
-        type !== 'gallery' &&
-        type !== 'mela-route' &&
-        type !== 'atm'
-      ) {
-        const { data, error } = await supabase
-          .from('facilities')
-          .select('*')
-          .eq('facility_type', type)
-          .eq('is_active', true)
-          .order('name');
-
-        if (error) {
-          console.error('Error fetching facilities:', error);
-          return;
-        }
-
-        setFacilities(data || []);
+      if (error) {
+        console.error('Error fetching facilities:', error);
+        return;
       }
+
+      setFacilities(data || []);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -444,9 +417,7 @@ const FacilityRoute = () => {
       'shivir': '🏕️',
       'health-centre': '🏥',
       'parking': '🅿️',
-      'centralised-contact': '📞',
       'mela-route': '🗺️',
-      'gallery': '🖼️',
       'atm': '🏧',
       'bhandara': '🍽️'
     };
@@ -464,119 +435,17 @@ const FacilityRoute = () => {
       'shivir': 'shivir',
       'health-centre': 'health_centre',
       'parking': 'parking',
-      'centralised-contact': 'centralised_contact',
       'mela-route': 'mela_route',
-      'gallery': 'gallery',
       'atm': 'atm',
       'bhandara': 'bhandaras'
     };
     return t(nameKeys[facilityType] || facilityType);
   };
 
-  const getFacilityDescription = (facilityType: string) => {
-    const descKeys: { [key: string]: string } = {
-      'paid-hotels': 'paid_hotels_desc',
-      'drinking-water': 'drinking_water_desc',
-      'toilet': 'toilet_desc',
-      'bathroom': 'bathroom_desc',
-      'rest-room': 'rest_room_desc',
-      'dharamshala': 'dharamshala_desc',
-      'shivir': 'shivir_desc',
-      'health-centre': 'health_centre_desc',
-      'parking': 'parking_desc',
-      'mela-route': 'mela_route_desc',
-      'atm': 'atm_desc',
-      'bhandara': 'bhandara_desc'
-    };
-    return t(descKeys[facilityType] || '');
-  };
-
   const handleNavigation = (googleMapsLink: string) => {
     if (googleMapsLink) {
       window.open(googleMapsLink, '_blank');
     }
-  };
-
-  const handleCall = (phoneNumber: string) => {
-    window.open(`tel:${phoneNumber}`, '_self');
-  };
-
-  const renderSpecialPages = () => {
-    if (type === 'mela-route') {
-      return (
-        <div className="space-y-6">
-          <div className="text-center py-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-2xl">🗺️</span>
-            </div>
-            <h3 className="text-lg font-semibold mb-2">{t('mela_route')}</h3>
-            <p className="text-gray-600 mb-4">{getFacilityDescription('mela-route')}</p>
-          </div>
-
-          {/* ✅ Responsive Embedded Map */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-            <div className="mb-4">
-              <h4 className="text-md font-semibold text-gray-800 mb-2">🗺️ Interactive Mela Route Map</h4>
-              <p className="text-sm text-gray-600">
-                Navigate through the complete mela route with detailed locations
-              </p>
-            </div>
-
-            <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden border border-gray-200">
-              <iframe
-                src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
-                className="absolute top-0 left-0 w-full h-full rounded-xl"
-                allowFullScreen
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                title="Mela Route Map"
-                style={{ border: 0 }}
-              />
-            </div>
-
-            <div className="mt-4 flex justify-center">
-              <Button
-                onClick={() =>
-                  window.open(
-                    'https://www.google.com/maps/d/edit?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&usp=sharing',
-                    '_blank'
-                  )
-                }
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
-              >
-                🔗 Open Full Map
-              </Button>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (type === 'gallery') {
-      return (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🖼️</span>
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{t('gallery')}</h3>
-          <p className="text-gray-600">Photo gallery from contest submissions</p>
-        </div>
-      );
-    }
-
-    if (type === 'atm') {
-      return (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🏧</span>
-          </div>
-          <h3 className="text-lg font-semibold mb-2">{t('atm')}</h3>
-          <p className="text-gray-600">{getFacilityDescription('atm')}</p>
-        </div>
-      );
-    }
-
-    return null;
   };
 
   if (loading) {
@@ -587,6 +456,57 @@ const FacilityRoute = () => {
     );
   }
 
+  // 📍 Special hardcoded section for Mela Route
+  if (type === 'mela-route') {
+    return (
+      <div className="min-h-screen bg-white p-4">
+        <div className="app-gradient text-white px-4 py-3 shadow-lg">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={() => navigate('/')}
+              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+            >
+              ←
+            </button>
+            <h1 className="text-lg font-semibold">
+              🗺️ {t('mela_route') || 'Mela Route'}
+            </h1>
+          </div>
+        </div>
+
+        <div className="mt-6 text-center">
+          <h2 className="text-lg font-semibold mb-2">🧭 Navigate the Mela Route</h2>
+          <p className="text-gray-600 mb-4">{t('mela_route_desc') || 'Explore the Mela area using the interactive map below.'}</p>
+        </div>
+
+        <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow border border-gray-200">
+          <iframe
+            src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
+            className="absolute top-0 left-0 w-full h-full"
+            allowFullScreen
+            loading="lazy"
+            title="Mela Route Map"
+          ></iframe>
+        </div>
+
+        <div className="mt-6 flex justify-center">
+          <Button
+            onClick={() =>
+              window.open(
+                'https://www.google.com/maps/d/edit?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&usp=sharing',
+                '_blank'
+              )
+            }
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+          >
+            🔗 Open Full Map
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // 🔁 Regular facilities view
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
@@ -602,48 +522,25 @@ const FacilityRoute = () => {
               {type ? getFacilityName(type) : t('facilities')}
             </h1>
           </div>
-          {type &&
-            type !== 'centralised-contact' &&
-            type !== 'gallery' &&
-            type !== 'mela-route' && (
-              <Button
-                onClick={() => setShowMap(!showMap)}
-                size="sm"
-                className="bg-blue-800 hover:bg-blue-900 text-white-900 border-blue-500"
-              >
-                <MapPin className="w-4 h-4 mr-2 text-white-900" />
-                {showMap ? t('show_all') : t('show_nearby')}
-              </Button>
-            )}
+          <Button
+            onClick={() => setShowMap(!showMap)}
+            size="sm"
+            className="bg-blue-800 hover:bg-blue-900 text-white-900 border-blue-500"
+          >
+            <MapPin className="w-4 h-4 mr-2 text-white-900" />
+            {showMap ? t('show_all') : t('show_nearby')}
+          </Button>
         </div>
-
-        {type && getFacilityDescription(type) && (
-          <div className="mt-2 px-2">
-            <p className="text-white/90 text-sm">{getFacilityDescription(type)}</p>
-          </div>
-        )}
       </div>
 
       <div className="px-4 py-6">
-        {showMap &&
-          type &&
-          type !== 'centralised-contact' &&
-          type !== 'gallery' &&
-          type !== 'mela-route' && (
-            <div className="mb-6">
-              <FacilityMap facilityType={type} />
-            </div>
-          )}
+        {showMap && type && (
+          <div className="mb-6">
+            <FacilityMap facilityType={type} />
+          </div>
+        )}
 
-        {type === 'centralised-contact' ? (
-          contacts.length === 0 ? (
-            <div className="text-center py-12">...No contacts available...</div>
-          ) : (
-            <div className="space-y-4">...map contacts here...</div>
-          )
-        ) : type === 'mela-route' || type === 'gallery' || type === 'atm' ? (
-          renderSpecialPages()
-        ) : facilities.length === 0 ? (
+        {facilities.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
               <span className="text-2xl">{getFacilityIcon(type || '')}</span>
