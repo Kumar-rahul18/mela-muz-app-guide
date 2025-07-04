@@ -25,7 +25,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'toilet': [
       'toilet', 'टॉयलेट', 'washroom','वाशरूम','wash room', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना',
-      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine', 'बाथरूम'
+      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine'
     ],
     'bathroom': [
       'bathroom', 'बाथरूम', 'नहाने', 'स्नान', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर',
@@ -256,6 +256,8 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
         'virtual-pooja': '/virtual-pooja',
         'live-darshan': '/live-darshan',
         'crowd-status': '/crowd-status',
+        'centralised-contact': '/centralised-contact',
+        'bathroom':'/bathroom',
         'gallery': '/gallery',
         'quiz': '/mela-quiz',
         'lost-found': '/lost-found',
