@@ -20,7 +20,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   // Enhanced keywords mapping with more precise matching
   const serviceKeywords = {
     'drinking-water': [
-      'water', 'पानी','वाटर', 'वाट' 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
+      'water', 'पानी','वाटर', 'वाट', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
       'वाटर', 'ड्रिंकिंग वाटर', 'ड्रिंक वाटर', 'बोतल पानी', 'पानी कहां है'
     ],
     'toilet': [
@@ -37,8 +37,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'health-centre': [
       'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
-      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस',
-      'चोट', 'हेल्थ सेंटर', 'मेडिकल'
+      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल'
     ],
     'bhandara': [
       'bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal',
@@ -46,7 +45,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'parking': [
       'parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन',
-      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park karna', 'parking area'
+      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park', 'parking area'
     ],
     'paid-hotels': [
       'hotel', 'होटल', 'paid hotel', 'पेड होटल', 'पैसे वाला होटल', 'booking', 'paid stay', 'होटल बुकिंग'
@@ -58,8 +57,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क',
-      'contact number', 'फोन नंबर', 'सहायता'
+      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
