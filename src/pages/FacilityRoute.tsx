@@ -243,7 +243,7 @@ const FacilityRoute = () => {
               {type ? getFacilityName(type) : t('facilities')}
             </h1>
           </div>
-          {type && type !== 'centralised-contact' && type !== 'gallery' && (
+          {type && type !== 'centralised-contact' && type !== 'gallery' && type !== 'mela-route' && (
             <Button
               onClick={() => setShowMap(!showMap)}
               size="sm"
@@ -264,7 +264,7 @@ const FacilityRoute = () => {
 
       <div className="px-4 py-6">
         {/* Map Component */}
-        {showMap && type && type !== 'centralised-contact' && type !== 'gallery' && (
+        {showMap && type && type !== 'centralised-contact' && type !== 'gallery' && type !== 'mela-route' && (
           <div className="mb-6">
             <FacilityMap facilityType={type} />
           </div>
