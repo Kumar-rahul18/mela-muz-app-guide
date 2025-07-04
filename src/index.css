@@ -79,6 +79,19 @@
   .animate-fade-in {
     animation: fadeIn 0.5s ease-out;
   }
+
+  .animate-dice-3d {
+    animation: dice3d 3s ease-in-out infinite;
+  }
+
+  .icon-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  .icon-3d-container {
+    transform-style: preserve-3d;
+  }
 }
 
 @keyframes slideUp {
@@ -98,5 +111,23 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+@keyframes dice3d {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  25% {
+    transform: rotateX(180deg) rotateY(90deg) rotateZ(45deg);
+  }
+  50% {
+    transform: rotateX(270deg) rotateY(180deg) rotateZ(90deg);
+  }
+  75% {
+    transform: rotateX(360deg) rotateY(270deg) rotateZ(135deg);
+  }
+  100% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg);
   }
 }
