@@ -385,7 +385,7 @@ const FloatingVoiceButton: React.FC = () => {
     ],
     'toilet': [
       'toilet', 'टॉयलेट', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना',
-      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine', 'बाथरूम'
+      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine'
     ],
     'bathroom': [
       'bathroom', 'बाथरूम', 'नहाने', 'स्नान', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर',
@@ -586,7 +586,9 @@ const FloatingVoiceButton: React.FC = () => {
         'virtual-pooja': '/virtual-pooja',
         'live-darshan': '/live-darshan',
         'crowd-status': '/crowd-status',
+        'bathroom': '/bathroom',
         'gallery': '/gallery',
+        'centralised-contact' : '/centralised-contact',
         'quiz': '/mela-quiz',
         'lost-found': '/lost-found',
         'photo-contest': '/photo-contest',
