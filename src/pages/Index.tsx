@@ -277,6 +277,7 @@ const Index = () => {
                   label={item.label}
                   type={item.path ? item.path.split('/').pop() : undefined}
                   onClick={item.action}
+                  index={index}
                 />
               ))}
             </div>
