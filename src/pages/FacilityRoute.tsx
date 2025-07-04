@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -151,12 +150,45 @@ const FacilityRoute = () => {
   const renderSpecialPages = () => {
     if (type === 'mela-route') {
       return (
-        <div className="text-center py-12">
-          <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
-            <span className="text-2xl">🗺️</span>
+        <div className="space-y-6">
+          <div className="text-center py-6">
+            <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-2xl">🗺️</span>
+            </div>
+            <h3 className="text-lg font-semibold mb-2">{t('mela_route')}</h3>
+            <p className="text-gray-600 mb-4">{getFacilityDescription('mela-route')}</p>
           </div>
-          <h3 className="text-lg font-semibold mb-2">{t('mela_route')}</h3>
-          <p className="text-gray-600">{getFacilityDescription('mela-route')}</p>
+          
+          {/* Embedded Google My Maps */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+            <div className="mb-4">
+              <h4 className="text-md font-semibold text-gray-800 mb-2">🗺️ Interactive Mela Route Map</h4>
+              <p className="text-sm text-gray-600">Navigate through the complete mela route with detailed locations</p>
+            </div>
+            
+            <div className="relative w-full h-96 rounded-xl overflow-hidden border border-gray-200">
+              <iframe
+                src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={true}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                title="Mela Route Map"
+                className="rounded-xl"
+              />
+            </div>
+            
+            <div className="mt-4 flex justify-center">
+              <Button
+                onClick={() => window.open('https://www.google.com/maps/d/edit?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&usp=sharing', '_blank')}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+              >
+                🔗 Open Full Map
+              </Button>
+            </div>
+          </div>
         </div>
       );
     }
