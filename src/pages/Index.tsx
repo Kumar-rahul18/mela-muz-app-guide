@@ -6,16 +6,28 @@ import LanguageSelector from '@/components/LanguageSelector';
 import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import FacilityIcon from '@/components/FacilityIcon';
 import FloatingVoiceButton from '@/components/FloatingVoiceButton';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
   const [contestPhotos, setContestPhotos] = useState<any[]>([]);
   const [showContacts, setShowContacts] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+
+  useEffect(() => {
+    fetchApprovedContestPhotos();
+    
+    // Check if we need to show contacts from voice navigation
+    if (location.state?.showContacts) {
+      setShowContacts(true);
+      // Clear the state to prevent it from persisting
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   useEffect(() => {
     fetchApprovedContestPhotos();
