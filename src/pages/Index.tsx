@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -6,10 +7,22 @@ import { useLocation } from 'react-router-dom';
 import HeroSection from '@/components/HeroSection';
 import ServicesSection from '@/components/ServicesSection';
 import FacilitySection from '@/components/FacilitySection';
-import ContactCategoryFilter, { Contact } from '@/components/ContactCategoryFilter';
+import ContactCategoryFilter from '@/components/ContactCategoryFilter';
 import { Button } from '@/components/ui/button';
 import Marquee from "react-fast-marquee";
 import VoiceSearch from '@/components/VoiceSearch';
+
+// Define Contact interface locally since it's not exported from ContactCategoryFilter
+interface Contact {
+  id: string;
+  contact_type: string;
+  name: string;
+  phone: string;
+  email: string;
+  designation: string;
+  category: string;
+  is_active: boolean;
+}
 
 const Index = () => {
   const location = useLocation();
