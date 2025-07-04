@@ -16,15 +16,15 @@ const FloatingVoiceButton: React.FC = () => {
     // Facilities
     'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
     'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
-    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल'],
+    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल','पेजल'],
     'toilet': ['toilet', 'टॉयलेट', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना', 'हगने', 'हगना', 'मूत्र', 'पेशाब'],
-    'bathroom': ['bathroom', 'बाथरूम', 'नहाने', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर'],
-    'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter', 'आश्रय', 'ठहरने', 'रुकने', 'निवास'],
-    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'अस्थायी निवास'],
-    'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार', 'कटना', 'छिलना', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
+    'bathroom': ['bathroom', 'बाथरूम', 'नहाने','स्नान', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर'],
+    'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter',  'निवास'],
+    'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','आराम','ठहरने', 'रुकने', 'आश्रय', 'अस्थायी निवास'],
+    'health-centre': ['health', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार', 'कटना', 'कट','छिलना','छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
     'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक'],
     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
-    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal', 'फ्री भोजन', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
+    'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
     
     // Pages and Services
     'virtual-pooja': ['गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
@@ -32,7 +32,7 @@ const FloatingVoiceButton: React.FC = () => {
     'crowd-status': ['crowd status', 'crowd', 'भीड़', 'भीड़ की स्थिति', 'rush', 'रश'],
     'gallery': ['gallery', 'गैलरी', 'photos', 'फोटो', 'pictures', 'तस्वीरें'],
     'quiz': ['quiz', 'क्विज', 'mela quiz', 'मेला क्विज', 'questions', 'प्रश्न'],
-    'lost-found': ['lost found', 'lost and found', 'खोया पाया', 'lost', 'खोया', 'found', 'पाया'],
+    'lost-found': ['lost found', 'lost and found', 'खोया पाया', 'lost', 'खोया','खो', 'found', 'पाया','भूल','भुला'],
     'photo-contest': ['photo contest', 'फोटो कॉन्टेस्ट', 'contest', 'कॉन्टेस्ट', 'competition', 'प्रतियोगिता'],
     'events': ['events', 'इवेंट्स', 'event', 'इवेंट', 'program', 'प्रोग्राम', 'कार्यक्रम'],
     'history': ['history', 'इतिहास', 'mela history', 'मेला इतिहास']
