@@ -20,7 +20,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   // Enhanced keywords mapping with more precise matching
   const serviceKeywords = {
     'drinking-water': [
-      'water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
+      'water', 'पानी','वाटर', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
       'वाटर', 'ड्रिंकिंग वाटर', 'ड्रिंक वाटर', 'बोतल पानी', 'पानी कहां है'
     ],
     'toilet': [
@@ -33,10 +33,10 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'shivir': [
       'shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'आराम', 'ठहरने', 'रुकने', 'विश्राम',
-      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने'
+      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने', 'restroom', 'rest room', 'vishram','रेस्टरूम'
     ],
     'health-centre': [
-      'health', 'hospital', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
+      'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
       'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस',
       'चोट', 'हेल्थ सेंटर', 'medic', 'medical help', 'medical centre'
     ],
