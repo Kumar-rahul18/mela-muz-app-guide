@@ -80,8 +80,12 @@
     animation: fadeIn 0.5s ease-out;
   }
 
-  .animate-dice-3d {
-    animation: dice3dCycle 10s ease-in-out infinite;
+  .animate-dice-3d-odd {
+    animation: dice3dCycleOdd 11s ease-in-out infinite;
+  }
+
+  .animate-dice-3d-even {
+    animation: dice3dCycleEven 11s ease-in-out infinite;
   }
 
   .icon-3d {
@@ -144,26 +148,50 @@
   }
 }
 
-@keyframes dice3dCycle {
+@keyframes dice3dCycleOdd {
   0% {
     transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
   }
-  4% {
+  6.8% {
     transform: rotateX(90deg) rotateY(90deg) rotateZ(45deg);
   }
-  8% {
+  13.6% {
     transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg);
   }
-  12% {
+  20.4% {
     transform: rotateX(270deg) rotateY(270deg) rotateZ(135deg);
   }
-  16% {
+  27.2% {
     transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg);
   }
-  20% {
-    transform: rotateX(450deg) rotateY(450deg) rotateZ(225deg);
+  27.3% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
   }
-  20.1% {
+  100% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+}
+
+@keyframes dice3dCycleEven {
+  0% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  27.2% {
+    transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+  }
+  34% {
+    transform: rotateX(90deg) rotateY(90deg) rotateZ(45deg);
+  }
+  40.8% {
+    transform: rotateX(180deg) rotateY(180deg) rotateZ(90deg);
+  }
+  47.6% {
+    transform: rotateX(270deg) rotateY(270deg) rotateZ(135deg);
+  }
+  54.4% {
+    transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg);
+  }
+  54.5% {
     transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
   }
   100% {
