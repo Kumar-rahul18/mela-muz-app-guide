@@ -37,7 +37,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'health-centre': [
       'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
-      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल'
+      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल', 'ambulance'
     ],
     'bhandara': [
       'bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal',
@@ -57,14 +57,14 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता'
+      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
       'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना', 'पूजन', 'भगवान'
     ],
     'live-darshan': [
-      'live darshan', 'लाइव दर्शन', 'darshan', 'दर्शन', 'live', 'लाइव', 'online darshan', 'streaming', 'stream'
+      'live darshan', 'लाइव दर्शन', 'darshan', 'दर्शन', 'live', 'लाइव', 'online darshan', 'streaming', 'stream', 
     ],
     'crowd-status': [
       'crowd status', 'crowd', 'भीड़', 'भीड़ की स्थिति', 'rush', 'रश', 'भीड़भाड़', 'अधिक भीड़', 'जमावड़ा'
