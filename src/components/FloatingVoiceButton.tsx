@@ -29,7 +29,7 @@ const FloatingVoiceButton: React.FC = () => {
     ],
     'health-centre': [
       'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
-      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल'
+      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल','ambulance'
     ],
     'bhandara': [
       'bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal',
@@ -49,7 +49,7 @@ const FloatingVoiceButton: React.FC = () => {
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता'
+      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
