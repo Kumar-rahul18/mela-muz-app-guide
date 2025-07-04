@@ -20,12 +20,12 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   // Enhanced keywords mapping with more precise matching
   const serviceKeywords = {
     'drinking-water': [
-      'water', 'पानी','वाटर', 'वाट', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
+      'water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
       'वाटर', 'ड्रिंकिंग वाटर', 'ड्रिंक वाटर', 'बोतल पानी', 'पानी कहां है'
     ],
     'toilet': [
-      'toilet', 'टॉयलेट', 'washroom','वाशरूम','wash room', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना',
-      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine'
+      'toilet', 'टॉयलेट', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना',
+      'हगने', 'हगना', 'मूत्र', 'पेशाब', 'पेशाब घर', 'जाना है', 'toilat', 'latrine', 'बाथरूम'
     ],
     'bathroom': [
       'bathroom', 'बाथरूम', 'नहाने', 'स्नान', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर',
@@ -33,11 +33,11 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'shivir': [
       'shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'आराम', 'ठहरने', 'रुकने', 'विश्राम',
-      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने', 'restroom', 'rest room', 'vishram','रेस्टरूम'
+      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने'
     ],
     'health-centre': [
-      'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
-      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'मेडिकल'
+      'health', 'hospital', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
+      'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'चोट', 'हेल्थ सेंटर', 'medic', 'medical help', 'medical centre'
     ],
     'bhandara': [
       'bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal',
@@ -45,7 +45,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     ],
     'parking': [
       'parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन',
-      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park', 'parking area'
+      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park karna', 'parking area'
     ],
     'paid-hotels': [
       'hotel', 'होटल', 'paid hotel', 'पेड होटल', 'पैसे वाला होटल', 'booking', 'paid stay', 'होटल बुकिंग'
@@ -57,7 +57,16 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता'
+      'contact', 'संपर्क', 'phone', 'फोन', 'call', 'contact number', 'फोन नंबर', 'central contact', 'central phone'
+    ],
+    'ambulance': [
+      'ambulance', 'एम्बुलेंस', 'emergency', 'इमरजेंसी', 'emergency service', 'medical emergency'
+    ],
+    'helpdesk': [
+      'help', 'मदद', 'helpdesk', 'help desk', 'हेल्प डेस्क', 'सहायता', 'assistance', 'support'
+    ],
+    'control-room': [
+      'control room', 'कंट्रोल रूम', 'control', 'कंट्रोल', 'security', 'सिक्योरिटी', 'admin', 'administration'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
@@ -171,15 +180,12 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
           score = 100;
           console.log(`✅ Exact match found: "${cleanKeyword}" = ${score}`);
         }
-        // Contains full keyword
-        else if (cleanTranscript.includes(cleanKeyword)) {
-          score = 90;
+        // Contains full keyword (high priority)
+        else if (cleanTranscript.includes(cleanKeyword) || cleanKeyword.includes(cleanTranscript)) {
+          // Give higher score for longer matches
+          const matchRatio = Math.min(cleanKeyword.length, cleanTranscript.length) / Math.max(cleanKeyword.length, cleanTranscript.length);
+          score = 85 + (matchRatio * 10);
           console.log(`✅ Contains match found: "${cleanKeyword}" = ${score}`);
-        }
-        // Keyword contains transcript (partial match)
-        else if (cleanKeyword.includes(cleanTranscript) && cleanTranscript.length > 2) {
-          score = 80;
-          console.log(`✅ Partial match found: "${cleanKeyword}" contains "${cleanTranscript}" = ${score}`);
         }
         // Word-by-word matching for multi-word phrases
         else {
@@ -199,12 +205,12 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
           }
           
           if (matchedWords > 0) {
-            score = 60 * (matchedWords / Math.max(transcriptWords.length, keywordWords.length));
+            score = 40 + (30 * (matchedWords / Math.max(transcriptWords.length, keywordWords.length)));
             console.log(`✅ Word match found: ${matchedWords}/${Math.max(transcriptWords.length, keywordWords.length)} words = ${score}`);
           }
         }
         
-        if (score > bestScore && score > 30) { // Lower threshold for better matching
+        if (score > bestScore && score > 25) { // Lower threshold for better matching
           bestScore = score;
           bestMatch = { serviceType, keyword, score };
           console.log(`🎯 New best match: ${serviceType} (${keyword}) = ${score}`);
@@ -219,7 +225,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       console.log('❌ No match found for:', cleanTranscript);
       toast({
         title: "Service Not Found",
-        description: "Please try saying a clear service name like 'पानी', 'toilet', 'contact', 'parking'",
+        description: "Please try saying a clear service name like 'contact', 'ambulance', 'helpdesk', 'पानी', 'toilet'",
         duration: 4000,
         variant: "destructive",
       });
@@ -233,11 +239,35 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     const facilityTypes = ['paid-hotels', 'atm', 'drinking-water', 'toilet', 'bathroom', 'dharamshala', 'shivir', 'health-centre', 'parking', 'bhandara'];
     
     if (serviceType === 'centralised-contact') {
-      // Special handling for contact section - navigate to Index with contacts showing
-      navigate('/', { state: { showContacts: true } });
+      // Navigate to Index with contacts showing
+      navigate('/', { state: { showContacts: true, activeSection: 'centralised-contact' } });
       toast({
         title: "Contacts Found!",
         description: "Showing centralized contact information",
+        duration: 2000,
+      });
+    } else if (serviceType === 'ambulance') {
+      // Navigate to Index with emergency ambulance section showing
+      navigate('/', { state: { showContacts: true, activeSection: 'ambulance' } });
+      toast({
+        title: "Ambulance Contacts Found!",
+        description: "Showing emergency ambulance contacts",
+        duration: 2000,
+      });
+    } else if (serviceType === 'helpdesk') {
+      // Navigate to Index with helpdesk section showing
+      navigate('/', { state: { showContacts: true, activeSection: 'helpdesk' } });
+      toast({
+        title: "Helpdesk Found!",
+        description: "Showing helpdesk contact information",
+        duration: 2000,
+      });
+    } else if (serviceType === 'control-room') {
+      // Navigate to Index with control room section showing
+      navigate('/', { state: { showContacts: true, activeSection: 'control-room' } });
+      toast({
+        title: "Control Room Found!",
+        description: "Showing control room contact information",
         duration: 2000,
       });
     } else if (facilityTypes.includes(serviceType)) {
@@ -254,7 +284,6 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
         'virtual-pooja': '/virtual-pooja',
         'live-darshan': '/live-darshan',
         'crowd-status': '/crowd-status',
-        'centralised-contact': '/centralised-contact',
         'bathroom':'/bathroom',
         'gallery': '/gallery',
         'quiz': '/mela-quiz',
