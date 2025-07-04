@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,15 +17,7 @@ interface Contact {
   is_active: boolean;
 }
 
-interface ContactCategoryFilterProps {
-  onContactsLoad: (contacts: Contact[]) => void;
-  activeSection?: string;
-}
-
-const ContactCategoryFilter: React.FC<ContactCategoryFilterProps> = ({ 
-  onContactsLoad, 
-  activeSection 
-}) => {
+const ContactCategoryFilter: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [filteredContacts, setFilteredContacts] = useState<Contact[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -38,23 +31,6 @@ const ContactCategoryFilter: React.FC<ContactCategoryFilterProps> = ({
   useEffect(() => {
     filterContacts();
   }, [contacts, selectedCategory]);
-
-  useEffect(() => {
-    if (activeSection) {
-      // Map voice search sections to contact categories
-      const sectionToCategoryMap: { [key: string]: string } = {
-        'ambulance': 'ambulance',
-        'helpdesk': 'helpdesk',
-        'control-room': 'control-room',
-        'centralised-contact': 'centralised-contact'
-      };
-      
-      const category = sectionToCategoryMap[activeSection];
-      if (category) {
-        setSelectedCategory(category);
-      }
-    }
-  }, [activeSection]);
 
   const fetchContacts = async () => {
     try {
