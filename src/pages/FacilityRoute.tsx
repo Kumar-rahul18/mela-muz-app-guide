@@ -347,7 +347,6 @@
 //   );
 // };
 
-// export default FacilityRoute;
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -370,18 +369,13 @@ const FacilityRoute = () => {
   const navigate = useNavigate();
   const { type } = useParams();
   const { t } = useLanguage();
-
   const [facilities, setFacilities] = useState<Facility[]>([]);
   const [loading, setLoading] = useState(true);
   const [showMap, setShowMap] = useState(false);
 
   useEffect(() => {
-    if (type === 'mela-route') {
-      // Skip fetching for mela-route
-      setLoading(false);
-    } else {
-      fetchData();
-    }
+    if (type !== 'mela-route') fetchData();
+    else setLoading(false);
   }, [type]);
 
   const fetchData = async () => {
@@ -419,7 +413,7 @@ const FacilityRoute = () => {
       'parking': '🅿️',
       'mela-route': '🗺️',
       'atm': '🏧',
-      'bhandara': '🍽️'
+      'bhandara': '🍽️',
     };
     return icons[facilityType] || '🏢';
   };
@@ -437,7 +431,7 @@ const FacilityRoute = () => {
       'parking': 'parking',
       'mela-route': 'mela_route',
       'atm': 'atm',
-      'bhandara': 'bhandaras'
+      'bhandara': 'bhandaras',
     };
     return t(nameKeys[facilityType] || facilityType);
   };
@@ -456,57 +450,54 @@ const FacilityRoute = () => {
     );
   }
 
-  // 📍 Special hardcoded section for Mela Route
   if (type === 'mela-route') {
     return (
-      <div className="min-h-screen bg-white p-4">
+      <div className="min-h-screen bg-white">
         <div className="app-gradient text-white px-4 py-3 shadow-lg">
           <div className="flex items-center space-x-3">
             <button
               onClick={() => navigate('/')}
-              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30"
             >
               ←
             </button>
             <h1 className="text-lg font-semibold">
-              🗺️ {t('mela_route') || 'Mela Route'}
+              🗌 {t('mela_route') || 'Mela Route'}
             </h1>
           </div>
         </div>
 
-        <div className="mt-6 text-center">
-          <h2 className="text-lg font-semibold mb-2">🧭 Navigate the Mela Route</h2>
-          <p className="text-gray-600 mb-4">{t('mela_route_desc') || 'Explore the Mela area using the interactive map below.'}</p>
-        </div>
+        <div className="p-4">
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-semibold mb-1">Interactive Mela Route Map</h2>
+            <p className="text-gray-600">
+              {t('mela_route_desc') || 'Explore mela route through the map below'}
+            </p>
+          </div>
 
-        <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow border border-gray-200">
-          <iframe
-            src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
-            className="absolute top-0 left-0 w-full h-full"
-            allowFullScreen
-            loading="lazy"
-            title="Mela Route Map"
-          ></iframe>
-        </div>
+          <div className="relative w-full pb-[56.25%] h-0 rounded-xl overflow-hidden shadow border border-gray-200">
+            <iframe
+              src="https://www.google.com/maps/d/embed?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&ehbc=2E312F"
+              className="absolute top-0 left-0 w-full h-full"
+              allowFullScreen
+              loading="lazy"
+              title="Mela Route Map"
+            ></iframe>
+          </div>
 
-        <div className="mt-6 flex justify-center">
-          <Button
-            onClick={() =>
-              window.open(
-                'https://www.google.com/maps/d/edit?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&usp=sharing',
-                '_blank'
-              )
-            }
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
-          >
-            🔗 Open Full Map
-          </Button>
+          <div className="mt-6 flex justify-center">
+            <Button
+              onClick={() => window.open('https://www.google.com/maps/d/edit?mid=12Ska74VIJpg4q92-zOkNb9guMft1UZE&usp=sharing', '_blank')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-full"
+            >
+              🔗 Open Full Map
+            </Button>
+          </div>
         </div>
       </div>
     );
   }
 
-  // 🔁 Regular facilities view
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="app-gradient text-white px-4 py-3 shadow-lg">
@@ -514,7 +505,7 @@ const FacilityRoute = () => {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => navigate('/')}
-              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30 transition-colors"
+              className="text-white font-bold text-xl bg-white/20 rounded-lg px-3 py-1 hover:bg-white/30"
             >
               ←
             </button>
@@ -550,7 +541,10 @@ const FacilityRoute = () => {
         ) : (
           <div className="space-y-4">
             {facilities.map((facility) => (
-              <div key={facility.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+              <div
+                key={facility.id}
+                className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100"
+              >
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
                     <span className="text-xl">{getFacilityIcon(facility.facility_type)}</span>
@@ -559,14 +553,16 @@ const FacilityRoute = () => {
                     <h3 className="font-semibold text-gray-800 mb-1">{facility.name}</h3>
                     <p className="text-sm text-gray-600 mb-1">{facility.location_name}</p>
                     {facility.contact_number && (
-                      <p className="text-sm text-blue-600 mb-3">📞 {facility.contact_number}</p>
+                      <p className="text-sm text-blue-600 mb-3">
+                        📞 {facility.contact_number}
+                      </p>
                     )}
                     {facility.google_maps_link && (
                       <Button
                         onClick={() => handleNavigation(facility.google_maps_link)}
                         className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-full"
                       >
-                        🧭 Navigate
+                        🫭 Navigate
                       </Button>
                     )}
                   </div>
@@ -581,3 +577,4 @@ const FacilityRoute = () => {
 };
 
 export default FacilityRoute;
+
