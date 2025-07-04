@@ -379,8 +379,8 @@ const FloatingVoiceButton: React.FC = () => {
   const { toast } = useToast();
 
   const serviceKeywords: Record<string, string[]> = {
-    'drinking-water': [
-      'water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
+     'drinking-water': [
+      'water', 'पानी','वाटर', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल', 'पेजल',
       'वाटर', 'ड्रिंकिंग वाटर', 'ड्रिंक वाटर', 'बोतल पानी', 'पानी कहां है'
     ],
     'toilet': [
@@ -393,10 +393,10 @@ const FloatingVoiceButton: React.FC = () => {
     ],
     'shivir': [
       'shivir', 'शिविर', 'camp', 'camping', 'कैंप', 'आराम', 'ठहरने', 'रुकने', 'विश्राम',
-      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने'
+      'आश्रय', 'अस्थायी निवास', 'तंबू', 'रात रुकने', 'restroom', 'rest room', 'vishram','रेस्टरूम'
     ],
     'health-centre': [
-      'health', 'hospital', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
+      'health', 'hospital','हॉस्पिटल', 'अस्पताल', 'हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार',
       'कटना', 'कट', 'छिलना', 'छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस',
       'चोट', 'हेल्थ सेंटर', 'medic', 'medical help', 'medical centre'
     ],
@@ -406,7 +406,7 @@ const FloatingVoiceButton: React.FC = () => {
     ],
     'parking': [
       'parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन',
-      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park karna', 'parking area'
+      'मोटरसाइकिल', 'बाइक', 'व्हीकल', 'गाड़ी खड़ी करना', 'park karna', 'parking area'
     ],
     'paid-hotels': [
       'hotel', 'होटल', 'paid hotel', 'पेड होटल', 'पैसे वाला होटल', 'booking', 'paid stay', 'होटल बुकिंग'
