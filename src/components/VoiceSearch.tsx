@@ -20,17 +20,17 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
   // Enhanced keywords mapping with more precise matching
   const serviceKeywords = {
     // Facilities
-    'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
-    'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
-    'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल','पेजल'],
+     'drinking-water': ['water', 'पानी', 'drinking water', 'पीने का पानी', 'प्यास', 'thirst', 'पीने', 'जल', 'पेय जल','पेजल'],
     'toilet': ['toilet', 'टॉयलेट', 'washroom', 'शौचालय', 'संडास', 'प्रसाधन', 'लेट्रिन', 'पखाना', 'पैखाना', 'हगने', 'हगना', 'मूत्र', 'पेशाब'],
     'bathroom': ['bathroom', 'बाथरूम', 'नहाने','स्नान', 'bath', 'shower', 'नहाने की जगह', 'स्नान घर'],
-    'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter',  'निवास'],
     'shivir': ['shivir', 'शिविर', 'camp', 'camping', 'कैंप','आराम','ठहरने', 'रुकने', 'आश्रय', 'अस्थायी निवास'],
     'health-centre': ['health', 'hospital','अस्पताल','हेल्थ', 'medical', 'doctor', 'first aid', 'दर्द', 'बुखार', 'कटना', 'कट','छिलना','छिल', 'डॉक्टर', 'इलाज', 'दवा', 'medicine', 'ambulance', 'एम्बुलेंस'],
-    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक'],
-    'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
     'bhandara': ['bhandara', 'भंडारा', 'लंगर', 'निःशुल्क भोजन', 'जन सेवा भोजन', 'प्रसाद वितरण', 'free meal', 'फ्री खाना', 'meal', 'खाना', 'भोजन', 'प्रसाद'],
+    'parking': ['parking', 'पार्किंग', 'गाड़ी', 'car', 'vehicle', 'वाहन', 'कार', 'बस', 'यात्री वाहन', 'मोटरसाइकिल', 'बाइक'],
+    'paid-hotels': ['hotel', 'होटल', 'paid hotel', 'पेड होटल'],
+    'atm': ['atm', 'एटीएम', 'cash', 'पैसे', 'money', 'bank', 'बैंक'],
+     'dharamshala': ['dharamshala', 'धर्मशाला', 'shelter',  'निवास'],
+     'centralised-contact': ['contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call', 'helpdesk', 'help desk', 'हेल्प डेस्क'],
     
     // Pages and Services
     'virtual-pooja': ['गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा', 'online pooja', 'ऑनलाइन पूजा', 'pooja', 'पूजा', 'prayer', 'प्रार्थना'],
