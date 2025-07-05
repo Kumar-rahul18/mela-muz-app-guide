@@ -57,7 +57,14 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk'
+      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk',
+      'centralised contact', 'centralized contact', 'सेंट्रलाइज्ड कॉन्टैक्ट', 'केंद्रीकृत संपर्क', 'emergency contact',
+      'इमरजेंसी कॉन्टैक्ट', 'आपातकालीन संपर्क', 'contacts', 'कॉन्टैक्ट्स', 'संपर्क सूची'
+    ],
+    'emergency-contacts': [
+      'emergency', 'इमरजेंसी', 'आपातकाल', 'urgent', 'ambulance', 'एम्बुलेंस', 'control room', 'कंट्रोल रूम',
+      'help desk', 'हेल्प डेस्क', 'emergency contact', 'इमरजेंसी कॉन्टैक्ट', 'आपातकालीन संपर्क', '108', '102',
+      'emergency number', 'इमरजेंसी नंबर', 'आपातकालीन नंबर'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
@@ -232,7 +239,7 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
     // Handle different navigation patterns
     const facilityTypes = ['paid-hotels', 'atm', 'drinking-water', 'toilet', 'bathroom', 'dharamshala', 'shivir', 'health-centre', 'parking', 'bhandara'];
     
-    if (serviceType === 'centralised-contact') {
+    if (serviceType === 'centralised-contact' || serviceType === 'emergency-contacts') {
       // Special handling for contact section - navigate to Index with contacts showing
       navigate('/', { state: { showContacts: true } });
       toast({
@@ -254,7 +261,6 @@ const VoiceSearch: React.FC<VoiceSearchProps> = ({ onFacilityFound, compact = fa
         'virtual-pooja': '/virtual-pooja',
         'live-darshan': '/live-darshan',
         'crowd-status': '/crowd-status',
-        'centralised-contact': '/centralised-contact',
         'bathroom':'/bathroom',
         'gallery': '/gallery',
         'quiz': '/mela-quiz',

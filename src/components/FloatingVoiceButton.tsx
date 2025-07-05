@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -49,7 +50,14 @@ const FloatingVoiceButton: React.FC = () => {
       'dharamshala', 'धर्मशाला', 'shelter', 'निवास', 'stay', 'ठहरने की जगह', 'रुकने की जगह'
     ],
     'centralised-contact': [
-      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk'
+      'contact', 'संपर्क', 'help', 'मदद', 'phone', 'फोन', 'call','contact number', 'फोन नंबर', 'सहायता','helpdesk',
+      'centralised contact', 'centralized contact', 'सेंट्रलाइज्ड कॉन्टैक्ट', 'केंद्रीकृत संपर्क', 'emergency contact',
+      'इमरजेंसी कॉन्टैक्ट', 'आपातकालीन संपर्क', 'contacts', 'कॉन्टैक्ट्स', 'संपर्क सूची'
+    ],
+    'emergency-contacts': [
+      'emergency', 'इमरजेंसी', 'आपातकाल', 'urgent', 'ambulance', 'एम्बुलेंस', 'control room', 'कंट्रोल रूम',
+      'help desk', 'हेल्प डेस्क', 'emergency contact', 'इमरजेंसी कॉन्टैक्ट', 'आपातकालीन संपर्क', '108', '102',
+      'emergency number', 'इमरजेंसी नंबर', 'आपातकालीन नंबर'
     ],
     'virtual-pooja': [
       'गरीबनाथ', 'गरीबनाथ धाम', 'garibnath', 'garibnath dham', 'वर्चुअल पूजा',
@@ -204,7 +212,15 @@ const FloatingVoiceButton: React.FC = () => {
   const navigateToService = (serviceType: string, keyword: string) => {
     const facilityTypes = ['paid-hotels', 'atm', 'drinking-water', 'toilet', 'bathroom', 'dharamshala', 'shivir', 'health-centre', 'parking', 'centralised-contact', 'bhandara'];
 
-    if (facilityTypes.includes(serviceType)) {
+    if (serviceType === 'centralised-contact' || serviceType === 'emergency-contacts') {
+      // Special handling for contact section - navigate to Index with contacts showing
+      navigate('/', { state: { showContacts: true } });
+      toast({
+        title: "Contacts Found!",
+        description: "Showing centralized contact information",
+        duration: 2000,
+      });
+    } else if (facilityTypes.includes(serviceType)) {
       navigate(`/facility/${serviceType}?showMap=true`);
       toast({
         title: "Facility Found!",
@@ -218,7 +234,6 @@ const FloatingVoiceButton: React.FC = () => {
         'crowd-status': '/crowd-status',
         'bathroom': '/bathroom',
         'gallery': '/gallery',
-        'centralised-contact' : '/centralised-contact',
         'quiz': '/mela-quiz',
         'lost-found': '/lost-found',
         'photo-contest': '/photo-contest',
