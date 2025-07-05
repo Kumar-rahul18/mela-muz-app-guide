@@ -9,7 +9,7 @@ const LiveSection = () => {
 
   const items = [
     {
-      icon: '🎭',
+      icon: '🛕',
       label: t('virtual_pooja'),
       path: '/virtual-pooja',
     },
