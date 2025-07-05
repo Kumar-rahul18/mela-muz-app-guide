@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapPin, ArrowLeft, Navigation, TreePine } from 'lucide-react';
@@ -10,8 +11,17 @@ const Attractions = () => {
 
   const attractions = [
     {
+      id: 'sikandarpur-lake-front',
+      icon: '🏞️',
+      title: 'Sikandarpur Lake Front',
+      description: 'The Sikandarpur Lake Front in Muzaffarpur is a beautiful recreational spot developed under the Smart City project. It features a scenic walking path, vibrant lighting, boating facilities, fountains, cycling tracks, and open seating areas—making it an ideal place for relaxation, family outings, and evening strolls.',
+      image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//lakefront.jpeg',
+      location: 'Sikandarpur, Muzaffarpur',
+      coordinates: { lat: 26.1197, lng: 85.3910 }
+    },
+    {
       id: 'litchi-gardens',
-    
+      icon: '🌿',
       title: t('litchi_gardens'),
       description: t('litchi_gardens_desc'),
       image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//litchi.webp',
@@ -56,7 +66,7 @@ const Attractions = () => {
     },
     {
       id: 'motijheel',
-      
+      icon: '💎',
       title: t('motijheel'),
       description: t('motijheel_desc'),
       image: 'https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/attraction//motijheel.avif',
