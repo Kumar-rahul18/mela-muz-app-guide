@@ -80,7 +80,7 @@ const VirtualPooja = () => {
   useEffect(() => {
     // Start background music with reduced volume
     if (backgroundMusicRef.current && backgroundMusicEnabled) {
-      backgroundMusicRef.current.volume = 0.60;
+      backgroundMusicRef.current.volume = 0.80;
       backgroundMusicRef.current.play().catch(console.error);
     }
     
