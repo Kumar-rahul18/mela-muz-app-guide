@@ -8,8 +8,8 @@ const LiveDarshan = () => {
   const [isStreamActive, setIsStreamActive] = useState(false);
   const [streamError, setStreamError] = useState(false);
   
-  // Placeholder RTSP link - replace with actual RTSP URL when available
-  const rtspStreamUrl = "https://ipcamlive.com/64a530efb34bd"; // Replace with actual RTSP URL
+  // Live feed URL
+  const liveStreamUrl = "https://ipcamlive.com/64a530efb34bd";
   
   useEffect(() => {
     const video = videoRef.current;
@@ -37,28 +37,43 @@ const LiveDarshan = () => {
       setIsStreamActive(true);
     };
 
+    const handleLoadedMetadata = () => {
+      console.log('Live stream metadata loaded');
+      // Try to play the video once metadata is loaded
+      video.play().catch(error => {
+        console.error('Auto-play failed:', error);
+      });
+    };
+
     // Add event listeners
     video.addEventListener('loadstart', handleLoadStart);
     video.addEventListener('canplay', handleCanPlay);
     video.addEventListener('error', handleError);
     video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
 
-    // Attempt to load the stream
-    if (rtspStreamUrl && rtspStreamUrl !== "https://ipcamlive.com/64a530efb34bd") {
-      video.src = rtspStreamUrl;
-      video.load();
-    } else {
-      // No valid RTSP URL provided, show placeholder
-      setStreamError(true);
-    }
+    // Load the live stream
+    video.src = liveStreamUrl;
+    video.load();
 
     return () => {
       video.removeEventListener('loadstart', handleLoadStart);
       video.removeEventListener('canplay', handleCanPlay);
       video.removeEventListener('error', handleError);
       video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
-  }, [rtspStreamUrl]);
+  }, []);
+
+  const retryConnection = () => {
+    const video = videoRef.current;
+    if (video) {
+      setStreamError(false);
+      setIsStreamActive(false);
+      video.src = liveStreamUrl;
+      video.load();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,7 +90,7 @@ const LiveDarshan = () => {
       <div className="px-4 py-6">
         {/* Live Video Section */}
         <div className="bg-black rounded-2xl aspect-video mb-6 relative overflow-hidden">
-          {/* RTSP Video Stream */}
+          {/* Live Video Stream */}
           <video
             ref={videoRef}
             className={`w-full h-full object-cover ${isStreamActive ? 'block' : 'hidden'}`}
@@ -83,6 +98,7 @@ const LiveDarshan = () => {
             muted
             playsInline
             controls
+            crossOrigin="anonymous"
           />
           
           {/* Placeholder when stream is not available */}
@@ -99,11 +115,7 @@ const LiveDarshan = () => {
                 </p>
                 {streamError && (
                   <button
-                    onClick={() => {
-                      if (videoRef.current && rtspStreamUrl !== "https://ipcamlive.com/64a530efb34bd") {
-                        videoRef.current.load();
-                      }
-                    }}
+                    onClick={retryConnection}
                     className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
                   >
                     Retry Connection
