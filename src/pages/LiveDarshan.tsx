@@ -10,7 +10,7 @@ const LiveDarshan = () => {
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   
   // RTSP stream URL - Note: This needs to be converted to HLS/WebRTC for web browsers
-  const rtspStreamUrl = "rtsp://user:baba@1234@112.196.183.93:554/profile2";
+  const rtspStreamUrl = "http://13.61.12.204/live/stream.m3u8";
   
   // For demonstration, we'll show this message since RTSP won't work directly
   const [showRtspMessage, setShowRtspMessage] = useState(true);
