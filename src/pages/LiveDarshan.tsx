@@ -9,7 +9,7 @@ const LiveDarshan = () => {
   const [streamError, setStreamError] = useState(false);
   
   // Placeholder RTSP link - replace with actual RTSP URL when available
-  const rtspStreamUrl = "rtsp://your-camera-ip:554/stream"; // Replace with actual RTSP URL
+  const rtspStreamUrl = "https://ipcamlive.com/64a530efb34bd"; // Replace with actual RTSP URL
   
   useEffect(() => {
     const video = videoRef.current;
@@ -44,7 +44,7 @@ const LiveDarshan = () => {
     video.addEventListener('loadeddata', handleLoadedData);
 
     // Attempt to load the stream
-    if (rtspStreamUrl && rtspStreamUrl !== "rtsp://your-camera-ip:554/stream") {
+    if (rtspStreamUrl && rtspStreamUrl !== "https://ipcamlive.com/64a530efb34bd") {
       video.src = rtspStreamUrl;
       video.load();
     } else {
@@ -100,7 +100,7 @@ const LiveDarshan = () => {
                 {streamError && (
                   <button
                     onClick={() => {
-                      if (videoRef.current && rtspStreamUrl !== "rtsp://your-camera-ip:554/stream") {
+                      if (videoRef.current && rtspStreamUrl !== "https://ipcamlive.com/64a530efb34bd") {
                         videoRef.current.load();
                       }
                     }}
