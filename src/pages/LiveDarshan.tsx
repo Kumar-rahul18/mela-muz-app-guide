@@ -9,7 +9,7 @@ const LiveDarshan = () => {
   const [streamError, setStreamError] = useState(false);
   
   // Live feed URL
-  const liveStreamUrl = "https://ipcamlive.com/64a530efb34bd";
+  const liveStreamUrl = "	http://webcam.kielmonitor.de:8080/mjpg/video.mjpg";//https://ipcamlive.com/64a530efb34bd
   
   useEffect(() => {
     const video = videoRef.current;
