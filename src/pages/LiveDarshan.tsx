@@ -7,41 +7,57 @@ const LiveDarshan = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isStreamActive, setIsStreamActive] = useState(false);
   const [streamError, setStreamError] = useState(false);
+  const [connectionAttempts, setConnectionAttempts] = useState(0);
   
-  // Live feed URL
-  const liveStreamUrl = "http://webcam.kielmonitor.de:8080/mjpg/video.mjpg";//https://ipcamlive.com/64a530efb34bd
+  // RTSP stream URL - Note: This needs to be converted to HLS/WebRTC for web browsers
+  const rtspStreamUrl = "rtsp://user:baba@1234@112.196.183.93:554/profile2";
+  
+  // For demonstration, we'll show this message since RTSP won't work directly
+  const [showRtspMessage, setShowRtspMessage] = useState(true);
   
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const handleLoadStart = () => {
-      console.log('Live stream loading...');
+      console.log('Live stream loading...', rtspStreamUrl);
       setStreamError(false);
+      setShowRtspMessage(false);
     };
 
     const handleCanPlay = () => {
       console.log('Live stream ready to play');
       setIsStreamActive(true);
       setStreamError(false);
+      setShowRtspMessage(false);
     };
 
     const handleError = (e: Event) => {
       console.error('Live stream error:', e);
+      console.error('RTSP URL:', rtspStreamUrl);
       setIsStreamActive(false);
       setStreamError(true);
+      setConnectionAttempts(prev => prev + 1);
+      
+      // Show RTSP message after failed attempts
+      if (connectionAttempts > 0) {
+        setShowRtspMessage(true);
+      }
     };
 
     const handleLoadedData = () => {
       console.log('Live stream data loaded');
       setIsStreamActive(true);
+      setShowRtspMessage(false);
     };
 
     const handleLoadedMetadata = () => {
       console.log('Live stream metadata loaded');
+      setShowRtspMessage(false);
       // Try to play the video once metadata is loaded
       video.play().catch(error => {
         console.error('Auto-play failed:', error);
+        setStreamError(true);
       });
     };
 
@@ -52,9 +68,15 @@ const LiveDarshan = () => {
     video.addEventListener('loadeddata', handleLoadedData);
     video.addEventListener('loadedmetadata', handleLoadedMetadata);
 
-    // Load the live stream
-    video.src = liveStreamUrl;
-    video.load();
+    // Attempt to load the RTSP stream (this will likely fail in browsers)
+    try {
+      video.src = rtspStreamUrl;
+      video.load();
+    } catch (error) {
+      console.error('Failed to load RTSP stream:', error);
+      setStreamError(true);
+      setShowRtspMessage(true);
+    }
 
     return () => {
       video.removeEventListener('loadstart', handleLoadStart);
@@ -63,15 +85,24 @@ const LiveDarshan = () => {
       video.removeEventListener('loadeddata', handleLoadedData);
       video.removeEventListener('loadedmetadata', handleLoadedMetadata);
     };
-  }, []);
+  }, [connectionAttempts]);
 
   const retryConnection = () => {
     const video = videoRef.current;
     if (video) {
       setStreamError(false);
       setIsStreamActive(false);
-      video.src = liveStreamUrl;
-      video.load();
+      setShowRtspMessage(false);
+      setConnectionAttempts(0);
+      
+      try {
+        video.src = rtspStreamUrl;
+        video.load();
+      } catch (error) {
+        console.error('Retry failed:', error);
+        setStreamError(true);
+        setShowRtspMessage(true);
+      }
     }
   };
 
@@ -102,25 +133,39 @@ const LiveDarshan = () => {
           />
           
           {/* Placeholder when stream is not available */}
-          {(!isStreamActive || streamError) && (
+          {(!isStreamActive || streamError || showRtspMessage) && (
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
+              <div className="text-center text-white px-4">
                 <div className="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center animate-pulse">
                   <span className="text-2xl">📹</span>
                 </div>
                 <h3 className="text-lg font-bold mb-2">Live Darshan</h3>
-                <p className="text-gray-300 text-sm">Streaming live from the temple</p>
-                <p className="text-gray-300 text-sm">
-                  {streamError ? 'Live video will start soon' : 'Connecting to live feed...'}
-                </p>
-                {streamError && (
-                  <button
-                    onClick={retryConnection}
-                    className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
-                  >
-                    Retry Connection
-                  </button>
+                <p className="text-gray-300 text-sm mb-2">Streaming live from the temple</p>
+                
+                {showRtspMessage && (
+                  <div className="bg-yellow-900/50 rounded-lg p-3 mb-4 text-yellow-200">
+                    <p className="text-xs mb-2">
+                      <strong>Technical Note:</strong> RTSP streams cannot be played directly in web browsers.
+                    </p>
+                    <p className="text-xs">
+                      Stream URL: {rtspStreamUrl}
+                    </p>
+                    <p className="text-xs mt-1">
+                      A streaming server (like FFmpeg, GStreamer, or Wowza) is needed to convert RTSP to HLS/WebRTC format.
+                    </p>
+                  </div>
                 )}
+                
+                <p className="text-gray-300 text-sm">
+                  {streamError ? 'Connecting to live feed...' : 'Live video will start soon'}
+                </p>
+                
+                <button
+                  onClick={retryConnection}
+                  className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
+                >
+                  Try Connection ({connectionAttempts + 1})
+                </button>
               </div>
             </div>
           )}
@@ -140,10 +185,19 @@ const LiveDarshan = () => {
             <div>
               <h3 className="font-semibold text-gray-800">Stream Status</h3>
               <p className="text-sm text-gray-600">
-                {isStreamActive ? 'Live stream is active' : 'Waiting for live stream'}
+                {isStreamActive ? 'Live stream is active' : 
+                 showRtspMessage ? 'RTSP stream requires server conversion' : 
+                 'Connecting to live stream...'}
+              </p>
+              <p className="text-xs text-gray-500 mt-1">
+                Stream: {rtspStreamUrl}
               </p>
             </div>
-            <div className={`w-3 h-3 rounded-full ${isStreamActive ? 'bg-green-500' : 'bg-gray-400'}`}></div>
+            <div className={`w-3 h-3 rounded-full ${
+              isStreamActive ? 'bg-green-500' : 
+              showRtspMessage ? 'bg-yellow-500' : 
+              'bg-gray-400'
+            }`}></div>
           </div>
         </div>
 
