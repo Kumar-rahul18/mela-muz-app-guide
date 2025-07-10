@@ -12,7 +12,7 @@ const LiveDarshan = () => {
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   
   // HLS stream URL
-  const streamUrl = "const streamUrl = `http://13.61.12.204/live/stream.m3u8?t=${Date.now()}`;
+  const streamUrl= `https://13.61.12.204/live/stream.m3u8?t=${Date.now()}`;
   
   useEffect(() => {
     const video = videoRef.current;
