@@ -9,17 +9,16 @@ const LiveDarshan = () => {
   const hlsRef = useRef<Hls | null>(null);
   const [isStreamActive, setIsStreamActive] = useState(false);
   const [streamError, setStreamError] = useState(false);
-  const [connectionAttempts, setConnectionAttempts] = useState(0);
   
   // HLS stream URL
-  const streamUrl= "https://13.61.12.204/live/stream.m3u8";
+  const videoSrc = 'https://13.61.12.204/live/stream.m3u8';
   
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
     const initializeStream = () => {
-      console.log('Initializing HLS stream...', streamUrl);
+      console.log('Initializing HLS stream...', videoSrc);
       setStreamError(false);
       setIsStreamActive(false);
 
@@ -36,6 +35,8 @@ const LiveDarshan = () => {
         });
         
         hlsRef.current = hls;
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
 
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
           console.log('HLS manifest parsed, starting playback');
@@ -51,15 +52,11 @@ const LiveDarshan = () => {
           if (data.fatal) {
             setStreamError(true);
             setIsStreamActive(false);
-            setConnectionAttempts(prev => prev + 1);
           }
         });
-
-        hls.loadSource(streamUrl);
-        hls.attachMedia(video);
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         // For Safari browsers that support HLS natively
-        video.src = streamUrl;
+        video.src = videoSrc;
         video.addEventListener('loadedmetadata', () => {
           console.log('Native HLS loaded, starting playback');
           setIsStreamActive(true);
@@ -73,7 +70,6 @@ const LiveDarshan = () => {
           console.error('Native HLS error');
           setStreamError(true);
           setIsStreamActive(false);
-          setConnectionAttempts(prev => prev + 1);
         });
       } else {
         console.error('HLS not supported');
@@ -89,13 +85,47 @@ const LiveDarshan = () => {
         hlsRef.current = null;
       }
     };
-  }, [connectionAttempts]);
+  }, []);
 
   const retryConnection = () => {
     console.log('Retrying connection...');
     setStreamError(false);
     setIsStreamActive(false);
-    setConnectionAttempts(prev => prev + 1);
+    
+    // Reinitialize the stream
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (hlsRef.current) {
+      hlsRef.current.destroy();
+      hlsRef.current = null;
+    }
+
+    if (Hls.isSupported()) {
+      const hls = new Hls({
+        enableWorker: false,
+        lowLatencyMode: true,
+      });
+      
+      hlsRef.current = hls;
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+
+      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+        setIsStreamActive(true);
+        setStreamError(false);
+        video.play().catch(error => {
+          console.error('Auto-play failed:', error);
+        });
+      });
+
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          setStreamError(true);
+          setIsStreamActive(false);
+        }
+      });
+    }
   };
 
   return (
@@ -137,13 +167,14 @@ const LiveDarshan = () => {
                   {streamError ? 'Connection failed. Please try again.' : 'Connecting to live feed...'}
                 </p>
                 
-                <button
-                  onClick={retryConnection}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
-                  disabled={!streamError}
-                >
-                  {streamError ? `Retry (${connectionAttempts + 1})` : 'Connecting...'}
-                </button>
+                {streamError && (
+                  <button
+                    onClick={retryConnection}
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
+                  >
+                    Retry Connection
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -168,7 +199,7 @@ const LiveDarshan = () => {
                  'Connecting to live stream...'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Stream: {streamUrl}
+                Stream: {videoSrc}
               </p>
             </div>
             <div className={`w-3 h-3 rounded-full ${
