@@ -13,7 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { t, showLanguageSelector, setShowLanguageSelector } = useLanguage();
+  const { t, showLanguageSelector, setShowLanguageSelector, language } = useLanguage();
   const [contestPhotos, setContestPhotos] = useState<any[]>([]);
   const [showContacts, setShowContacts] = useState(false);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
@@ -279,7 +279,9 @@ const Index = () => {
 
         {/* Facilities Section */}
         <div className="mb-8">
-          <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">🏛️ Facilities</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-4 px-4">
+            🏛️ {language === 'hi' ? 'सुविधाएं' : 'Facilities'}
+          </h2>
           <div className="px-4">
             <div className="grid grid-cols-4 gap-4">
               {facilityItems.map((item, index) => (
