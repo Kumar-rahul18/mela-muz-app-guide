@@ -8,8 +8,8 @@ const LiveDarshan = () => {
   const [isStreamLoaded, setIsStreamLoaded] = useState(false);
   const [streamError, setStreamError] = useState(false);
   
-  // Live stream URL
-  const streamUrl = 'https://ipcamlive.com/64a530efb34bd';
+  // Live stream URL - updated to the correct format
+  const streamUrl = 'https://www.ipcamlive.com/64a530efb34bd';
   
   const handleIframeLoad = () => {
     console.log('Live stream iframe loaded successfully');
