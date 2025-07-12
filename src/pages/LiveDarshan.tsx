@@ -1,5 +1,5 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const LiveDarshan = () => {
@@ -52,12 +52,13 @@ const LiveDarshan = () => {
           <iframe
             ref={iframeRef}
             src={streamUrl}
-            className="w-full h-full object-cover"
+            className="w-full h-full"
             frameBorder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
             allowFullScreen
             onLoad={handleIframeLoad}
             onError={handleIframeError}
+            style={{ border: 'none' }}
           />
           
           {/* Loading/Error Overlay */}
@@ -106,7 +107,7 @@ const LiveDarshan = () => {
                  'Loading live stream...'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Stream: {streamUrl}
+                Direct video stream
               </p>
             </div>
             <div className={`w-3 h-3 rounded-full ${
