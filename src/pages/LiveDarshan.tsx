@@ -1,130 +1,35 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Hls from 'hls.js';
 
 const LiveDarshan = () => {
   const navigate = useNavigate();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const hlsRef = useRef<Hls | null>(null);
-  const [isStreamActive, setIsStreamActive] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const [isStreamLoaded, setIsStreamLoaded] = useState(false);
   const [streamError, setStreamError] = useState(false);
   
-  // HLS stream URL
-  const videoSrc = 'https://13.61.12.204/live/stream.m3u8';
+  // Live stream URL
+  const streamUrl = 'https://ipcamlive.com/64a530efb34bd';
   
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
+  const handleIframeLoad = () => {
+    console.log('Live stream iframe loaded successfully');
+    setIsStreamLoaded(true);
+    setStreamError(false);
+  };
 
-    const initializeStream = () => {
-      console.log('Initializing HLS stream...', videoSrc);
-      setStreamError(false);
-      setIsStreamActive(false);
-
-      // Clean up any existing HLS instance
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-
-      if (Hls.isSupported()) {
-        const hls = new Hls({
-          enableWorker: false,
-          lowLatencyMode: true,
-        });
-        
-        hlsRef.current = hls;
-        hls.loadSource(videoSrc);
-        hls.attachMedia(video);
-
-        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-          console.log('HLS manifest parsed, starting playback');
-          setIsStreamActive(true);
-          setStreamError(false);
-          video.play().catch(error => {
-            console.error('Auto-play failed:', error);
-          });
-        });
-
-        hls.on(Hls.Events.ERROR, (event, data) => {
-          console.error('HLS error:', data);
-          if (data.fatal) {
-            setStreamError(true);
-            setIsStreamActive(false);
-          }
-        });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        // For Safari browsers that support HLS natively
-        video.src = videoSrc;
-        video.addEventListener('loadedmetadata', () => {
-          console.log('Native HLS loaded, starting playback');
-          setIsStreamActive(true);
-          setStreamError(false);
-          video.play().catch(error => {
-            console.error('Auto-play failed:', error);
-          });
-        });
-        
-        video.addEventListener('error', () => {
-          console.error('Native HLS error');
-          setStreamError(true);
-          setIsStreamActive(false);
-        });
-      } else {
-        console.error('HLS not supported');
-        setStreamError(true);
-      }
-    };
-
-    initializeStream();
-
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-    };
-  }, []);
+  const handleIframeError = () => {
+    console.error('Live stream iframe failed to load');
+    setStreamError(true);
+    setIsStreamLoaded(false);
+  };
 
   const retryConnection = () => {
-    console.log('Retrying connection...');
+    console.log('Retrying live stream connection...');
     setStreamError(false);
-    setIsStreamActive(false);
+    setIsStreamLoaded(false);
     
-    // Reinitialize the stream
-    const video = videoRef.current;
-    if (!video) return;
-
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-
-    if (Hls.isSupported()) {
-      const hls = new Hls({
-        enableWorker: false,
-        lowLatencyMode: true,
-      });
-      
-      hlsRef.current = hls;
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
-
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        setIsStreamActive(true);
-        setStreamError(false);
-        video.play().catch(error => {
-          console.error('Auto-play failed:', error);
-        });
-      });
-
-      hls.on(Hls.Events.ERROR, (event, data) => {
-        if (data.fatal) {
-          setStreamError(true);
-          setIsStreamActive(false);
-        }
-      });
+    if (iframeRef.current) {
+      iframeRef.current.src = streamUrl;
     }
   };
 
@@ -143,18 +48,20 @@ const LiveDarshan = () => {
       <div className="px-4 py-6">
         {/* Live Video Section */}
         <div className="bg-black rounded-2xl aspect-video mb-6 relative overflow-hidden">
-          {/* Live Video Stream */}
-          <video
-            ref={videoRef}
+          {/* Live Stream Iframe */}
+          <iframe
+            ref={iframeRef}
+            src={streamUrl}
             className="w-full h-full object-cover"
-            autoPlay
-            muted
-            playsInline
-            controls
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            onLoad={handleIframeLoad}
+            onError={handleIframeError}
           />
           
           {/* Loading/Error Overlay */}
-          {(!isStreamActive || streamError) && (
+          {(!isStreamLoaded || streamError) && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/50">
               <div className="text-center text-white px-4">
                 <div className="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center animate-pulse">
@@ -164,7 +71,7 @@ const LiveDarshan = () => {
                 <p className="text-gray-300 text-sm mb-2">Streaming live from the temple</p>
                 
                 <p className="text-gray-300 text-sm mb-4">
-                  {streamError ? 'Connection failed. Please try again.' : 'Connecting to live feed...'}
+                  {streamError ? 'Connection failed. Please try again.' : 'Loading live feed...'}
                 </p>
                 
                 {streamError && (
@@ -179,8 +86,8 @@ const LiveDarshan = () => {
             </div>
           )}
           
-          {/* Live indicator when stream is active */}
-          {isStreamActive && (
+          {/* Live indicator when stream is loaded */}
+          {isStreamLoaded && !streamError && (
             <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-medium flex items-center space-x-1">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               <span>LIVE</span>
@@ -194,16 +101,16 @@ const LiveDarshan = () => {
             <div>
               <h3 className="font-semibold text-gray-800">Stream Status</h3>
               <p className="text-sm text-gray-600">
-                {isStreamActive ? 'Live stream is active' : 
+                {isStreamLoaded && !streamError ? 'Live stream is active' : 
                  streamError ? 'Connection failed' : 
-                 'Connecting to live stream...'}
+                 'Loading live stream...'}
               </p>
               <p className="text-xs text-gray-500 mt-1">
-                Stream: {videoSrc}
+                Stream: {streamUrl}
               </p>
             </div>
             <div className={`w-3 h-3 rounded-full ${
-              isStreamActive ? 'bg-green-500' : 
+              isStreamLoaded && !streamError ? 'bg-green-500' : 
               streamError ? 'bg-red-500' : 
               'bg-yellow-500'
             }`}></div>
