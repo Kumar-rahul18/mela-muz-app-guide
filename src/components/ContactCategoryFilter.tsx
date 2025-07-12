@@ -14,6 +14,7 @@ interface Contact {
   email: string;
   designation: string;
   category: string;
+  ranking: number | null;
   is_active: boolean;
 }
 
@@ -38,9 +39,9 @@ const ContactCategoryFilter: React.FC = () => {
         .from('contacts')
         .select('*')
         .eq('is_active', true)
-       // .order('contact_type');
-      .order('created_at', { ascending: false });
-
+        .order('category')
+        .order('ranking', { ascending: true, nullsFirst: false })
+        .order('created_at', { ascending: false });
 
       if (error) {
         console.error('Error fetching contacts:', error);
@@ -117,6 +118,9 @@ const ContactCategoryFilter: React.FC = () => {
                   <div className="font-semibold">{contact.name}</div>
                   {contact.designation && (
                     <div className="text-sm font-normal text-orange-600">{contact.designation}</div>
+                  )}
+                  {contact.ranking && (
+                    <div className="text-xs text-orange-500">Rank: {contact.ranking}</div>
                   )}
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
