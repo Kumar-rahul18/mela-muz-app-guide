@@ -40,7 +40,7 @@ const ContactCategoryFilter: React.FC = () => {
         .eq('is_active', true)
         .order('category')
         .order('ranking', { ascending: true, nullsFirst: false })
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: true });
 
       if (error) {
         console.error('Error fetching contacts:', error);
