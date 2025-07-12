@@ -139,10 +139,7 @@ const LiveDarshan = () => {
               'bg-yellow-500'
             }`}></div>
           </div>
-          <div className="text-xs text-gray-500">
-            <p>Stream URL: <a href={directLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{directLink}</a></p>
-            <p className="mt-1">Click "Open Full Screen" for better viewing experience</p>
-          </div>
+         
         </div>
 
         {/* Aarti Schedule */}
