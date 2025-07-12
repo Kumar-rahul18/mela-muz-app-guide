@@ -8,8 +8,9 @@ const LiveDarshan = () => {
   const [isStreamLoaded, setIsStreamLoaded] = useState(false);
   const [streamError, setStreamError] = useState(false);
   
-  // Live stream URL - updated to the correct format
-  const streamUrl = 'https://www.ipcamlive.com/64a530efb34bd';
+  // Updated live stream URL - using the RTSP.me embed link
+  const streamUrl = 'https://rtsp.me/embed/hY7DS2rk/';
+  const directLink = 'https://rtsp.me/embed/hY7DS2rk/';
   
   const handleIframeLoad = () => {
     console.log('Live stream iframe loaded successfully');
@@ -31,6 +32,10 @@ const LiveDarshan = () => {
     if (iframeRef.current) {
       iframeRef.current.src = streamUrl;
     }
+  };
+
+  const openFullScreen = () => {
+    window.open(directLink, '_blank');
   };
 
   return (
@@ -59,6 +64,7 @@ const LiveDarshan = () => {
             onLoad={handleIframeLoad}
             onError={handleIframeError}
             style={{ border: 'none' }}
+            title="Live Darshan Stream"
           />
           
           {/* Loading/Error Overlay */}
@@ -78,11 +84,18 @@ const LiveDarshan = () => {
                 {streamError && (
                   <button
                     onClick={retryConnection}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition-colors mr-2"
                   >
                     Retry Connection
                   </button>
                 )}
+                
+                <button
+                  onClick={openFullScreen}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                >
+                  Open Full Screen
+                </button>
               </div>
             </div>
           )}
@@ -94,11 +107,24 @@ const LiveDarshan = () => {
               <span>LIVE</span>
             </div>
           )}
+
+          {/* Full Screen Button */}
+          {isStreamLoaded && !streamError && (
+            <button
+              onClick={openFullScreen}
+              className="absolute top-4 right-4 bg-black/50 text-white p-2 rounded-lg hover:bg-black/70 transition-colors"
+              title="Open in full screen"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+              </svg>
+            </button>
+          )}
         </div>
 
-        {/* Stream Status */}
+        {/* Stream Information */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="font-semibold text-gray-800">Stream Status</h3>
               <p className="text-sm text-gray-600">
@@ -106,15 +132,16 @@ const LiveDarshan = () => {
                  streamError ? 'Connection failed' : 
                  'Loading live stream...'}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Direct video stream
-              </p>
             </div>
             <div className={`w-3 h-3 rounded-full ${
               isStreamLoaded && !streamError ? 'bg-green-500' : 
               streamError ? 'bg-red-500' : 
               'bg-yellow-500'
             }`}></div>
+          </div>
+          <div className="text-xs text-gray-500">
+            <p>Stream URL: <a href={directLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{directLink}</a></p>
+            <p className="mt-1">Click "Open Full Screen" for better viewing experience</p>
           </div>
         </div>
 
