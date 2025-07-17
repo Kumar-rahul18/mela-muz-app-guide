@@ -32,9 +32,15 @@ const Gallery = () => {
           .order('vote_count', { ascending: false })
           .order('created_at', { ascending: false });
 
-        if (error) setError('Failed to load photos');
-        else setPhotos(data || []);
+        if (error) {
+          console.error('Error fetching photos:', error);
+          setError('Failed to load photos');
+        } else {
+          console.log('Fetched photos:', data);
+          setPhotos(data || []);
+        }
       } catch (err) {
+        console.error('Unexpected error:', err);
         setError('An unexpected error occurred');
       } finally {
         setLoading(false);
@@ -55,6 +61,7 @@ const Gallery = () => {
           table: 'photo_contest_submissions'
         },
         (payload) => {
+          console.log('Real-time update received:', payload);
           if (payload.eventType === 'UPDATE' && payload.new) {
             setPhotos(prev => prev.map(photo => 
               photo.id === payload.new.id 
@@ -73,6 +80,7 @@ const Gallery = () => {
 
   const handleVoteClick = async (e: React.MouseEvent, photoId: string) => {
     e.stopPropagation();
+    console.log('Vote clicked for photo:', photoId);
     await toggleVote(photoId);
   };
 
