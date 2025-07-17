@@ -147,21 +147,21 @@ const LiveDarshan = () => {
           <h3 className="font-semibold text-gray-800 mb-3">Today's Aarti Schedule</h3>
           <div className="space-y-3">
             {[
-              { time: '5:00 AM', name: 'Mangla Aarti', status: 'completed' },
-              { time: '12:00 PM', name: 'Bhog Aarti', status: 'completed' },
-              { time: '7:00 PM', name: 'Sandhya Aarti', status: 'live' },
-              { time: '10:00 PM', name: 'Shayan Aarti', status: 'upcoming' }
+              { time: '5:00 AM', name: 'Mangla Aarti'  },
+              { time: '12:00 PM', name: 'Bhog Aarti' },
+              { time: '7:00 PM', name: 'Sandhya Aarti' },
+              { time: '10:00 PM', name: 'Shayan Aarti' }
             ].map((aarti, index) => (
               <div key={index} className="flex items-center justify-between py-2">
                 <div>
                   <div className="font-medium text-gray-800">{aarti.name}</div>
                   <div className="text-sm text-gray-600">{aarti.time}</div>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
+{/*                 <span className={`text-xs px-2 py-1 rounded-full ${
                   aarti.status === 'live' ? 'bg-red-100 text-red-700' :
                   aarti.status === 'completed' ? 'bg-green-100 text-green-700' :
                   'bg-gray-100 text-gray-700'
-                }`}>
+                }`}> */}
                   {aarti.status === 'live' ? 'LIVE' : 
                    aarti.status === 'completed' ? 'Completed' : 'Upcoming'}
                 </span>
