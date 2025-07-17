@@ -187,8 +187,8 @@ const Index = () => {
   const quickAccessItems = [
     { icon: '🚨', label: t('ambulance'), action: () => window.open('tel:108', '_self') },
     { icon: '🌤️', label: t('weather'), component: <WeatherWidget /> },
-    { icon: '📞', label: t('control_room'), action: () => window.open('tel:102', '_self') },
-    { icon: '🛠️', label: t('help_desk'), action: () => window.open('tel:1800-123-4567', '_self') }
+    { icon: '📞', label: t('control_room'), action: () => window.open('tel:155304', '_self') },
+    { icon: '🛠️', label: t('help_desk'), action: () => window.open('tel:155304', '_self') }
   ];
 
   if (showContacts) {
