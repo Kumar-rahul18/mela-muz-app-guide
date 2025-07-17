@@ -49,7 +49,7 @@ export const usePhotoVotes = () => {
     loadUserVotes();
   }, []);
 
-  const voteOnPhoto = async (photoId: string) => {
+  const voteOnPhoto = async (photoId: string, onVoteSuccess?: (newCount: number) => void) => {
     const userIdentifier = getUserIdentifier();
     
     // Check if user has already voted
@@ -73,7 +73,7 @@ export const usePhotoVotes = () => {
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
-      // Add vote
+      // Add vote to database
       console.log('Attempting to add vote...');
       const { error } = await supabase
         .from('photo_votes')
@@ -99,11 +99,23 @@ export const usePhotoVotes = () => {
         throw error;
       }
 
+      // Update local user votes state
       setUserVotes(prev => {
         const newSet = new Set([...prev, photoId]);
         console.log('Updated user votes after addition:', newSet);
         return newSet;
       });
+
+      // Get updated vote count for immediate UI feedback
+      const { data: updatedPhoto, error: fetchError } = await supabase
+        .from('photo_contest_submissions')
+        .select('vote_count')
+        .eq('id', photoId)
+        .single();
+
+      if (!fetchError && updatedPhoto && onVoteSuccess) {
+        onVoteSuccess(updatedPhoto.vote_count || 0);
+      }
       
       console.log('Vote added successfully');
       toast({

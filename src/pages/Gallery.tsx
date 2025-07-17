@@ -71,6 +71,28 @@ const Gallery = () => {
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'photo_votes'
+        },
+        (payload) => {
+          console.log('Vote change received:', payload);
+          // Refresh the specific photo's vote count when votes change
+          if (payload.eventType === 'INSERT' && payload.new) {
+            const photoId = payload.new.photo_id;
+            // Update the vote count for this specific photo
+            setPhotos(prev => prev.map(photo => {
+              if (photo.id === photoId) {
+                return { ...photo, vote_count: (photo.vote_count || 0) + 1 };
+              }
+              return photo;
+            }));
+          }
+        }
+      )
       .subscribe();
 
     return () => {
@@ -88,7 +110,14 @@ const Gallery = () => {
       return;
     }
     
-    await voteOnPhoto(photoId);
+    await voteOnPhoto(photoId, (newCount) => {
+      // Immediately update the vote count in the UI
+      setPhotos(prev => prev.map(photo => 
+        photo.id === photoId 
+          ? { ...photo, vote_count: newCount }
+          : photo
+      ));
+    });
   };
 
   /* ------------ ui ------------ */
@@ -170,7 +199,7 @@ const Gallery = () => {
                     <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center space-x-1 text-sm text-gray-600">
                         <Heart className="w-3 h-3 fill-current text-red-500" />
-                        <span className="font-medium">{photo.vote_count || 0}</span>
+                        <span className="font-medium text-lg">{photo.vote_count || 0}</span>
                         <span className="text-xs">votes</span>
                       </div>
                       {photo.vote_count > 0 && photo.vote_count >= Math.max(...photos.map(p => p.vote_count || 0)) && (
