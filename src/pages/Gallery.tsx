@@ -104,10 +104,17 @@ const Gallery = () => {
     
     await voteOnPhoto(photoId, (votedPhotoId) => {
       console.log('Vote success callback for photo:', votedPhotoId);
-      // Force refresh the photos to ensure we have the latest vote counts
+      // Optimistically update the vote count in the UI immediately
+      setPhotos(prev => prev.map(photo => 
+        photo.id === votedPhotoId 
+          ? { ...photo, vote_count: (photo.vote_count || 0) + 1 }
+          : photo
+      ));
+      
+      // Also refresh from database to ensure consistency
       setTimeout(() => {
         fetchPhotos();
-      }, 1000); // Give the trigger time to update
+      }, 500);
     });
   };
 

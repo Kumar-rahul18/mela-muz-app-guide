@@ -86,9 +86,9 @@ export const usePhotoVotes = () => {
         console.log('Vote count before voting:', beforePhoto?.vote_count);
       }
 
-      // Add vote to database - the trigger will automatically update vote_count
+      // Add vote to database first
       console.log('Attempting to add vote...');
-      const { data, error } = await supabase
+      const { data: voteData, error: voteError } = await supabase
         .from('photo_votes')
         .insert([{
           photo_id: photoId,
@@ -97,9 +97,9 @@ export const usePhotoVotes = () => {
         }])
         .select();
 
-      if (error) {
+      if (voteError) {
         // Check if it's a duplicate vote error
-        if (error.code === '23505' || error.message?.includes('unique_user_photo_vote')) {
+        if (voteError.code === '23505' || voteError.message?.includes('unique_user_photo_vote')) {
           console.log('Duplicate vote detected, updating local state...');
           setUserVotes(prev => new Set([...prev, photoId]));
           toast({
@@ -109,27 +109,30 @@ export const usePhotoVotes = () => {
           });
           return;
         }
-        console.error('Error adding vote:', error);
-        throw error;
+        console.error('Error adding vote:', voteError);
+        throw voteError;
       }
 
-      console.log('Vote added successfully to photo_votes:', data);
+      console.log('Vote added successfully to photo_votes:', voteData);
 
-      // Check vote count after voting to verify trigger worked
-      setTimeout(async () => {
-        const { data: afterPhoto, error: afterError } = await supabase
-          .from('photo_contest_submissions')
-          .select('vote_count')
-          .eq('id', photoId)
-          .single();
+      // Manually update the vote count since trigger isn't working reliably
+      const currentCount = beforePhoto?.vote_count || 0;
+      const newCount = currentCount + 1;
+      
+      console.log('Manually updating vote count from', currentCount, 'to', newCount);
+      
+      const { data: updateData, error: updateError } = await supabase
+        .from('photo_contest_submissions')
+        .update({ vote_count: newCount })
+        .eq('id', photoId)
+        .select();
 
-        if (afterError) {
-          console.error('Error fetching photo after vote:', afterError);
-        } else {
-          console.log('Vote count after voting:', afterPhoto?.vote_count);
-          console.log('Vote count difference:', (afterPhoto?.vote_count || 0) - (beforePhoto?.vote_count || 0));
-        }
-      }, 500);
+      if (updateError) {
+        console.error('Error updating vote count:', updateError);
+        // Don't throw error here, vote was still recorded
+      } else {
+        console.log('Vote count updated successfully:', updateData);
+      }
 
       // Update local user votes state
       setUserVotes(prev => {
@@ -138,12 +141,12 @@ export const usePhotoVotes = () => {
         return newSet;
       });
 
-      // Call the success callback
+      // Call the success callback immediately
       if (onVoteSuccess) {
         onVoteSuccess(photoId);
       }
       
-      console.log('Vote added successfully - trigger should update vote_count');
+      console.log('Vote process completed successfully');
       toast({
         title: "Vote added",
         description: "Your vote has been recorded!",
