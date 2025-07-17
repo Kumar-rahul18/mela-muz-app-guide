@@ -14,25 +14,32 @@ const Events = () => {
       type: 'सांस्कृतिक'
     },
     {
-      date: 'Jul 22',
-      time: '11:00 AM',
-      title: 'Cultural Program',
-      description: 'Traditional dance and music',
-      type: 'cultural'
+      date: 'Jul 14',
+      time: '4:00 AM',
+      title: 'पहली सोमवारी',
+      description: 'जलार्पण',
+      type: 'धार्मिक'
     },
     {
-      date: 'Jul 23',
+      date: 'Jul 21',
       time: '5:00 AM',
-      title: 'Kanwar Yatra Arrival',
-      description: 'Devotees arrival ceremony',
-      type: 'special'
+      title: 'दूसरी सोमवारी',
+      description: 'जलार्पण',
+      type: 'धार्मिक'
     },
     {
-      date: 'Jul 23',
-      time: '8:00 PM',
-      title: 'Evening Aarti',
-      description: 'Community prayer session',
-      type: 'ritual'
+      date: 'Jul 28',
+      time: '5:00 AM',
+      title: 'तिसरी सोमवारी',
+      description: 'जलार्पण',
+      type: 'धार्मिक'
+    },
+     {
+      date: 'Aug 4',
+      time: '5:00 AM',
+      title: 'चौथी सोमवारी',
+      description: 'जलार्पण',
+      type: 'धार्मिक'
     }
   ];
 
