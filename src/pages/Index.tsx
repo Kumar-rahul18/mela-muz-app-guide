@@ -223,12 +223,20 @@ const Index = () => {
                 <h2 className="text-lg font-bold">{t('photo_contest')}</h2>
               </div>
               <p className="text-sm text-white/90 mb-3">{t('submit_entry')}</p>
-              <button 
-                onClick={() => navigate('/photo-contest')}
-                className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors"
-              >
-                {t('participate')}
-              </button>
+              <div className="flex flex-col space-y-2">
+                <button 
+                  onClick={() => navigate('/photo-contest')}
+                  className="bg-white text-purple-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-gray-100 transition-colors w-fit"
+                >
+                  {t('participate')}
+                </button>
+                <button 
+                  onClick={() => navigate('/gallery')}
+                  className="bg-white/10 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-white/20 transition-colors w-fit"
+                >
+                  जमा किया हुआ फोटो देखें
+                </button>
+              </div>
             </div>
             <div className="text-6xl opacity-20">🏆</div>
           </div>
