@@ -23,36 +23,37 @@ const Gallery = () => {
   const { userVotes, votingStates, voteOnPhoto, hasVoted } = usePhotoVotes();
 
   /* ------------ fetch all submissions ------------ */
-  useEffect(() => {
-    const fetchPhotos = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('photo_contest_submissions')
-          .select('id, image_url, created_at, name, is_approved, vote_count')
-          .order('vote_count', { ascending: false })
-          .order('created_at', { ascending: false });
+  const fetchPhotos = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('photo_contest_submissions')
+        .select('id, image_url, created_at, name, is_approved, vote_count')
+        .order('vote_count', { ascending: false })
+        .order('created_at', { ascending: false });
 
-        if (error) {
-          console.error('Error fetching photos:', error);
-          setError('Failed to load photos');
-        } else {
-          console.log('Fetched photos:', data);
-          setPhotos(data || []);
-        }
-      } catch (err) {
-        console.error('Unexpected error:', err);
-        setError('An unexpected error occurred');
-      } finally {
-        setLoading(false);
+      if (error) {
+        console.error('Error fetching photos:', error);
+        setError('Failed to load photos');
+      } else {
+        console.log('Fetched photos:', data);
+        setPhotos(data || []);
       }
-    };
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      setError('An unexpected error occurred');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchPhotos();
   }, []);
 
-  // Real-time updates for vote counts
+  // Real-time updates for photo submissions and vote counts
   useEffect(() => {
     const channel = supabase
-      .channel('photo-votes-changes')
+      .channel('photo-gallery-changes')
       .on(
         'postgres_changes',
         {
@@ -61,35 +62,46 @@ const Gallery = () => {
           table: 'photo_contest_submissions'
         },
         (payload) => {
-          console.log('Real-time update received:', payload);
+          console.log('Photo submission change received:', payload);
           if (payload.eventType === 'UPDATE' && payload.new) {
+            // Update the specific photo with new vote count
             setPhotos(prev => prev.map(photo => 
               photo.id === payload.new.id 
-                ? { ...photo, vote_count: payload.new.vote_count }
+                ? { ...photo, vote_count: payload.new.vote_count || 0 }
                 : photo
             ));
+          } else if (payload.eventType === 'INSERT' && payload.new) {
+            // Add new photo submission
+            setPhotos(prev => [payload.new as Submission, ...prev]);
           }
         }
       )
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'INSERT',
           schema: 'public',
           table: 'photo_votes'
         },
         (payload) => {
-          console.log('Vote change received:', payload);
-          // Refresh the specific photo's vote count when votes change
-          if (payload.eventType === 'INSERT' && payload.new) {
+          console.log('New vote received:', payload);
+          if (payload.new) {
             const photoId = payload.new.photo_id;
-            // Update the vote count for this specific photo
-            setPhotos(prev => prev.map(photo => {
-              if (photo.id === photoId) {
-                return { ...photo, vote_count: (photo.vote_count || 0) + 1 };
-              }
-              return photo;
-            }));
+            // Refresh the photo data to get accurate vote count
+            supabase
+              .from('photo_contest_submissions')
+              .select('vote_count')
+              .eq('id', photoId)
+              .single()
+              .then(({ data, error }) => {
+                if (!error && data) {
+                  setPhotos(prev => prev.map(photo => 
+                    photo.id === photoId 
+                      ? { ...photo, vote_count: data.vote_count || 0 }
+                      : photo
+                  ));
+                }
+              });
           }
         }
       )
@@ -110,13 +122,22 @@ const Gallery = () => {
       return;
     }
     
-    await voteOnPhoto(photoId, (newCount) => {
-      // Immediately update the vote count in the UI
-      setPhotos(prev => prev.map(photo => 
-        photo.id === photoId 
-          ? { ...photo, vote_count: newCount }
-          : photo
-      ));
+    await voteOnPhoto(photoId, (votedPhotoId) => {
+      // Immediately refresh the photo data to get the latest vote count
+      supabase
+        .from('photo_contest_submissions')
+        .select('vote_count')
+        .eq('id', votedPhotoId)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setPhotos(prev => prev.map(photo => 
+              photo.id === votedPhotoId 
+                ? { ...photo, vote_count: data.vote_count || 0 }
+                : photo
+            ));
+          }
+        });
     });
   };
 
@@ -198,9 +219,9 @@ const Gallery = () => {
                     <div className="text-sm font-medium text-gray-800">By {photo.name}</div>
                     <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center space-x-1 text-sm text-gray-600">
-                        <Heart className="w-3 h-3 fill-current text-red-500" />
-                        <span className="font-medium text-lg">{photo.vote_count || 0}</span>
-                        <span className="text-xs">votes</span>
+                        <Heart className="w-4 h-4 fill-current text-red-500" />
+                        <span className="font-bold text-xl text-red-500">{photo.vote_count || 0}</span>
+                        <span className="text-sm">votes</span>
                       </div>
                       {photo.vote_count > 0 && photo.vote_count >= Math.max(...photos.map(p => p.vote_count || 0)) && (
                         <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">

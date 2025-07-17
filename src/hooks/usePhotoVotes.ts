@@ -49,7 +49,7 @@ export const usePhotoVotes = () => {
     loadUserVotes();
   }, []);
 
-  const voteOnPhoto = async (photoId: string, onVoteSuccess?: (newCount: number) => void) => {
+  const voteOnPhoto = async (photoId: string, onVoteSuccess?: (photoId: string) => void) => {
     const userIdentifier = getUserIdentifier();
     
     // Check if user has already voted
@@ -106,15 +106,9 @@ export const usePhotoVotes = () => {
         return newSet;
       });
 
-      // Get updated vote count for immediate UI feedback
-      const { data: updatedPhoto, error: fetchError } = await supabase
-        .from('photo_contest_submissions')
-        .select('vote_count')
-        .eq('id', photoId)
-        .single();
-
-      if (!fetchError && updatedPhoto && onVoteSuccess) {
-        onVoteSuccess(updatedPhoto.vote_count || 0);
+      // Call the success callback immediately
+      if (onVoteSuccess) {
+        onVoteSuccess(photoId);
       }
       
       console.log('Vote added successfully');
