@@ -33,10 +33,14 @@ export const usePhotoVotes = () => {
           .select('photo_id')
           .eq('user_identifier', userIdentifier);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error loading user votes:', error);
+          return;
+        }
 
         const votedPhotoIds = new Set(data?.map(vote => vote.photo_id) || []);
         setUserVotes(votedPhotoIds);
+        console.log('Loaded user votes:', votedPhotoIds);
       } catch (error) {
         console.error('Error loading user votes:', error);
       }
@@ -50,28 +54,40 @@ export const usePhotoVotes = () => {
     const hasVoted = userVotes.has(photoId);
 
     // Prevent multiple simultaneous votes on the same photo
-    if (votingStates[photoId]) return;
+    if (votingStates[photoId]) {
+      console.log('Vote already in progress for photo:', photoId);
+      return;
+    }
 
+    console.log(`${hasVoted ? 'Removing' : 'Adding'} vote for photo:`, photoId);
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
       if (hasVoted) {
         // Remove vote
+        console.log('Attempting to remove vote...');
         const { error } = await supabase
           .from('photo_votes')
           .delete()
           .eq('photo_id', photoId)
           .eq('user_identifier', userIdentifier);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error removing vote:', error);
+          throw error;
+        }
 
         setUserVotes(prev => {
           const newSet = new Set(prev);
           newSet.delete(photoId);
+          console.log('Updated user votes after removal:', newSet);
           return newSet;
         });
+        
+        console.log('Vote removed successfully');
       } else {
         // Add vote
+        console.log('Attempting to add vote...');
         const { error } = await supabase
           .from('photo_votes')
           .insert([{
@@ -80,9 +96,18 @@ export const usePhotoVotes = () => {
             vote_type: 'like'
           }]);
 
-        if (error) throw error;
+        if (error) {
+          console.error('Error adding vote:', error);
+          throw error;
+        }
 
-        setUserVotes(prev => new Set([...prev, photoId]));
+        setUserVotes(prev => {
+          const newSet = new Set([...prev, photoId]);
+          console.log('Updated user votes after addition:', newSet);
+          return newSet;
+        });
+        
+        console.log('Vote added successfully');
       }
     } catch (error) {
       console.error('Error toggling vote:', error);

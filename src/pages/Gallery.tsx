@@ -81,6 +81,20 @@ const Gallery = () => {
   const handleVoteClick = async (e: React.MouseEvent, photoId: string) => {
     e.stopPropagation();
     console.log('Vote clicked for photo:', photoId);
+    
+    // Optimistically update the UI
+    const currentlyVoted = hasVoted(photoId);
+    setPhotos(prev => prev.map(photo => 
+      photo.id === photoId 
+        ? { 
+            ...photo, 
+            vote_count: currentlyVoted 
+              ? Math.max(0, (photo.vote_count || 0) - 1)
+              : (photo.vote_count || 0) + 1
+          }
+        : photo
+    ));
+    
     await toggleVote(photoId);
   };
 
