@@ -55,7 +55,7 @@ const Events = () => {
         </div>
       </div>
 
-      <div className="px-4 py-6">
+      
         {/* Current Event */}
        
 
@@ -89,7 +89,7 @@ const Events = () => {
           </div>
         </div>
 
-        {/* Event Categories */}
+       
         
        // </div>
      // </div>
