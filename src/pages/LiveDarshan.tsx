@@ -144,7 +144,7 @@ const LiveDarshan = () => {
 
         {/* Aarti Schedule */}
         <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-3">Today's Aarti Schedule</h3>
+          <h3 className="font-semibold text-gray-800 mb-3">आज का आरती कार्यक्रम</h3>
           <div className="space-y-3">
             {[
               { time: '4:00 AM', name: 'प्रातःकालीन आरती'  },
