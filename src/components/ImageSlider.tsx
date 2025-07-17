@@ -75,7 +75,7 @@ const ImageSlider: React.FC = () => {
         >
           <img src={image.image_url} alt={image.title} className="w-full h-full object-cover" />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 z-20">
-            <h3 className="text-white font-semibold text-lg">{image.title}</h3>
+           
             <p className="text-white/90 text-sm">{image.description}</p>
           </div>
         </div>
