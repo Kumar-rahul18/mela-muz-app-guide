@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -36,7 +37,7 @@ const ContactCategoryFilter: React.FC = () => {
     try {
       const { data, error } = await supabase
         .from('contacts')
-        .select('id, contact_type, name, designation, phone, email, category, is_active')
+        .select('id, contact_type, name, designation, phone, email, category, ranking, is_active')
         .eq('is_active', true)
         .order('category')
         .order('ranking', { ascending: true, nullsFirst: false })
