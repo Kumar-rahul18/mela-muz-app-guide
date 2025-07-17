@@ -73,6 +73,19 @@ export const usePhotoVotes = () => {
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
+      // Get current vote count before voting
+      const { data: beforePhoto, error: beforeError } = await supabase
+        .from('photo_contest_submissions')
+        .select('vote_count')
+        .eq('id', photoId)
+        .single();
+
+      if (beforeError) {
+        console.error('Error fetching photo before vote:', beforeError);
+      } else {
+        console.log('Vote count before voting:', beforePhoto?.vote_count);
+      }
+
       // Add vote to database - the trigger will automatically update vote_count
       console.log('Attempting to add vote...');
       const { data, error } = await supabase
@@ -100,7 +113,23 @@ export const usePhotoVotes = () => {
         throw error;
       }
 
-      console.log('Vote added successfully:', data);
+      console.log('Vote added successfully to photo_votes:', data);
+
+      // Check vote count after voting to verify trigger worked
+      setTimeout(async () => {
+        const { data: afterPhoto, error: afterError } = await supabase
+          .from('photo_contest_submissions')
+          .select('vote_count')
+          .eq('id', photoId)
+          .single();
+
+        if (afterError) {
+          console.error('Error fetching photo after vote:', afterError);
+        } else {
+          console.log('Vote count after voting:', afterPhoto?.vote_count);
+          console.log('Vote count difference:', (afterPhoto?.vote_count || 0) - (beforePhoto?.vote_count || 0));
+        }
+      }, 500);
 
       // Update local user votes state
       setUserVotes(prev => {

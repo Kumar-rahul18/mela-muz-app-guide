@@ -105,7 +105,9 @@ const Gallery = () => {
     await voteOnPhoto(photoId, (votedPhotoId) => {
       console.log('Vote success callback for photo:', votedPhotoId);
       // Force refresh the photos to ensure we have the latest vote counts
-      fetchPhotos();
+      setTimeout(() => {
+        fetchPhotos();
+      }, 1000); // Give the trigger time to update
     });
   };
 
