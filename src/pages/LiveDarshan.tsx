@@ -147,10 +147,10 @@ const LiveDarshan = () => {
           <h3 className="font-semibold text-gray-800 mb-3">Today's Aarti Schedule</h3>
           <div className="space-y-3">
             {[
-              { time: '5:00 AM', name: 'Mangla Aarti'  },
-              { time: '12:00 PM', name: 'Bhog Aarti' },
-              { time: '7:00 PM', name: 'Sandhya Aarti' },
-              { time: '10:00 PM', name: 'Shayan Aarti' }
+              { time: '4:00 AM', name: 'प्रातःकालीन आरती'  },
+              { time: '2:00 PM', name: 'दोपहर की आरती' },
+              { time: '9:00 PM', name: 'सांध्यकालीन आरती' }
+             
             ].map((aarti, index) => (
               <div key={index} className="flex items-center justify-between py-2">
                 <div>
