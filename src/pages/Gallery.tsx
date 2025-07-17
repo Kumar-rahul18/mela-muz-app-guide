@@ -25,6 +25,7 @@ const Gallery = () => {
   /* ------------ fetch all submissions ------------ */
   const fetchPhotos = async () => {
     try {
+      console.log('Fetching photos from database...');
       const { data, error } = await supabase
         .from('photo_contest_submissions')
         .select('id, image_url, created_at, name, is_approved, vote_count')
@@ -76,6 +77,7 @@ const Gallery = () => {
             ));
           } else if (payload.eventType === 'INSERT' && payload.new) {
             // Add new photo submission
+            console.log('New photo submission added:', payload.new);
             setPhotos(prev => [payload.new as Submission, ...prev]);
           }
         }
@@ -102,8 +104,8 @@ const Gallery = () => {
     
     await voteOnPhoto(photoId, (votedPhotoId) => {
       console.log('Vote success callback for photo:', votedPhotoId);
-      // The database trigger will automatically update the vote_count
-      // and the real-time subscription will update the UI
+      // Force refresh the photos to ensure we have the latest vote counts
+      fetchPhotos();
     });
   };
 
@@ -186,7 +188,9 @@ const Gallery = () => {
                     <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center space-x-1 text-sm text-gray-600">
                         <Heart className="w-4 h-4 fill-current text-red-500" />
-                        <span className="font-bold text-2xl text-red-500">{photo.vote_count || 0}</span>
+                        <span className="font-bold text-lg text-red-500">
+                          {photo.vote_count !== null && photo.vote_count !== undefined ? photo.vote_count : 0}
+                        </span>
                         <span className="text-sm">votes</span>
                       </div>
                       {photo.vote_count > 0 && photo.vote_count >= Math.max(...photos.map(p => p.vote_count || 0)) && (
@@ -200,6 +204,9 @@ const Gallery = () => {
                         ✓ You voted for this
                       </div>
                     )}
+                    <div className="text-xs text-gray-400 mt-1">
+                      Photo ID: {photo.id.slice(-8)}
+                    </div>
                   </div>
                 </div>
               ))}

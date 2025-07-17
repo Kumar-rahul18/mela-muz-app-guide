@@ -75,17 +75,18 @@ export const usePhotoVotes = () => {
     try {
       // Add vote to database - the trigger will automatically update vote_count
       console.log('Attempting to add vote...');
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('photo_votes')
         .insert([{
           photo_id: photoId,
           user_identifier: userIdentifier,
           vote_type: 'like'
-        }]);
+        }])
+        .select();
 
       if (error) {
         // Check if it's a duplicate vote error
-        if (error.message?.includes('unique_user_photo_vote')) {
+        if (error.code === '23505' || error.message?.includes('unique_user_photo_vote')) {
           console.log('Duplicate vote detected, updating local state...');
           setUserVotes(prev => new Set([...prev, photoId]));
           toast({
@@ -99,6 +100,8 @@ export const usePhotoVotes = () => {
         throw error;
       }
 
+      console.log('Vote added successfully:', data);
+
       // Update local user votes state
       setUserVotes(prev => {
         const newSet = new Set([...prev, photoId]);
@@ -106,12 +109,12 @@ export const usePhotoVotes = () => {
         return newSet;
       });
 
-      // Call the success callback - the database trigger handles vote_count updates
+      // Call the success callback
       if (onVoteSuccess) {
         onVoteSuccess(photoId);
       }
       
-      console.log('Vote added successfully - trigger will update vote_count');
+      console.log('Vote added successfully - trigger should update vote_count');
       toast({
         title: "Vote added",
         description: "Your vote has been recorded!",
