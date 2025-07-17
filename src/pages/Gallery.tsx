@@ -80,7 +80,7 @@ const Gallery = () => {
               {photos.map((photo) => (
                 <div
                   key={photo.id}
-                  className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-105"
+                  className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-120"
                   onClick={() => setSelectedImage(photo.image_url)}
                 >
                   <img
@@ -128,8 +128,3 @@ const Gallery = () => {
 };
 
 export default Gallery;
-
-//   );
-// };
-
-// export default Gallery;
