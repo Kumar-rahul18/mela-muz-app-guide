@@ -73,20 +73,7 @@ export const usePhotoVotes = () => {
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
-      // Get current vote count before voting
-      const { data: beforePhoto, error: beforeError } = await supabase
-        .from('photo_contest_submissions')
-        .select('vote_count')
-        .eq('id', photoId)
-        .single();
-
-      if (beforeError) {
-        console.error('Error fetching photo before vote:', beforeError);
-      } else {
-        console.log('Vote count before voting:', beforePhoto?.vote_count);
-      }
-
-      // Add vote to database first
+      // Add vote to database - the trigger should automatically update vote_count now that RLS is fixed
       console.log('Attempting to add vote...');
       const { data: voteData, error: voteError } = await supabase
         .from('photo_votes')
@@ -115,25 +102,6 @@ export const usePhotoVotes = () => {
 
       console.log('Vote added successfully to photo_votes:', voteData);
 
-      // Manually update the vote count since trigger isn't working reliably
-      const currentCount = beforePhoto?.vote_count || 0;
-      const newCount = currentCount + 1;
-      
-      console.log('Manually updating vote count from', currentCount, 'to', newCount);
-      
-      const { data: updateData, error: updateError } = await supabase
-        .from('photo_contest_submissions')
-        .update({ vote_count: newCount })
-        .eq('id', photoId)
-        .select();
-
-      if (updateError) {
-        console.error('Error updating vote count:', updateError);
-        // Don't throw error here, vote was still recorded
-      } else {
-        console.log('Vote count updated successfully:', updateData);
-      }
-
       // Update local user votes state
       setUserVotes(prev => {
         const newSet = new Set([...prev, photoId]);
@@ -141,10 +109,25 @@ export const usePhotoVotes = () => {
         return newSet;
       });
 
-      // Call the success callback immediately
+      // Call the success callback immediately for optimistic UI update
       if (onVoteSuccess) {
         onVoteSuccess(photoId);
       }
+      
+      // Verify that the trigger updated the vote count after a short delay
+      setTimeout(async () => {
+        const { data: updatedPhoto, error: fetchError } = await supabase
+          .from('photo_contest_submissions')
+          .select('vote_count')
+          .eq('id', photoId)
+          .single();
+
+        if (!fetchError && updatedPhoto) {
+          console.log('Verified vote count after trigger:', updatedPhoto.vote_count);
+        } else {
+          console.error('Error verifying vote count:', fetchError);
+        }
+      }, 1000);
       
       console.log('Vote process completed successfully');
       toast({

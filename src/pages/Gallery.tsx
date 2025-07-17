@@ -69,7 +69,7 @@ const Gallery = () => {
           
           if (payload.eventType === 'UPDATE' && payload.new) {
             console.log('Updating photo with new vote count:', payload.new);
-            // Update the specific photo with new vote count
+            // Update the specific photo with new vote count from real-time
             setPhotos(prev => prev.map(photo => 
               photo.id === payload.new.id 
                 ? { ...photo, vote_count: payload.new.vote_count || 0 }
@@ -104,17 +104,17 @@ const Gallery = () => {
     
     await voteOnPhoto(photoId, (votedPhotoId) => {
       console.log('Vote success callback for photo:', votedPhotoId);
-      // Optimistically update the vote count in the UI immediately
+      // Optimistically update the vote count for immediate feedback
       setPhotos(prev => prev.map(photo => 
         photo.id === votedPhotoId 
           ? { ...photo, vote_count: (photo.vote_count || 0) + 1 }
           : photo
       ));
       
-      // Also refresh from database to ensure consistency
+      // Refresh from database after a delay to get the actual count
       setTimeout(() => {
         fetchPhotos();
-      }, 500);
+      }, 2000);
     });
   };
 
