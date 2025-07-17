@@ -226,7 +226,7 @@ const Gallery = () => {
                 >
                   <img
                     src={photo.image_url}
-                    alt={`Photo by ${photo.name}`}
+                    alt={`${photo.name}`}
                     className="w-full h-48 object-cover"
                     onError={(e) => {
                       const target = e.target as HTMLImageElement;
