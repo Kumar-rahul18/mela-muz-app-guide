@@ -159,8 +159,8 @@ const LiveDarshan = () => {
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full ${
                  
-                  {aarti.status === 'live' ? 'LIVE' : 
-                   aarti.status === 'completed' ? 'Completed' : 'Upcoming'}
+                  {aarti.status === 'live' ? 'LIVE' : 'Network eroor'
+                   }
                 </span>
               </div>
             ))}
