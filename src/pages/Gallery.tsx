@@ -20,7 +20,7 @@ const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { userVotes, votingStates, toggleVote, hasVoted } = usePhotoVotes();
+  const { userVotes, votingStates, voteOnPhoto, hasVoted } = usePhotoVotes();
 
   /* ------------ fetch all submissions ------------ */
   useEffect(() => {
@@ -82,20 +82,13 @@ const Gallery = () => {
     e.stopPropagation();
     console.log('Vote clicked for photo:', photoId);
     
-    // Optimistically update the UI
-    const currentlyVoted = hasVoted(photoId);
-    setPhotos(prev => prev.map(photo => 
-      photo.id === photoId 
-        ? { 
-            ...photo, 
-            vote_count: currentlyVoted 
-              ? Math.max(0, (photo.vote_count || 0) - 1)
-              : (photo.vote_count || 0) + 1
-          }
-        : photo
-    ));
+    // Don't allow voting if user has already voted
+    if (hasVoted(photoId)) {
+      console.log('User has already voted for this photo');
+      return;
+    }
     
-    await toggleVote(photoId);
+    await voteOnPhoto(photoId);
   };
 
   /* ------------ ui ------------ */
@@ -130,7 +123,7 @@ const Gallery = () => {
                 {photos.length} photo{photos.length !== 1 ? 's' : ''} submitted to the contest
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Photos are sorted by popularity • Tap ❤️ to vote for your favorites
+                Photos are sorted by popularity • Tap ❤️ to vote for your favorites (one vote per photo)
               </p>
             </div>
 
@@ -159,12 +152,13 @@ const Gallery = () => {
                   {/* Vote button overlay */}
                   <button
                     onClick={(e) => handleVoteClick(e, photo.id)}
-                    disabled={votingStates[photo.id]}
+                    disabled={votingStates[photo.id] || hasVoted(photo.id)}
                     className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-200 ${
                       hasVoted(photo.id)
-                        ? 'bg-red-500 text-white shadow-lg'
-                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
-                    } ${votingStates[photo.id] ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+                        ? 'bg-red-500 text-white shadow-lg cursor-not-allowed opacity-75'
+                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500 hover:scale-110'
+                    } ${votingStates[photo.id] ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title={hasVoted(photo.id) ? 'You have already voted' : 'Vote for this photo'}
                   >
                     <Heart 
                       className={`w-4 h-4 ${hasVoted(photo.id) ? 'fill-current' : ''}`}
@@ -185,6 +179,11 @@ const Gallery = () => {
                         </span>
                       )}
                     </div>
+                    {hasVoted(photo.id) && (
+                      <div className="text-xs text-green-600 mt-1 font-medium">
+                        ✓ You voted for this
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

@@ -49,9 +49,19 @@ export const usePhotoVotes = () => {
     loadUserVotes();
   }, []);
 
-  const toggleVote = async (photoId: string) => {
+  const voteOnPhoto = async (photoId: string) => {
     const userIdentifier = getUserIdentifier();
-    const hasVoted = userVotes.has(photoId);
+    
+    // Check if user has already voted
+    if (userVotes.has(photoId)) {
+      console.log('User has already voted for this photo');
+      toast({
+        title: "Already voted",
+        description: "You have already voted for this photo.",
+        variant: "default"
+      });
+      return;
+    }
 
     // Prevent multiple simultaneous votes on the same photo
     if (votingStates[photoId]) {
@@ -59,61 +69,53 @@ export const usePhotoVotes = () => {
       return;
     }
 
-    console.log(`${hasVoted ? 'Removing' : 'Adding'} vote for photo:`, photoId);
+    console.log('Adding vote for photo:', photoId);
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
-      if (hasVoted) {
-        // Remove vote
-        console.log('Attempting to remove vote...');
-        const { error } = await supabase
-          .from('photo_votes')
-          .delete()
-          .eq('photo_id', photoId)
-          .eq('user_identifier', userIdentifier);
+      // Add vote
+      console.log('Attempting to add vote...');
+      const { error } = await supabase
+        .from('photo_votes')
+        .insert([{
+          photo_id: photoId,
+          user_identifier: userIdentifier,
+          vote_type: 'like'
+        }]);
 
-        if (error) {
-          console.error('Error removing vote:', error);
-          throw error;
+      if (error) {
+        // Check if it's a duplicate vote error
+        if (error.message?.includes('unique_user_photo_vote')) {
+          console.log('Duplicate vote detected, updating local state...');
+          setUserVotes(prev => new Set([...prev, photoId]));
+          toast({
+            title: "Already voted",
+            description: "You have already voted for this photo.",
+            variant: "default"
+          });
+          return;
         }
-
-        setUserVotes(prev => {
-          const newSet = new Set(prev);
-          newSet.delete(photoId);
-          console.log('Updated user votes after removal:', newSet);
-          return newSet;
-        });
-        
-        console.log('Vote removed successfully');
-      } else {
-        // Add vote
-        console.log('Attempting to add vote...');
-        const { error } = await supabase
-          .from('photo_votes')
-          .insert([{
-            photo_id: photoId,
-            user_identifier: userIdentifier,
-            vote_type: 'like'
-          }]);
-
-        if (error) {
-          console.error('Error adding vote:', error);
-          throw error;
-        }
-
-        setUserVotes(prev => {
-          const newSet = new Set([...prev, photoId]);
-          console.log('Updated user votes after addition:', newSet);
-          return newSet;
-        });
-        
-        console.log('Vote added successfully');
+        console.error('Error adding vote:', error);
+        throw error;
       }
+
+      setUserVotes(prev => {
+        const newSet = new Set([...prev, photoId]);
+        console.log('Updated user votes after addition:', newSet);
+        return newSet;
+      });
+      
+      console.log('Vote added successfully');
+      toast({
+        title: "Vote added",
+        description: "Your vote has been recorded!",
+        variant: "default"
+      });
     } catch (error) {
-      console.error('Error toggling vote:', error);
+      console.error('Error voting on photo:', error);
       toast({
         title: "Error",
-        description: "Failed to update vote. Please try again.",
+        description: "Failed to vote. Please try again.",
         variant: "destructive"
       });
     } finally {
@@ -124,7 +126,7 @@ export const usePhotoVotes = () => {
   return {
     userVotes,
     votingStates,
-    toggleVote,
+    voteOnPhoto,
     hasVoted: (photoId: string) => userVotes.has(photoId)
   };
 };
