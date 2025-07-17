@@ -1,8 +1,9 @@
 
-
 import React, { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { Heart } from 'lucide-react';
+import { usePhotoVotes } from '@/hooks/usePhotoVotes';
 
 interface Submission {
   id: string;
@@ -10,6 +11,7 @@ interface Submission {
   created_at: string;
   name: string;
   is_approved: boolean;
+  vote_count: number;
 }
 
 const Gallery = () => {
@@ -18,6 +20,7 @@ const Gallery = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { userVotes, votingStates, toggleVote, hasVoted } = usePhotoVotes();
 
   /* ------------ fetch all submissions ------------ */
   useEffect(() => {
@@ -25,7 +28,8 @@ const Gallery = () => {
       try {
         const { data, error } = await supabase
           .from('photo_contest_submissions')
-          .select('id, image_url, created_at, name, is_approved')
+          .select('id, image_url, created_at, name, is_approved, vote_count')
+          .order('vote_count', { ascending: false })
           .order('created_at', { ascending: false });
 
         if (error) setError('Failed to load photos');
@@ -38,6 +42,39 @@ const Gallery = () => {
     };
     fetchPhotos();
   }, []);
+
+  // Real-time updates for vote counts
+  useEffect(() => {
+    const channel = supabase
+      .channel('photo-votes-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'photo_contest_submissions'
+        },
+        (payload) => {
+          if (payload.eventType === 'UPDATE' && payload.new) {
+            setPhotos(prev => prev.map(photo => 
+              photo.id === payload.new.id 
+                ? { ...photo, vote_count: payload.new.vote_count }
+                : photo
+            ));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const handleVoteClick = async (e: React.MouseEvent, photoId: string) => {
+    e.stopPropagation();
+    await toggleVote(photoId);
+  };
 
   /* ------------ ui ------------ */
   return (
@@ -71,7 +108,7 @@ const Gallery = () => {
                 {photos.length} photo{photos.length !== 1 ? 's' : ''} submitted to the contest
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                All submissions are shown here in the order they were received
+                Photos are sorted by popularity • Tap ❤️ to vote for your favorites
               </p>
             </div>
 
@@ -80,7 +117,7 @@ const Gallery = () => {
               {photos.map((photo) => (
                 <div
                   key={photo.id}
-                  className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-120"
+                  className="rounded-lg overflow-hidden border shadow-sm bg-white cursor-pointer transform transition-all hover:scale-105 relative"
                   onClick={() => setSelectedImage(photo.image_url)}
                 >
                   <img
@@ -96,8 +133,36 @@ const Gallery = () => {
                       );
                     }}
                   />
+                  
+                  {/* Vote button overlay */}
+                  <button
+                    onClick={(e) => handleVoteClick(e, photo.id)}
+                    disabled={votingStates[photo.id]}
+                    className={`absolute top-2 right-2 p-2 rounded-full transition-all duration-200 ${
+                      hasVoted(photo.id)
+                        ? 'bg-red-500 text-white shadow-lg'
+                        : 'bg-white/80 text-gray-600 hover:bg-white hover:text-red-500'
+                    } ${votingStates[photo.id] ? 'opacity-50 cursor-not-allowed' : 'hover:scale-110'}`}
+                  >
+                    <Heart 
+                      className={`w-4 h-4 ${hasVoted(photo.id) ? 'fill-current' : ''}`}
+                    />
+                  </button>
+
                   <div className="p-2">
                     <div className="text-sm font-medium text-gray-800">By {photo.name}</div>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex items-center space-x-1 text-sm text-gray-600">
+                        <Heart className="w-3 h-3 fill-current text-red-500" />
+                        <span className="font-medium">{photo.vote_count || 0}</span>
+                        <span className="text-xs">votes</span>
+                      </div>
+                      {photo.vote_count > 0 && photo.vote_count >= Math.max(...photos.map(p => p.vote_count || 0)) && (
+                        <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full font-medium">
+                          🏆 Top
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -348,6 +348,7 @@ export type Database = {
           name: string
           phone: string
           updated_at: string
+          vote_count: number | null
         }
         Insert: {
           created_at?: string
@@ -358,6 +359,7 @@ export type Database = {
           name: string
           phone: string
           updated_at?: string
+          vote_count?: number | null
         }
         Update: {
           created_at?: string
@@ -368,8 +370,41 @@ export type Database = {
           name?: string
           phone?: string
           updated_at?: string
+          vote_count?: number | null
         }
         Relationships: []
+      }
+      photo_votes: {
+        Row: {
+          created_at: string
+          id: string
+          photo_id: string
+          user_identifier: string
+          vote_type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_id: string
+          user_identifier: string
+          vote_type?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_id?: string
+          user_identifier?: string
+          vote_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_votes_photo_id_fkey"
+            columns: ["photo_id"]
+            isOneToOne: false
+            referencedRelation: "photo_contest_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
