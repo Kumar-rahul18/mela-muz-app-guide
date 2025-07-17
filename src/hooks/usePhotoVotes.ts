@@ -73,7 +73,7 @@ export const usePhotoVotes = () => {
     setVotingStates(prev => ({ ...prev, [photoId]: true }));
 
     try {
-      // Add vote to database
+      // Add vote to database - the trigger will automatically update vote_count
       console.log('Attempting to add vote...');
       const { error } = await supabase
         .from('photo_votes')
@@ -106,12 +106,12 @@ export const usePhotoVotes = () => {
         return newSet;
       });
 
-      // Call the success callback immediately
+      // Call the success callback - the database trigger handles vote_count updates
       if (onVoteSuccess) {
         onVoteSuccess(photoId);
       }
       
-      console.log('Vote added successfully');
+      console.log('Vote added successfully - trigger will update vote_count');
       toast({
         title: "Vote added",
         description: "Your vote has been recorded!",

@@ -35,7 +35,7 @@ const Gallery = () => {
         console.error('Error fetching photos:', error);
         setError('Failed to load photos');
       } else {
-        console.log('Fetched photos:', data);
+        console.log('Fetched photos with vote counts:', data);
         setPhotos(data || []);
       }
     } catch (err) {
@@ -52,8 +52,10 @@ const Gallery = () => {
 
   // Real-time updates for photo submissions and vote counts
   useEffect(() => {
+    console.log('Setting up real-time subscriptions...');
+    
     const channel = supabase
-      .channel('photo-gallery-changes')
+      .channel('photo-gallery-realtime')
       .on(
         'postgres_changes',
         {
@@ -63,7 +65,9 @@ const Gallery = () => {
         },
         (payload) => {
           console.log('Photo submission change received:', payload);
+          
           if (payload.eventType === 'UPDATE' && payload.new) {
+            console.log('Updating photo with new vote count:', payload.new);
             // Update the specific photo with new vote count
             setPhotos(prev => prev.map(photo => 
               photo.id === payload.new.id 
@@ -76,38 +80,12 @@ const Gallery = () => {
           }
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'photo_votes'
-        },
-        (payload) => {
-          console.log('New vote received:', payload);
-          if (payload.new) {
-            const photoId = payload.new.photo_id;
-            // Refresh the photo data to get accurate vote count
-            supabase
-              .from('photo_contest_submissions')
-              .select('vote_count')
-              .eq('id', photoId)
-              .single()
-              .then(({ data, error }) => {
-                if (!error && data) {
-                  setPhotos(prev => prev.map(photo => 
-                    photo.id === photoId 
-                      ? { ...photo, vote_count: data.vote_count || 0 }
-                      : photo
-                  ));
-                }
-              });
-          }
-        }
-      )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Photo gallery subscription status:', status);
+      });
 
     return () => {
+      console.log('Cleaning up photo gallery subscription');
       supabase.removeChannel(channel);
     };
   }, []);
@@ -123,21 +101,9 @@ const Gallery = () => {
     }
     
     await voteOnPhoto(photoId, (votedPhotoId) => {
-      // Immediately refresh the photo data to get the latest vote count
-      supabase
-        .from('photo_contest_submissions')
-        .select('vote_count')
-        .eq('id', votedPhotoId)
-        .single()
-        .then(({ data, error }) => {
-          if (!error && data) {
-            setPhotos(prev => prev.map(photo => 
-              photo.id === votedPhotoId 
-                ? { ...photo, vote_count: data.vote_count || 0 }
-                : photo
-            ));
-          }
-        });
+      console.log('Vote success callback for photo:', votedPhotoId);
+      // The database trigger will automatically update the vote_count
+      // and the real-time subscription will update the UI
     });
   };
 
@@ -220,7 +186,7 @@ const Gallery = () => {
                     <div className="flex items-center justify-between mt-1">
                       <div className="flex items-center space-x-1 text-sm text-gray-600">
                         <Heart className="w-4 h-4 fill-current text-red-500" />
-                        <span className="font-bold text-xl text-red-500">{photo.vote_count || 0}</span>
+                        <span className="font-bold text-2xl text-red-500">{photo.vote_count || 0}</span>
                         <span className="text-sm">votes</span>
                       </div>
                       {photo.vote_count > 0 && photo.vote_count >= Math.max(...photos.map(p => p.vote_count || 0)) && (
