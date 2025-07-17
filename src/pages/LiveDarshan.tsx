@@ -157,11 +157,7 @@ const LiveDarshan = () => {
                   <div className="font-medium text-gray-800">{aarti.name}</div>
                   <div className="text-sm text-gray-600">{aarti.time}</div>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                 
-                  {aarti.status === 'live' ? 'LIVE' : 'Network eroor'
-                   }
-                </span>
+               
               </div>
             ))}
           </div>
