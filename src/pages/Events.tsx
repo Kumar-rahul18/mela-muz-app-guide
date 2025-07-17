@@ -7,11 +7,11 @@ const Events = () => {
 
   const events = [
     {
-      date: 'Jul 22',
-      time: '6:00 AM',
-      title: 'Rudra Abhishek',
-      description: 'Special prayer ceremony',
-      type: 'ritual'
+      date: 'Jul 13',
+      time: '2:00 PM',
+      title: 'श्रावणी मेला उद्घाटन',
+      description: 'श्री विजय कुमार सिन्हा \(उपमुख्यमंत्री बिहार द्वारा\) उद्घाटन',
+      type: 'सांस्कृतिक'
     },
     {
       date: 'Jul 22',
