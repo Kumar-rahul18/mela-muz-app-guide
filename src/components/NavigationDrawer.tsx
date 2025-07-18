@@ -265,7 +265,7 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
             <Button
               variant="ghost"
               className="w-full justify-start text-left h-12 bg-green-50 hover:bg-green-100 text-green-700"
-              onClick={() => window.open('callto:8503945378', '_blank')}
+              onClick={() => window.open('tel:8503945378', '_self')} 
             >
               <div className="flex items-center w-full">
                 <img 
