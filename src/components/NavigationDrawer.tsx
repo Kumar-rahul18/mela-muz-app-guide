@@ -262,20 +262,17 @@ const NavigationDrawer: React.FC<NavigationDrawerProps> = ({
               {t('change_language')}
             </Button>
 
-            <Button
-              variant="ghost"
-              className="w-full justify-start text-left h-12 bg-green-50 hover:bg-green-100 text-green-700"
-              onClick={() => window.open('tel:8503945378', '_self')} 
+            <div 
+              className="w-full flex flex-col items-center py-4 cursor-pointer hover:bg-green-50 rounded-lg"
+              onClick={() => window.open('tel:8503945378', '_self')}
             >
-              <div className="flex items-center w-full">
-                <img 
-                  src="https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/general//contact_developer.webp" 
-                  alt="Contact Developer" 
-                  className="mr-3 h-5 w-5 rounded-full object-cover"
-                />
-                Contact Developer
-              </div>
-            </Button>
+              <img 
+                src="https://jrnlegccgugofvnovqey.supabase.co/storage/v1/object/public/general//contact_developer.webp" 
+                alt="Contact Developer" 
+                className="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm"
+              />
+              <span className="text-sm text-green-700 mt-2 font-medium">Contact Developer</span>
+            </div>
           </div>
 
           <div className="p-4">
