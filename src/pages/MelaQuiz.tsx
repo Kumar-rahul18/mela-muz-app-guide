@@ -190,7 +190,7 @@ const MelaQuiz = () => {
         .from('quiz_attempts')
         .select('*')
         .order('score', { ascending: false })
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
       
       if (error) {
         console.error('Error fetching quiz attempts:', error);
