@@ -150,7 +150,7 @@ const Gallery = () => {
                 {photos.length} photo{photos.length !== 1 ? 's' : ''} submitted to the contest
               </p>
               <p className="text-gray-500 text-xs mt-1">
-                Photos are sorted by popularity • Tap ❤️ to vote for your favorites (one vote per photo)
+                फोटो को लोकप्रियता के अनुसार क्रमबद्ध किया गया है • अपने पसंदीदा के लिए वोट देने के लिए ❤️ पर टैप करें (प्रति फोटो एक वोट) | सबसे ज्यादा लाइक की गई फोटो को कैश प्राइज दिया जाएगा
               </p>
             </div>
 
