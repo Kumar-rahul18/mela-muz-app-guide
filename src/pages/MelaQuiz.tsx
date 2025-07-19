@@ -544,7 +544,7 @@ const MelaQuiz = () => {
           </div>
         ) : (
           <div className="space-y-2">
-            {attempts.slice(0, 10).map((attempt, index) => (
+            {attempts.slice(0, 100).map((attempt, index) => (
               <div
                 key={attempt.id || attempt.phone}
                 className={`flex justify-between items-center p-3 rounded-md ${
